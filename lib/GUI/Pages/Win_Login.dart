@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../Services/testing_cloud_functions.dart';
 import 'Win_Manager_View.dart';
 
 class Win_Login_Start extends StatefulWidget {
@@ -9,6 +10,8 @@ class Win_Login_Start extends StatefulWidget {
 }
 
 class _Win_Login_StartState extends State<Win_Login_Start> {
+
+  testing_cloud_functions cloud_functions_tester = testing_cloud_functions();
 
   String page_name = "Login Window";
 
@@ -69,8 +72,12 @@ class _Win_Login_StartState extends State<Win_Login_Start> {
                 context,
                 MaterialPageRoute(builder: (context) => const Win_Manager_View()),
               );
+            }, child: Text("Login")),
+            ElevatedButton(onPressed: (){
+              cloud_functions_tester.getEmployees();
+            }, child: Text("test cloud")),
 
-            }, child: Text("Login"))
+            // t
           ],
         ),
       ),
