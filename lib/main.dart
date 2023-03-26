@@ -1,3 +1,4 @@
+import 'package:csce315_project3_13/GUI/Pages/Win_Functions_Test_Page.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -21,24 +22,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: Win_Login_Start(),
-
-      // FutureBuilder(
-      //   future: _initialization,
-      //   builder: (context, snapshot){
-      //     if(snapshot.hasError){
-      //       print("Error");
-      //     }
-      //
-      //     if(snapshot.connectionState == ConnectionState.done){
-      //       //once it has loaded
-      //       return MyHomePage();
-      //     }
-      //
-      //     return CircularProgressIndicator();
-      //   },
-      //
-      // ),
+      home: Win_Functions_Test_Page(),
     );
   }
 }

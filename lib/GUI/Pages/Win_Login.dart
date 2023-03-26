@@ -3,6 +3,7 @@ import '../../Services/testing_cloud_functions.dart';
 import 'Win_Manager_View.dart';
 
 class Win_Login_Start extends StatefulWidget {
+  static const String route = '/overview';
   const Win_Login_Start({super.key});
 
   @override
