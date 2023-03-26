@@ -56,14 +56,14 @@ class _Win_Login_StartState extends State<Win_Login_Start> {
             TextField(
               controller: _username_controller,
               obscureText: false,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: 'Username',
               ),),
         TextField(
           controller: _password_controller,
           obscureText: true,
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             border: OutlineInputBorder(),
             labelText: 'Password',
           ),),
@@ -72,10 +72,12 @@ class _Win_Login_StartState extends State<Win_Login_Start> {
                 context,
                 MaterialPageRoute(builder: (context) => const Win_Manager_View()),
               );
-            }, child: Text("Login")),
+            }, child: const Text("Login")),
+
             ElevatedButton(onPressed: (){
               cloud_functions_tester.getEmployees();
-            }, child: Text("test cloud")),
+            }, child: const Text("test employees")),
+
 
             // t
           ],
