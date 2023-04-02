@@ -81,15 +81,15 @@ class _Win_LoginState extends State<Win_Login> {
                 ),),
 
               TextField(
-                 controller: _password_controller,
-                 onSubmitted: (String pass_string){
-                   _login(context);
-                 },
-                 obscureText: !_show_password,
-                 decoration: const InputDecoration(
-                   border: OutlineInputBorder(),
-                   labelText: 'Password',
-                 ),),
+                controller: _password_controller,
+                onSubmitted: (String pass_string){
+                  _login(context);
+                },
+                obscureText: !_show_password,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Password',
+                ),),
 
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -97,8 +97,8 @@ class _Win_LoginState extends State<Win_Login> {
                   Checkbox(
                       value: _show_password,
                       onChanged: (changed_value){
-                    _switch_show_password();
-                  }),
+                        _switch_show_password();
+                      }),
 
                   Text("Show password"),
                 ],
