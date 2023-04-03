@@ -89,6 +89,57 @@ exports.addMenuItem = functions.https.onCall(async (data, context) => {
     return "Added menu item to database"
 });
 
+exports.getInventoryItems = functions.https.onCall(async (data, context) => {
+    const client = new Client({
+          host: 'csce-315-db.engr.tamu.edu',
+          user: 'csce315331_team_13_master',
+          password: 'Lucky_13',
+          database: 'csce315331_team_13',
+          port: 5432,
+    });
+
+    await client.connect()
+
+    const res = await client.query('SELECT * FROM inventory ORDER BY inv_order_id ASC');
+
+    client.end()
+
+    return res.rows;
+});
+
+exports.addInventoryRow = functions.https.onCall(async (data, context) => {
+
+    const client = new Client({
+          host: 'csce-315-db.engr.tamu.edu',
+          user: 'csce315331_team_13_master',
+          password: 'Lucky_13',
+          database: 'csce315331_team_13',
+          port: 5432,
+    });
+
+    await client.connect()
+
+    const values = data.values;
+    const maxIdResult = await client.query('SELECT MAX(inv_order_id) AS max_id FROM inventory');
+    const maxId = maxIdResult.rows[0].max_id;
+
+    const valuesWithId = {
+        ...values,
+        inv_order_id: maxId + 1
+    };
+
+    const query = {
+        text: 'INSERT INTO inventory(inv_order_id, inv_item_id, ingredient, amount_inv_stock, amount_ordered, unit, date_ordered, expiration_date, conversion) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)',
+        values: Object.values(valuesWithId)
+    };
+
+    const res = await client.query(query);
+
+    client.end()
+
+    return maxId + 1;
+});
+
 
 
 

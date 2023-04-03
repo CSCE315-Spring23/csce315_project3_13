@@ -30,4 +30,19 @@ class inventory_item_obj
   {
     return "${this.inv_order_id}, ${this.inv_item_id}, '${this.ingredient}', ${this.amount_inv_stock}, ${this.amount_ordered}, '${this.unit}', '${this.date_ordered}', '${this.expiration_date}', ${this.conversion}";
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'inv_order_id': inv_order_id,
+      'inv_item_id': inv_item_id,
+      'ingredient': ingredient,
+      'amount_inv_stock': amount_inv_stock,
+      'amount_ordered': amount_ordered,
+      'unit': unit,
+      'date_ordered': date_ordered,
+      'expiration_date': expiration_date,
+      'conversion': conversion,
+    };
+  }
+
 }
