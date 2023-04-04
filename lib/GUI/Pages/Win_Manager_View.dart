@@ -1,5 +1,6 @@
 import 'package:csce315_project3_13/GUI/Components/ExampleButton.dart';
 import 'package:csce315_project3_13/GUI/Pages/Login/Win_Login.dart';
+import 'package:csce315_project3_13/GUI/Pages/Management/Win_View_Menu.dart';
 import 'package:flutter/material.dart';
 
 class Win_Manager_View extends StatefulWidget {
@@ -22,6 +23,12 @@ class _Win_Manager_ViewState extends State<Win_Manager_View> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            ElevatedButton(
+                onPressed: (){
+                  Navigator.pushNamed(context, Win_View_Menu.route);
+                },
+                child: const Text('Menu Management')
+            ),
             const Text(
               'Logged in',
             ),
@@ -35,6 +42,7 @@ class _Win_Manager_ViewState extends State<Win_Manager_View> {
           ],
         ),
       ),
+      bottomSheet: Container(height: 100, color: Colors.red,),
       // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
