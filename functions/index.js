@@ -90,21 +90,21 @@ exports.addMenuItem = functions.https.onCall(async (data, context) => {
 });
 
 exports.getInventoryItems = functions.https.onCall(async (data, context) => {
-    const client = new Client({
-          host: 'csce-315-db.engr.tamu.edu',
-          user: 'csce315331_team_13_master',
-          password: 'Lucky_13',
-          database: 'csce315331_team_13',
-          port: 5432,
-    });
+      const client = new Client({
+        host: 'csce-315-db.engr.tamu.edu',
+        user: 'csce315331_team_13_master',
+        password: 'Lucky_13',
+        database: 'csce315331_team_13',
+        port: 5432,
+      });
 
-    await client.connect()
+      await client.connect();
 
-    const res = await client.query('SELECT * FROM inventory ORDER BY inv_order_id ASC');
+      const res = await client.query("SELECT * FROM inventory WHERE expiration_date > CURRENT_TIMESTAMP ORDER BY inv_order_id ASC");
 
-    client.end()
+      client.end();
 
-    return res.rows;
+      return res.rows;
 });
 
 exports.addInventoryRow = functions.https.onCall(async (data, context) => {
