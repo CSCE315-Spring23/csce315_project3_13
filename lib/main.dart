@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
         Win_Functions_Test_Page.route: (BuildContext context) => Win_Functions_Test_Page(),
         Win_Loading_Page.route: (BuildContext context) => Win_Loading_Page(),
       },
-      initialRoute: Win_Login.route,
+      initialRoute: Win_Functions_Test_Page.route,
     );
   }
 }
