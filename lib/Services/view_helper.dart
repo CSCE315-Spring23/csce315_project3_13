@@ -17,12 +17,13 @@ class view_helper {
     return names;
   }
 
-  Future<String> get_item_price(String item_name) async
+  Future<double> get_item_price(String item_name) async
   {
     HttpsCallable getter = FirebaseFunctions.instance.httpsCallable('getItemPrice');
     final item_name_query = await getter.call({'menu_item_name': item_name});
     List<dynamic> data = item_name_query.data;
-    String item_price = data[0]['menu_item_price'];
+    String item_price_str = data[0]['item_price'];
+    double item_price = double.parse(item_price_str.replaceAll('\$', ''));
 
     return item_price;
   }

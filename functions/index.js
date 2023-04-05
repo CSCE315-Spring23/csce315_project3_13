@@ -359,6 +359,7 @@ exports.getItemID = functions.https.onCall(async (data, context) => {
 });
 
 
+
 exports.getMenuItemIngredients = functions.https.onCall(async (data, context) => {
     const client = new Client({
           host: 'csce-315-db.engr.tamu.edu',

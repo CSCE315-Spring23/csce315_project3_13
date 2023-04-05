@@ -1,10 +1,15 @@
+import 'package:csce315_project3_13/Manager_View/Win_Manager_View.dart';
 import 'package:csce315_project3_13/Models/Order%20Models/addon_order.dart';
 import 'package:csce315_project3_13/Models/Order%20Models/curr_order.dart';
 import 'package:csce315_project3_13/Models/Order%20Models/smoothie_order.dart';
 import 'package:csce315_project3_13/Models/Order%20Models/snack_order.dart';
+import 'package:csce315_project3_13/Services/order_processing_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import '../../../Services/view_helper.dart';
 import '../Login/Win_Login.dart';
 import '../Loading/Loading_Order_Win.dart';
+import '../../../Models/models_library.dart';
 
 class Win_Order extends StatefulWidget {
   static const String route = '/order';
@@ -43,12 +48,31 @@ class Win_Order_State extends State<Win_Order>{
   final List<Map<String, String>> _addonTable = [];
 
   // adds row to order table
-  void _addToOrder(String item, String size, double price) {
+  Future<void> _addToOrder(String item, String size, String type) async {
+    String price = (await view_helper().get_item_price(item)).toStringAsFixed(2);
+
+    if (type == 'Smoothie'){
+      setState(() {
+        _curr_smoothie.setSmoothiePrice(double.parse(price));
+        _current_order.addSmoothie(
+            _curr_smoothie);
+      });
+    }
+    if (type == 'Snack'){
+      snack_order snack = snack_order(
+        name: item,
+        price: double.parse(price),
+        table_index: _orderTable.length + 1,
+      );
+      setState(() {
+        _current_order.addSnack(snack);
+      });
+    }
     final newRow = {
       'index': (_orderTable.length + 1).toString(),
       'name': item,
       'size': size,
-      'price': price.toStringAsFixed(2),
+      'price': price,
     };
     setState(() {
       _orderTable.add(newRow);
@@ -56,15 +80,18 @@ class Win_Order_State extends State<Win_Order>{
   }
 
   // add addon to addon table
-  void _addAddon(String item, double price) {
+  Future<void> _addAddon(String item) async {
+    String price = (await view_helper().get_item_price(item)).toStringAsFixed(2);
     final newRow = {
       'index': (_addonTable.length + 1).toString(),
       'name': item,
-      'price': price.toStringAsFixed(2),
+      'price': price,
     };
+    addon_order new_addon = addon_order(name: item, price: double.parse(price), amount: 1);
     setState(() {
       // limit addons to 8
       if (_addonTable.length < 8) {
+        _curr_smoothie.addAddon(new_addon);
         _addonTable.add(newRow);
       }
     });
@@ -103,9 +130,6 @@ class Win_Order_State extends State<Win_Order>{
     );
   }
 
-  @override
-  bool get wantKeepAlive => true;
-
   Widget buttonGrid(BuildContext context, List<String> button_names, String type){
     return GridView.count(
       shrinkWrap: true,
@@ -117,10 +141,8 @@ class Win_Order_State extends State<Win_Order>{
         onPressed: () {
           if (type == "Smoothie" ) {
             setState(() {
-              //Todo: get price of medium smoothie
-              double med_price = 5.59;
               _curr_smoothie = smoothie_order(smoothie: name,
-                Size: 'medium', price: med_price,
+                Size: 'medium', price: 0,
                 table_index: _orderTable.length + 1,
               );
               _activeMenu2 = 1;
@@ -128,29 +150,15 @@ class Win_Order_State extends State<Win_Order>{
             });
           }
           if (type == 'Snack') {
-            // todo: get price of snack using name
-            double snack_price = 1.99;
-            snack_order snack = snack_order(
-              name: name,
-              price: snack_price,
-              table_index: _orderTable.length + 1,
-            );
-            _addToOrder(name, '-', snack_price);
             setState(() {
-              _current_order.addSnack(snack);
+              _addToOrder(name, '-', 'Snack');
             });
-            if (type == 'Addon'){
-              setState(() {
-                // Todo: get addon price
-                double addon_price = 0.99;
-                addon_order new_addon = addon_order(name: name, price: addon_price, amount: 1);
-                _curr_smoothie.addAddon(new_addon);
-                // Todo: get addon price
-                _addAddon(name, 0.99);
-              });
-            }
           }
-
+          if (type == 'Addon'){
+            setState(() {
+              _addAddon(name);
+            });
+          }
         },
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -166,6 +174,50 @@ class Win_Order_State extends State<Win_Order>{
       )).toList(),
     );
 
+  }
+
+  Future<List<int>> getIds() async{
+    List<smoothie_order> smoothies= _current_order.getSmoothies();
+    List<snack_order> snacks = _current_order.getSnacks();
+    List<int> item_ids = [];
+    view_helper helper_instance = view_helper();
+
+    for (snack_order snack in snacks)
+    {
+      int snack_id = await helper_instance.get_item_id(snack.name);
+      item_ids.add(snack_id);
+    }
+    for (smoothie_order smoothie in smoothies)
+    {
+      int smooth_id = await helper_instance.get_item_id(smoothie.getSmoothie());
+      item_ids.add(smooth_id);
+      List<addon_order> addons = smoothie.getAddons();
+      for (addon_order addon in addons)
+      {
+        int addon_id = await helper_instance.get_item_id(addon.name);
+        item_ids.add(addon_id);
+      }
+    }
+    return item_ids;
+  }
+
+  void process_order() async {
+    // if nothing in order, then don't process
+    if ((_current_order.getSnacks().length == 0) && (_current_order.getSmoothies() == 0))
+    {
+      return;
+    }
+    List<int> item_ids_in_order = await getIds();
+    DateTime now = DateTime.now();
+    String formattedDate = DateFormat('yyyy-MM-dd').format(now);
+    order_processing_helper order_helper = order_processing_helper();
+    int trans_id = await order_helper.get_new_transaction_id();
+    order_obj order_to_process = order_obj(trans_id, 3, item_ids_in_order, _current_order.price , _curr_customer, formattedDate, 'completed');
+    print(order_to_process.get_values());
+    order_helper.process_order(order_to_process);
+    _current_order.clear();
+    _orderTable.clear();
+    _addonTable.clear();
   }
 
   @override
@@ -240,7 +292,7 @@ class Win_Order_State extends State<Win_Order>{
                                               for (addon_order addon in _curr_smoothie
                                                   .getAddons()) {
                                                 _addAddon(
-                                                    addon.name, addon.price);
+                                                    addon.name);
                                               }
                                               _curr_editing = true;
                                             });
@@ -362,7 +414,7 @@ class Win_Order_State extends State<Win_Order>{
                           child: TextButton(
                             onPressed: () {
                               print("Logged Out");
-                              Navigator.pushReplacementNamed(context, Win_Login.route);
+                              Navigator.pushReplacementNamed(context, Win_Manager_View.route);
                             },
                             child: const Icon(
                               Icons.logout,
@@ -387,26 +439,9 @@ class Win_Order_State extends State<Win_Order>{
                         Expanded(
                           child: TextButton(
                             onPressed: () {
-                              List<smoothie_order> smoothies= _current_order.getSmoothies();
-                              List<snack_order> snacks = _current_order.getSnacks();
-                              //todo: process order
-                              print("Snacks purchased:  ");
-                              for (snack_order snack in snacks)
-                              {
-                                print("   ${snack.name}");
+                              if (!_curr_editing) {
+                                process_order();
                               }
-                              print("Smoothies purchased: ");
-                              for (smoothie_order smoothie in smoothies)
-                              {
-                                print("   ${smoothie.getSmoothie()}");
-                                List<addon_order> addons = smoothie.getAddons();
-                                print("    With Addons: ");
-                                for (addon_order addon in addons)
-                                {
-                                  print("        " + addon.name);
-                                }
-                              }
-
                             },
                             child: const Icon(
                               Icons.monetization_on,
@@ -487,7 +522,7 @@ class Win_Order_State extends State<Win_Order>{
                                     primary: true,
                                     child: Container(
                                       color: Colors.pink,
-                                      child: buttonGrid(context, Snack_names, "Snacks"),
+                                      child: buttonGrid(context, Snack_names, "Snack"),
                                     ),
                                   ),
                                 ),
@@ -568,7 +603,6 @@ class Win_Order_State extends State<Win_Order>{
                                     Text(
                                       _curr_smoothie.getSmoothie(),
                                       style: const TextStyle(
-                                        overflow: TextOverflow.ellipsis,
                                         fontWeight: FontWeight.bold,
                                         fontSize: 16,
                                         color: Colors.redAccent,
@@ -601,15 +635,11 @@ class Win_Order_State extends State<Win_Order>{
                                   child: !_curr_editing ? ElevatedButton(
                                       onPressed: (){
                                         setState(() {
-                                          // Todo: get smoothie price using name
-                                          double smoothie_price = 5.59;
-                                          _curr_smoothie.setSmoothiePrice(smoothie_price);
                                           _addToOrder(
-                                              _curr_smoothie.getName(),
-                                              _curr_smoothie.getSize(),
-                                              _curr_smoothie.getCost());
-                                          _current_order.addSmoothie(
-                                              _curr_smoothie);
+                                            _curr_smoothie.getSmoothie(),
+                                            _curr_smoothie.getSize(),
+                                            'Smoothie',
+                                          );
                                           _activeMenu2 = 0;
                                           _active_table = 0;
                                           _addonTable.clear();

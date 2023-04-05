@@ -16,7 +16,7 @@ class order_processing_helper
         await inventory_decrement(entry.key, entry.value);
       }
       await push_to_table(order.get_values());
-      await push_to_table(order.get_values());
+      //await push_to_table(order.get_values());
     }
 
     return invalid_items;
@@ -97,5 +97,15 @@ class order_processing_helper
   {
     HttpsCallable adder = FirebaseFunctions.instance.httpsCallable('insertIntoOrderHistory');
     await adder.call({'values': values});
+  }
+
+  Future<int> get_new_transaction_id() async
+  {
+    HttpsCallable getter = FirebaseFunctions.instance.httpsCallable('newTransID');
+    final item_name_query = await getter.call();
+    List<dynamic> data = item_name_query.data;
+    int new_id = data[0]['max'];
+
+    return (new_id + 1);
   }
 }
