@@ -63,16 +63,20 @@ class _Win_LoginState extends State<Win_Login> {
 
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: ElevatedButton(onPressed: (){
+                child: Login_Button(onTap: (){
                   Navigator.pushReplacementNamed(context, Win_Create_Account.route);
-                }, child: const Text("Create account")),
+                }, buttonName: "Create account",
+                    fontSize: 15
+                ),
               ),
 
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: ElevatedButton(onPressed: (){
+                child: Login_Button(onTap: (){
                   Navigator.pushReplacementNamed(context, Win_Reset_Password.route);
-                }, child: const Text("Reset password")),
+                }, buttonName: "Reset password",
+                fontSize: 15
+                ),
               ),
             ],
           ),

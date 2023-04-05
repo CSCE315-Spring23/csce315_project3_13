@@ -1,8 +1,9 @@
+import 'package:csce315_project3_13/Manager_View/Win_Manager_View.dart';
 import 'package:csce315_project3_13/Models/Order%20Models/curr_order.dart';
 import 'package:csce315_project3_13/Models/Order%20Models/smoothie_order.dart';
 import 'package:csce315_project3_13/Models/Order%20Models/snack_order.dart';
+import 'package:csce315_project3_13/Services/login_helper.dart';
 import 'package:flutter/material.dart';
-import '../Login/Win_Login.dart';
 import '../../../Models/Order Models/addon_order.dart';
 import '../Loading/Loading_Order_Win.dart';
 import '../../../Models/models_library.dart';
@@ -31,6 +32,8 @@ class Win_Order_State extends State<Win_Order>{
 
   // controls visibility of table (order or addon)
   int _active_table = 0;
+
+  login_helper login_helper_instance = login_helper();
 
 
   TextEditingController customer = TextEditingController();
@@ -159,7 +162,7 @@ class Win_Order_State extends State<Win_Order>{
                 children: [
                   Text(
                     name,
-                    style: const TextStyle(fontSize: 22,),
+                    style: const TextStyle(fontSize: 15,),
                     textAlign: TextAlign.center,
                   ),
                 ],
@@ -214,6 +217,15 @@ class Win_Order_State extends State<Win_Order>{
                                 }
                               }*/
   }
+
+
+
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -409,7 +421,7 @@ class Win_Order_State extends State<Win_Order>{
                           child: TextButton(
                             onPressed: () {
                               print("Logged Out");
-                              Navigator.pushReplacementNamed(context, Win_Login.route);
+                              Navigator.pushReplacementNamed(context, Win_Manager_View.route);
                             },
                             child: const Icon(
                               Icons.logout,
