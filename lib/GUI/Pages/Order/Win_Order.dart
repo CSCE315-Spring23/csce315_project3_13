@@ -1,12 +1,10 @@
-import 'package:csce315_project3_13/Manager_View/Win_Manager_View.dart';
+import 'package:csce315_project3_13/Models/Order%20Models/addon_order.dart';
 import 'package:csce315_project3_13/Models/Order%20Models/curr_order.dart';
 import 'package:csce315_project3_13/Models/Order%20Models/smoothie_order.dart';
 import 'package:csce315_project3_13/Models/Order%20Models/snack_order.dart';
-import 'package:csce315_project3_13/Services/login_helper.dart';
 import 'package:flutter/material.dart';
-import '../../../Models/Order Models/addon_order.dart';
+import '../Login/Win_Login.dart';
 import '../Loading/Loading_Order_Win.dart';
-import '../../../Models/models_library.dart';
 
 class Win_Order extends StatefulWidget {
   static const String route = '/order';
@@ -32,8 +30,6 @@ class Win_Order_State extends State<Win_Order>{
 
   // controls visibility of table (order or addon)
   int _active_table = 0;
-
-  login_helper login_helper_instance = login_helper();
 
 
   TextEditingController customer = TextEditingController();
@@ -112,120 +108,65 @@ class Win_Order_State extends State<Win_Order>{
 
   Widget buttonGrid(BuildContext context, List<String> button_names, String type){
     return GridView.count(
-            shrinkWrap: true,
-            crossAxisCount: 4,
-            padding: const EdgeInsets.all(10),
-            mainAxisSpacing: 20,
-            crossAxisSpacing: 20,
-            children: button_names.map((name) => ElevatedButton(
-              onPressed: () {
-                if (type == "Smoothie" ) {
-                setState(() {
-                  //Todo: get price of medium smoothie
-                  double med_price = 5.59;
-                  _curr_smoothie = smoothie_order(smoothie: name,
-                    Size: 'medium', price: med_price,
-                    table_index: _orderTable.length + 1,
-                  );
-                  _activeMenu2 = 1;
-                  _active_table = 1;
-                });
-                }
-                if (type == 'Snack') {
-                  // todo: get price of snack using name
-                  double snack_price = 1.99;
-                  snack_order snack = snack_order(
-                    name: name,
-                    price: snack_price,
-                    table_index: _orderTable.length + 1,
-                  );
-                  _addToOrder(name, '-', snack_price);
-                  setState(() {
-                    _current_order.addSnack(snack);
-                  });
-                  if (type == 'Addon'){
-                    setState(() {
-                      // Todo: get addon price
-                      double addon_price = 0.99;
-                      addon_order new_addon = addon_order(name: name, price: addon_price, amount: 1);
-                      _curr_smoothie.addAddon(new_addon);
-                      // Todo: get addon price
-                      _addAddon(name, 0.99);
-                    });
-                  }
-                }
+      shrinkWrap: true,
+      crossAxisCount: 4,
+      padding: const EdgeInsets.all(10),
+      mainAxisSpacing: 20,
+      crossAxisSpacing: 20,
+      children: button_names.map((name) => ElevatedButton(
+        onPressed: () {
+          if (type == "Smoothie" ) {
+            setState(() {
+              //Todo: get price of medium smoothie
+              double med_price = 5.59;
+              _curr_smoothie = smoothie_order(smoothie: name,
+                Size: 'medium', price: med_price,
+                table_index: _orderTable.length + 1,
+              );
+              _activeMenu2 = 1;
+              _active_table = 1;
+            });
+          }
+          if (type == 'Snack') {
+            // todo: get price of snack using name
+            double snack_price = 1.99;
+            snack_order snack = snack_order(
+              name: name,
+              price: snack_price,
+              table_index: _orderTable.length + 1,
+            );
+            _addToOrder(name, '-', snack_price);
+            setState(() {
+              _current_order.addSnack(snack);
+            });
+            if (type == 'Addon'){
+              setState(() {
+                // Todo: get addon price
+                double addon_price = 0.99;
+                addon_order new_addon = addon_order(name: name, price: addon_price, amount: 1);
+                _curr_smoothie.addAddon(new_addon);
+                // Todo: get addon price
+                _addAddon(name, 0.99);
+              });
+            }
+          }
 
-              },
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    name,
-                    style: const TextStyle(fontSize: 15,),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
-            )).toList(),
-          );
+        },
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              name,
+              style: const TextStyle(fontSize: 15,),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      )).toList(),
+    );
 
   }
-
-  Future<List<int>> getIds() async{
-    List<smoothie_order> smoothies= _current_order.getSmoothies();
-    List<snack_order> snacks = _current_order.getSnacks();
-    Future<List<int>> item_ids = Future.value([]);
-    for (snack_order snack in snacks)
-    {
-
-    }
-    print("Smoothies purchased: ");
-    for (smoothie_order smoothie in smoothies)
-    {
-      print("   ${smoothie.getSmoothie()}");
-      List<addon_order> addons = smoothie.getAddons();
-      print("    With Addons: ");
-      for (addon_order addon in addons)
-      {
-        print("        " + addon.name);
-      }
-    }
-    return item_ids;
-  }
-
-  void process_order() async {
-    List<int> item_ids_in_order = await getIds();
-    order_obj process_order = order_obj(5001, 3, item_ids_in_order, _current_order.price, _curr_customer, '4/5/2023', 'Completed');
-    /*List<smoothie_order> smoothies= _current_order.getSmoothies();
-                              List<snack_order> snacks = _current_order.getSnacks();
-                              //todo: process order
-                              print("Snacks purchased:  ");
-                              for (snack_order snack in snacks)
-                              {
-                                print("   ${snack.name}");
-                              }
-                              print("Smoothies purchased: ");
-                              for (smoothie_order smoothie in smoothies)
-                              {
-                                print("   ${smoothie.getSmoothie()}");
-                                List<addon_order> addons = smoothie.getAddons();
-                                print("    With Addons: ");
-                                for (addon_order addon in addons)
-                                {
-                                  print("        " + addon.name);
-                                }
-                              }*/
-  }
-
-
-
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
 
   @override
   Widget build(BuildContext context) {
@@ -421,7 +362,7 @@ class Win_Order_State extends State<Win_Order>{
                           child: TextButton(
                             onPressed: () {
                               print("Logged Out");
-                              Navigator.pushReplacementNamed(context, Win_Manager_View.route);
+                              Navigator.pushReplacementNamed(context, Win_Login.route);
                             },
                             child: const Icon(
                               Icons.logout,
@@ -446,7 +387,26 @@ class Win_Order_State extends State<Win_Order>{
                         Expanded(
                           child: TextButton(
                             onPressed: () {
-                              process_order();
+                              List<smoothie_order> smoothies= _current_order.getSmoothies();
+                              List<snack_order> snacks = _current_order.getSnacks();
+                              //todo: process order
+                              print("Snacks purchased:  ");
+                              for (snack_order snack in snacks)
+                              {
+                                print("   ${snack.name}");
+                              }
+                              print("Smoothies purchased: ");
+                              for (smoothie_order smoothie in smoothies)
+                              {
+                                print("   ${smoothie.getSmoothie()}");
+                                List<addon_order> addons = smoothie.getAddons();
+                                print("    With Addons: ");
+                                for (addon_order addon in addons)
+                                {
+                                  print("        " + addon.name);
+                                }
+                              }
+
                             },
                             child: const Icon(
                               Icons.monetization_on,
@@ -672,8 +632,8 @@ class Win_Order_State extends State<Win_Order>{
                             child: SingleChildScrollView(
                               primary: true,
                               child: Container(
-                                color: Colors.pink,
-                                child: buttonGrid(context, Addon_names, 'Addon')
+                                  color: Colors.pink,
+                                  child: buttonGrid(context, Addon_names, 'Addon')
                               ),
                             ),
                           ),
