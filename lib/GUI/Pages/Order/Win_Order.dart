@@ -1,10 +1,9 @@
+import 'package:csce315_project3_13/Models/Order%20Models/curr_order.dart';
+import 'package:csce315_project3_13/Models/Order%20Models/smoothie_order.dart';
+import 'package:csce315_project3_13/Models/Order%20Models/snack_order.dart';
 import 'package:flutter/material.dart';
-import '../../../Services/view_helper.dart';
 import '../Login/Win_Login.dart';
-import 'smoothie_order.dart';
-import 'curr_order.dart';
-import 'addon_order.dart';
-import 'snack_order.dart';
+import '../../../Models/Order Models/addon_order.dart';
 import '../Loading/Loading_Order_Win.dart';
 import '../../../Models/models_library.dart';
 

@@ -4,7 +4,7 @@ import 'package:csce315_project3_13/GUI/Pages/Login/Win_Reset_Password.dart';
 import 'package:csce315_project3_13/GUI/Pages/Test%20Pages/Win_Functions_Test_Page.dart';
 import 'package:csce315_project3_13/Services/login_helper.dart';
 import 'package:flutter/material.dart';
-import '../Win_Manager_View.dart';
+import '../../../Manager_View/Win_Manager_View.dart';
 
 class Win_Login extends StatefulWidget {
   static const String route = '/login';

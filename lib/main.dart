@@ -5,7 +5,7 @@ import 'package:csce315_project3_13/GUI/Pages/Login/Win_Reset_Password.dart';
 import 'package:csce315_project3_13/GUI/Pages/Order/Win_Order.dart';
 import 'package:csce315_project3_13/GUI/Pages/Test%20Pages/Win_Functions_Test_Page.dart';
 import 'package:csce315_project3_13/GUI/Pages/Loading/Loading_Order_Win.dart';
-import 'package:csce315_project3_13/GUI/Pages/Win_Manager_View.dart';
+import 'package:csce315_project3_13/Manager_View/Win_Manager_View.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'GUI/Pages/Login/Win_Login.dart';

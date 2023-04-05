@@ -1,4 +1,4 @@
-import 'addon_order.dart';
+import '../../../Models/Order Models/addon_order.dart';
 
 /// Represents a smoothie order that includes a smoothie, size, and a vector of addons.
 class smoothie_order
