@@ -11,10 +11,9 @@ class weather_API
   //Future<http.Response> get_weather_data()
   Future<void> get_user_city() async {
     Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    http.Response response = await http.get(Uri.parse("https://api.openweathermap.org/data/2.5/weather?lat=${position.latitude}&lon=${position.longitude}&appid=${access_key}"));
+    http.Response response = await http.get(Uri.parse("https://api.openweathermap.org/data/2.5/weather?lat=${position.latitude}&lon=${position.longitude}&appid=${access_key}&units=imperial"));
     Map<String, dynamic> json = jsonDecode(response.body);
-    for(MapEntry<String, dynamic> e in json.entries) {
-      print("${e.key} \t ${e.value}");
-    }
+    double temperature = json['main']['temp'];
+    print("temperature: $temperature");
   }
 }
