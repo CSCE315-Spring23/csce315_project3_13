@@ -1,3 +1,4 @@
+import 'package:csce315_project3_13/Constants/Color_Manager.dart';
 import 'package:csce315_project3_13/GUI/Components/Login_Button.dart';
 import 'package:csce315_project3_13/GUI/Pages/Login/Win_Create_Account.dart';
 import 'package:csce315_project3_13/GUI/Pages/Login/Win_Reset_Password.dart';
@@ -53,7 +54,7 @@ class _Win_LoginState extends State<Win_Login> {
 
   @override
   Widget build(BuildContext context) {
-
+    final my_color_manager = Color_Manager.of(context);
     return Scaffold(
       appBar: AppBar(
         title: Text(_page_name),
@@ -63,7 +64,19 @@ class _Win_LoginState extends State<Win_Login> {
 
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Login_Button(onTap: (){
+                child: Login_Button(
+                    textColor: my_color_manager.primary_color,
+                    onTap: (){
+                     my_color_manager.update_color();
+                    }, buttonName: "Create account",
+                    fontSize: 15
+                ),
+              ),
+
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Login_Button(
+                    onTap: (){
                   Navigator.pushReplacementNamed(context, Win_Create_Account.route);
                 }, buttonName: "Create account",
                     fontSize: 15
