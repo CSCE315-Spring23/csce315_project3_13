@@ -6,7 +6,7 @@ class reports_helper
 
   general_helper gen_helper = general_helper();
 
-  Future<double> generate_z_report(String date) async
+  Future<double> get_z_report(String date) async
   {
     HttpsCallable getter = FirebaseFunctions.instance.httpsCallable('getZReport');
     final res = await getter.call({'date': date});
