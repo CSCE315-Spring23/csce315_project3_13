@@ -1,12 +1,12 @@
 
 import 'package:csce315_project3_13/Colors/Color_Manager.dart';
 import 'package:csce315_project3_13/GUI/Components/Login_Button.dart';
+import 'package:csce315_project3_13/GUI/Components/Login_TextField.dart';
+import 'package:csce315_project3_13/GUI/Components/Page_Header.dart';
 import 'package:csce315_project3_13/GUI/Pages/Login/Win_Create_Account.dart';
 import 'package:csce315_project3_13/GUI/Pages/Login/Win_Reset_Password.dart';
-import 'package:csce315_project3_13/GUI/Pages/Test%20Pages/Win_Functions_Test_Page.dart';
 import 'package:csce315_project3_13/Services/login_helper.dart';
 import 'package:flutter/material.dart';
-import '../../../Manager_View/Win_Manager_View.dart';
 
 class Win_Login extends StatefulWidget {
   static const String route = '/login';
@@ -18,7 +18,6 @@ class Win_Login extends StatefulWidget {
 
 class _Win_LoginState extends State<Win_Login> {
 
-  String _page_name = "Login";
   bool _show_password = false;
 
   late TextEditingController _username_controller;
@@ -58,41 +57,33 @@ class _Win_LoginState extends State<Win_Login> {
     final _color_manager = Color_Manager.of(context);
     return Scaffold(
       backgroundColor: _color_manager.background_color,
-      appBar: AppBar(
-        backgroundColor: _color_manager.primary_color,
-        title: Text(_page_name,
-        style: TextStyle(
-          color: _color_manager.text_color,
-        ),
-        ),
-        actions: [
-          Row(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Login_Button(
-                    onTap: (){
+      appBar: Page_Header(
+          context: context,
+          pageName: "Login",
+          buttons: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Login_Button(
+                onTap: (){
                   Navigator.pushReplacementNamed(context, Win_Create_Account.route);
                 }, buttonName: "Create account",
-                    fontSize: 15,
-                  buttonColor: _color_manager.active_color,
-                  textColor: _color_manager.text_color,
-                ),
-              ),
-
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Login_Button(onTap: (){
-                  Navigator.pushReplacementNamed(context, Win_Reset_Password.route);
-                }, buttonName: "Reset password",
                 fontSize: 15,
-                  buttonColor: _color_manager.active_color,
-                  textColor: _color_manager.text_color,
-                ),
+                buttonColor: _color_manager.active_color,
+                textColor: _color_manager.text_color,
               ),
-            ],
-          ),
-        ],
+            ),
+
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Login_Button(onTap: (){
+                Navigator.pushReplacementNamed(context, Win_Reset_Password.route);
+              }, buttonName: "Reset password",
+                fontSize: 15,
+                buttonColor: _color_manager.active_color,
+                textColor: _color_manager.text_color,
+              ),
+            ),
+          ],
       ),
       body: Center(
         child: Container(
@@ -112,37 +103,18 @@ class _Win_LoginState extends State<Win_Login> {
                 ),
               ),
 
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextField(
-                  controller: _username_controller,
-                  obscureText: false,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Email',
-                  ),),
+              Login_TextField(context: context,
+                textController: _username_controller,
+                labelText: 'Email',
               ),
 
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextField(
-                  cursorColor: _color_manager.text_color,
-                  style: TextStyle(
-                    decorationColor: _color_manager.active_color,
-                    color: _color_manager.text_color,
-                  ),
-                  controller: _password_controller,
-                  onSubmitted: (String pass_string){
-                    _login(context);
-                  },
-                  obscureText: !_show_password,
-                  decoration: InputDecoration(
-                    focusColor: _color_manager.text_color,
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(color:  _color_manager.text_color),
-                    ),
-                    labelText: 'Password',
-                  ),),
+              Login_TextField(context: context,
+                textController: _password_controller,
+                obscureText: !_show_password,
+                labelText: 'Password',
+                onSubmitted: (){
+                _login(context);
+                },
               ),
 
               Row(

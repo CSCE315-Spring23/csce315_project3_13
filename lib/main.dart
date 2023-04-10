@@ -32,7 +32,7 @@ class _MyAppState extends State<MyApp> {
   Color background_color = Color(0xFFE38286);
   Color text_color = Color(0xFFFFFFFF);
   Color active_color = Color(0xFF25A8A2);
-  Color hover_color = Color(0x5525A8A2);
+  Color hover_color = Color(0xFF22bfb9);
   Color inactive_color = Color(0xFF00716C);
   Color active_size_color = Color(0xFF3088D1);
   Color active_confirm_color = Color(0xFF6BCF54);
@@ -46,7 +46,7 @@ class _MyAppState extends State<MyApp> {
       background_color = Color(0xFFE38286);
       text_color = Color(0xFFFFFFFF);
       active_color = Color(0xFF25A8A2);
-      hover_color = Color(0x5525A8A2);
+      hover_color = Color(0xFF22bfb9);
       inactive_color = Color(0xFF00716C);
       active_size_color = Color(0xFF3088D1);
       active_confirm_color = Color(0xFF6BCF54);
