@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../../Services/view_helper.dart';
-import '../Order/Win_Order.dart';
 
 class NextScreenArguments {
   final List<String> smoothieNames;

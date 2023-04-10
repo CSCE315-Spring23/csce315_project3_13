@@ -1,10 +1,12 @@
+
+import 'package:csce315_project3_13/Colors/Color_Manager.dart';
 import 'package:csce315_project3_13/GUI/Components/Login_Button.dart';
+import 'package:csce315_project3_13/GUI/Components/Login_TextField.dart';
+import 'package:csce315_project3_13/GUI/Components/Page_Header.dart';
 import 'package:csce315_project3_13/GUI/Pages/Login/Win_Create_Account.dart';
 import 'package:csce315_project3_13/GUI/Pages/Login/Win_Reset_Password.dart';
-import 'package:csce315_project3_13/GUI/Pages/Test%20Pages/Win_Functions_Test_Page.dart';
 import 'package:csce315_project3_13/Services/login_helper.dart';
 import 'package:flutter/material.dart';
-import '../../../Manager_View/Win_Manager_View.dart';
 
 class Win_Login extends StatefulWidget {
   static const String route = '/login';
@@ -16,7 +18,6 @@ class Win_Login extends StatefulWidget {
 
 class _Win_LoginState extends State<Win_Login> {
 
-  String _page_name = "Login";
   bool _show_password = false;
 
   late TextEditingController _username_controller;
@@ -53,34 +54,36 @@ class _Win_LoginState extends State<Win_Login> {
 
   @override
   Widget build(BuildContext context) {
-
+    final _color_manager = Color_Manager.of(context);
     return Scaffold(
-      appBar: AppBar(
-        title: Text(_page_name),
-        actions: [
-          Row(
-            children: [
-
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Login_Button(onTap: (){
+      backgroundColor: _color_manager.background_color,
+      appBar: Page_Header(
+          context: context,
+          pageName: "Login",
+          buttons: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Login_Button(
+                onTap: (){
                   Navigator.pushReplacementNamed(context, Win_Create_Account.route);
                 }, buttonName: "Create account",
-                    fontSize: 15
-                ),
+                fontSize: 15,
+                buttonColor: _color_manager.active_color,
+                textColor: _color_manager.text_color,
               ),
+            ),
 
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Login_Button(onTap: (){
-                  Navigator.pushReplacementNamed(context, Win_Reset_Password.route);
-                }, buttonName: "Reset password",
-                fontSize: 15
-                ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Login_Button(onTap: (){
+                Navigator.pushReplacementNamed(context, Win_Reset_Password.route);
+              }, buttonName: "Reset password",
+                fontSize: 15,
+                buttonColor: _color_manager.active_color,
+                textColor: _color_manager.text_color,
               ),
-            ],
-          ),
-        ],
+            ),
+          ],
       ),
       body: Center(
         child: Container(
@@ -89,51 +92,55 @@ class _Win_LoginState extends State<Win_Login> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
 
-              const Padding(
+              Padding(
                 padding: EdgeInsets.all(15.0),
                 child: Text(
                   'Enter your email and password:',
                   style: TextStyle(
                     fontSize: 30,
+                    color: _color_manager.text_color,
                   ),
                 ),
               ),
 
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextField(
-                  controller: _username_controller,
-                  obscureText: false,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Email',
-                  ),),
+              Login_TextField(context: context,
+                textController: _username_controller,
+                labelText: 'Email',
               ),
 
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextField(
-                  controller: _password_controller,
-                  onSubmitted: (String pass_string){
-                    _login(context);
-                  },
-                  obscureText: !_show_password,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Password',
-                  ),),
+              Login_TextField(context: context,
+                textController: _password_controller,
+                obscureText: !_show_password,
+                labelText: 'Password',
+                onSubmitted: (){
+                _login(context);
+                },
               ),
 
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Checkbox(
+                      fillColor: MaterialStateProperty.resolveWith((Set<MaterialState> states) {
+                      Set<MaterialState> interactiveStates = <MaterialState>{
+                      MaterialState.pressed,
+                      MaterialState.hovered,
+                      MaterialState.focused,
+                      };
+                      return _color_manager.active_color;
+                      }),
+                    hoverColor: _color_manager.hover_color,
+                    activeColor: _color_manager.active_color,
+                    checkColor: _color_manager.text_color,
                       value: _show_password,
                       onChanged: (changed_value){
                         _switch_show_password();
                       }),
-
-                  Text("Show password"),
+                  Text("Show password",
+                  style: TextStyle(
+                    color: _color_manager.text_color,
+                  ),
+                  ),
                 ],
               ),
 
@@ -141,7 +148,10 @@ class _Win_LoginState extends State<Win_Login> {
                 padding: const EdgeInsets.all(8.0),
                 child: Login_Button(onTap: (){
                   _login(context);
-                }, buttonName: "Login"),
+                }, buttonName: "Login",
+                buttonColor: _color_manager.active_color,
+                  textColor: _color_manager.text_color,
+                ),
               ),
 
 

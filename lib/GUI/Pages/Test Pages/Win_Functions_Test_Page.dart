@@ -1,10 +1,10 @@
-import 'package:cloud_functions/cloud_functions.dart';
+import 'package:csce315_project3_13/Colors/Color_Manager.dart';
+import 'package:csce315_project3_13/GUI/Components/Login_Button.dart';
 import 'package:csce315_project3_13/Services/login_helper.dart';
 import 'package:csce315_project3_13/Services/order_processing_helper.dart';
 import 'package:csce315_project3_13/Services/weather_API.dart';
 import 'package:flutter/material.dart';
 import '../../../Services/testing_cloud_functions.dart';
-import '../../../Manager_View/Win_Manager_View.dart';
 
 class Win_Functions_Test_Page extends StatefulWidget {
   static const String route = '/functions-test-page';
@@ -22,20 +22,30 @@ class _Win_Functions_Test_Page_StartState extends State<Win_Functions_Test_Page>
   login_helper login_helper_instance = login_helper();
   weather_API weather = weather_API();
 
+  bool is_high_contrast = false;
+
 
   @override
   Widget build(BuildContext context) {
+    final my_color_manager = Color_Manager.of(context);
+
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Test functions page"),
+        title: Text("Test functions page",
+        style: TextStyle(
+          color: my_color_manager.active_color,
+        ),
+        ),
       ),
+      backgroundColor: my_color_manager.primary_color,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
 
-            ElevatedButton(onPressed: (){
+            ElevatedButton(
+                onPressed: (){
               cloud_functions_tester.getEmployees();
             }, child: const Text("Test Firebase Function")),
             const SizedBox(
@@ -65,6 +75,23 @@ class _Win_Functions_Test_Page_StartState extends State<Win_Functions_Test_Page>
             const SizedBox(
               height: 20,
             ),
+            Login_Button(onTap: (){
+              if(is_high_contrast){
+                my_color_manager.reset_colors();
+                setState(() {
+                  is_high_contrast = !is_high_contrast;
+                });
+              }else{
+                my_color_manager.color_blind_option_1();
+                setState(() {
+                  is_high_contrast = !is_high_contrast;
+                });
+              }
+            }, buttonName: "Change Color scheme",
+              fontSize: 10,
+              buttonColor: my_color_manager.active_color
+
+            )
 
 
 
