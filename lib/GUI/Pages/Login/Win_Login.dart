@@ -55,32 +55,28 @@ class _Win_LoginState extends State<Win_Login> {
 
   @override
   Widget build(BuildContext context) {
-    final my_color_manager = Color_Manager.of(context);
+    final _color_manager = Color_Manager.of(context);
     return Scaffold(
+      backgroundColor: _color_manager.background_color,
       appBar: AppBar(
-        title: Text(_page_name),
+        backgroundColor: _color_manager.primary_color,
+        title: Text(_page_name,
+        style: TextStyle(
+          color: _color_manager.text_color,
+        ),
+        ),
         actions: [
           Row(
             children: [
-
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Login_Button(
-                    textColor: my_color_manager.primary_color,
-                    onTap: (){
-                     my_color_manager.color_blind_option_1();
-                    }, buttonName: "Create account",
-                    fontSize: 15
-                ),
-              ),
-
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Login_Button(
                     onTap: (){
                   Navigator.pushReplacementNamed(context, Win_Create_Account.route);
                 }, buttonName: "Create account",
-                    fontSize: 15
+                    fontSize: 15,
+                  buttonColor: _color_manager.active_color,
+                  textColor: _color_manager.text_color,
                 ),
               ),
 
@@ -89,7 +85,9 @@ class _Win_LoginState extends State<Win_Login> {
                 child: Login_Button(onTap: (){
                   Navigator.pushReplacementNamed(context, Win_Reset_Password.route);
                 }, buttonName: "Reset password",
-                fontSize: 15
+                fontSize: 15,
+                  buttonColor: _color_manager.active_color,
+                  textColor: _color_manager.text_color,
                 ),
               ),
             ],
@@ -103,12 +101,13 @@ class _Win_LoginState extends State<Win_Login> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
 
-              const Padding(
+              Padding(
                 padding: EdgeInsets.all(15.0),
                 child: Text(
                   'Enter your email and password:',
                   style: TextStyle(
                     fontSize: 30,
+                    color: _color_manager.text_color,
                   ),
                 ),
               ),
@@ -127,13 +126,21 @@ class _Win_LoginState extends State<Win_Login> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextField(
+                  cursorColor: _color_manager.text_color,
+                  style: TextStyle(
+                    decorationColor: _color_manager.active_color,
+                    color: _color_manager.text_color,
+                  ),
                   controller: _password_controller,
                   onSubmitted: (String pass_string){
                     _login(context);
                   },
                   obscureText: !_show_password,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    focusColor: _color_manager.text_color,
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(color:  _color_manager.text_color),
+                    ),
                     labelText: 'Password',
                   ),),
               ),
@@ -142,12 +149,26 @@ class _Win_LoginState extends State<Win_Login> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Checkbox(
+                      fillColor: MaterialStateProperty.resolveWith((Set<MaterialState> states) {
+                      Set<MaterialState> interactiveStates = <MaterialState>{
+                      MaterialState.pressed,
+                      MaterialState.hovered,
+                      MaterialState.focused,
+                      };
+                      return _color_manager.active_color;
+                      }),
+                    hoverColor: _color_manager.hover_color,
+                    activeColor: _color_manager.active_color,
+                    checkColor: _color_manager.text_color,
                       value: _show_password,
                       onChanged: (changed_value){
                         _switch_show_password();
                       }),
-
-                  Text("Show password"),
+                  Text("Show password",
+                  style: TextStyle(
+                    color: _color_manager.text_color,
+                  ),
+                  ),
                 ],
               ),
 
@@ -155,7 +176,10 @@ class _Win_LoginState extends State<Win_Login> {
                 padding: const EdgeInsets.all(8.0),
                 child: Login_Button(onTap: (){
                   _login(context);
-                }, buttonName: "Login"),
+                }, buttonName: "Login",
+                buttonColor: _color_manager.active_color,
+                  textColor: _color_manager.text_color,
+                ),
               ),
 
 

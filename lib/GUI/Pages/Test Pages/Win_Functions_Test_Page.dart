@@ -1,4 +1,3 @@
-import 'package:cloud_functions/cloud_functions.dart';
 import 'package:csce315_project3_13/Colors/Color_Manager.dart';
 import 'package:csce315_project3_13/GUI/Components/Login_Button.dart';
 import 'package:csce315_project3_13/Services/login_helper.dart';
@@ -6,7 +5,6 @@ import 'package:csce315_project3_13/Services/order_processing_helper.dart';
 import 'package:csce315_project3_13/Services/weather_API.dart';
 import 'package:flutter/material.dart';
 import '../../../Services/testing_cloud_functions.dart';
-import '../../../Manager_View/Win_Manager_View.dart';
 
 class Win_Functions_Test_Page extends StatefulWidget {
   static const String route = '/functions-test-page';
