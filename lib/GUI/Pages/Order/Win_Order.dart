@@ -54,11 +54,11 @@ class Win_Order_State extends State<Win_Order>{
     if (type == 'Smoothie'){
       setState(() {
         _curr_smoothie.setSmoothiePrice(double.parse(price));
-        _current_order.addSmoothie(
-            _curr_smoothie);
+        price = _curr_smoothie.getCost().toStringAsFixed(2);
+        _current_order.addSmoothie(_curr_smoothie);
       });
     }
-    if (type == 'Snack'){
+    else if (type == 'Snack'){
       snack_order snack = snack_order(
         name: item,
         price: double.parse(price),
@@ -75,8 +75,14 @@ class Win_Order_State extends State<Win_Order>{
       'price': price,
     };
     setState(() {
-      _orderTable.add(newRow);
+      if (!_curr_editing || _orderTable.isEmpty) {
+        _orderTable.add(newRow);
+      }
+      else{
+        _orderTable.insert(_curr_smoothie.table_index - 1, newRow);
+      }
     });
+    _curr_editing = false;
   }
 
   // add addon to addon table
@@ -213,7 +219,6 @@ class Win_Order_State extends State<Win_Order>{
     order_processing_helper order_helper = order_processing_helper();
     int trans_id = await order_helper.get_new_transaction_id();
     order_obj order_to_process = order_obj(trans_id, 3, item_ids_in_order, _current_order.price , _curr_customer, formattedDate, 'completed');
-    print(order_to_process.get_values());
     order_helper.process_order(order_to_process);
     _current_order.clear();
     _orderTable.clear();
@@ -291,8 +296,12 @@ class Win_Order_State extends State<Win_Order>{
                                               _addonTable.clear();
                                               for (addon_order addon in _curr_smoothie
                                                   .getAddons()) {
-                                                _addAddon(
-                                                    addon.name);
+                                                final newRow = {
+                                                  'index': (_addonTable.length + 1).toString(),
+                                                  'name': addon.name,
+                                                  'price': addon.price.toStringAsFixed(2),
+                                                };
+                                                _addonTable.add(newRow);
                                               }
                                               _curr_editing = true;
                                             });
@@ -413,7 +422,6 @@ class Win_Order_State extends State<Win_Order>{
                         Expanded(
                           child: TextButton(
                             onPressed: () {
-                              print("Logged Out");
                               Navigator.pushReplacementNamed(context, Win_Manager_View.route);
                             },
                             child: const Icon(
@@ -428,7 +436,6 @@ class Win_Order_State extends State<Win_Order>{
                                 _current_order.clear();
                                 _orderTable.clear();
                               });
-                              print("Cancel Order");
                             },
                             child: const Icon(
                               Icons.cancel_outlined,
@@ -546,26 +553,13 @@ class Win_Order_State extends State<Win_Order>{
                               Expanded(
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 50),
-                                  // back button is disabled when editing smoothie
                                   child: ElevatedButton(
                                     onPressed: (){
                                       setState(() {
-                                        // if currently editing, add smoothie back to order
-                                        double smoothie_price = 5.59;
-                                        _curr_smoothie.setSmoothiePrice(smoothie_price);
-
                                         // if currently editing smoothie, insert it to previous index
                                         if (_curr_editing)
                                         {
-                                          Map<String, String> newRow = {
-                                            'index': _curr_smoothie.table_index.toString(),
-                                            'name': _curr_smoothie.smoothie,
-                                            'size': _curr_smoothie.Size,
-                                            'price': _curr_smoothie.getCost().toStringAsFixed(2),
-                                          };
-                                          _orderTable.insert(_curr_smoothie.table_index - 1, newRow);
-                                          _current_order.addSmoothie(_curr_smoothie);
-                                          _curr_editing = false;
+                                          _addToOrder(_curr_smoothie.getSmoothie(), _curr_smoothie.getSize(), 'Smoothie');
                                         }
 
                                         _activeMenu2 = 0;
