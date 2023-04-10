@@ -1,4 +1,5 @@
-import 'package:csce315_project3_13/Constants/Color_Manager.dart';
+
+import 'package:csce315_project3_13/Colors/Color_Manager.dart';
 import 'package:csce315_project3_13/GUI/Components/Login_Button.dart';
 import 'package:csce315_project3_13/GUI/Pages/Login/Win_Create_Account.dart';
 import 'package:csce315_project3_13/GUI/Pages/Login/Win_Reset_Password.dart';
@@ -67,7 +68,7 @@ class _Win_LoginState extends State<Win_Login> {
                 child: Login_Button(
                     textColor: my_color_manager.primary_color,
                     onTap: (){
-                     my_color_manager.update_color();
+                     my_color_manager.color_blind_option_1();
                     }, buttonName: "Create account",
                     fontSize: 15
                 ),
