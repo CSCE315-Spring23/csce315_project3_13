@@ -2,9 +2,10 @@ import 'package:csce315_project3_13/Constants/constants.dart';
 import 'package:csce315_project3_13/GUI/Pages/Loading/Loading_Page.dart';
 import 'package:csce315_project3_13/GUI/Pages/Login/Win_Create_Account.dart';
 import 'package:csce315_project3_13/GUI/Pages/Login/Win_Reset_Password.dart';
+import 'package:csce315_project3_13/GUI/Pages/Order/Win_Order.dart';
 import 'package:csce315_project3_13/GUI/Pages/Test%20Pages/Win_Functions_Test_Page.dart';
-import 'package:csce315_project3_13/GUI/Pages/Win_Manager_View.dart';
-import 'package:csce315_project3_13/GUI/Pages/Management/Win_View_Menu.dart';
+import 'package:csce315_project3_13/GUI/Pages/Loading/Loading_Order_Win.dart';
+import 'package:csce315_project3_13/Manager_View/Win_Manager_View.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'GUI/Pages/Login/Win_Login.dart';
@@ -34,9 +35,10 @@ class MyApp extends StatelessWidget {
         Win_Manager_View.route: (BuildContext context) => Win_Manager_View(),
         Win_Functions_Test_Page.route: (BuildContext context) => Win_Functions_Test_Page(),
         Win_Loading_Page.route: (BuildContext context) => Win_Loading_Page(),
-        Win_View_Menu.route: (BuildContext context) => Win_View_Menu(),
+        Loading_Order_Win.route: (BuildContext context) => Loading_Order_Win(),
+        Win_Order.route: (BuildContext context) => Win_Order(),
       },
-      initialRoute: Win_Login.route,
+      initialRoute: Win_Functions_Test_Page.route,
     );
   }
 }

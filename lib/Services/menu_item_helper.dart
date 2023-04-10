@@ -1,28 +1,12 @@
+import 'package:csce315_project3_13/Services/general_helper.dart';
+import 'package:csce315_project3_13/Services/ingredients_table_helper.dart';
 import '../Models/models_library.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 
-class database_connection{
-
-  Future<void> getEmployees() async {
-
-    HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('getEmployeesTest');
-
-    final results = await callable();
-
-    List resultsList = results.data;
-
-    for(int i = 0; i < resultsList.length; i++){
-      print(resultsList[i]);
-    }
-  }
-
-  Future<void> getEmployeeByID(int employee_id) async {
-    HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('getOneEmployeeByIdTest');
-
-    final results = await callable.call({'employee_id':  employee_id});
-    print(results.data);
-  }
-
+class menu_item_helper
+{
+  general_helper gen_helper = general_helper();
+  ingredients_table_helper ing_helper = ingredients_table_helper();
 
   // -Adds a menu item to the database
   // -A menu_item_obj will get passed in, this object mirrors a row from the menu_items table
@@ -59,7 +43,7 @@ class database_connection{
           for(String ingredient in new_item.ingredients) {
             last_ingr_id += 1;
             ingredient_obj ingr_obj = ingredient_obj(last_ingr_id, new_item.menu_item, ingredient, i);
-            add_ingredient_row(ingr_obj);
+            ing_helper.add_ingredient_row(ingr_obj);
           }
         }
         else if(i == 2)
@@ -70,7 +54,7 @@ class database_connection{
           for(String ingredient in new_item.ingredients) {
             last_ingr_id += 1;
             ingredient_obj ingr_obj = ingredient_obj(last_ingr_id, new_item.menu_item, ingredient, i);
-            add_ingredient_row(ingr_obj);
+            ing_helper.add_ingredient_row(ingr_obj);
           }
         }
         else
@@ -81,7 +65,7 @@ class database_connection{
           for(String ingredient in new_item.ingredients) {
             last_ingr_id += 1;
             ingredient_obj ingr_obj = ingredient_obj(last_ingr_id, new_item.menu_item, ingredient, i);
-            add_ingredient_row(ingr_obj);
+            ing_helper.add_ingredient_row(ingr_obj);
           }
         }
         String values = new_item.get_values();
@@ -97,81 +81,54 @@ class database_connection{
 
   }
 
-  // Simply takes in an ingredient_obj which mirrors a row from the ingredients_table table
-  //    and adds it to the database
-  Future<void> add_ingredient_row(ingredient_obj ingr_obj) async
+  Future<void> edit_smoothie_ingredients(int menu_item_id, Map<String, int> new_ingredients) async
   {
-    HttpsCallable addIngredient = FirebaseFunctions.instance.httpsCallable('insertIntoIngredientsTable');
-    await addIngredient.call({'values': ingr_obj.get_values()});
+    Map<String, int> current_ingredients = await gen_helper.get_smoothie_ingredients(menu_item_id);
+    String menu_item_name = await gen_helper.get_item_name(menu_item_id);
+
+    for(MapEntry<String, int> ingredient in new_ingredients.entries) {
+      if(current_ingredients.containsKey(ingredient.key)) {
+        int row_id = await gen_helper.get_ingredient_row_id(menu_item_name, ingredient.key);
+        if(ingredient.value == 0) { // Remove the ingredient from the smoothie
+          HttpsCallable remover = FirebaseFunctions.instance.httpsCallable('deleteIngredientsTableRow');
+          await remover.call({'row_id': row_id});
+        } else if(current_ingredients[ingredient.key] == ingredient.value) {} // Leave it alone if the values are the same
+        else { // Update the ingredient amount
+          HttpsCallable updater = FirebaseFunctions.instance.httpsCallable('updateIngredientsTableRow');
+          await updater.call({
+            'row_id': row_id,
+            'new_amount': ingredient.value
+          });
+        }
+      } else { // Doesn't exist yet, so add it
+        HttpsCallable adder = FirebaseFunctions.instance.httpsCallable('insertIntoIngredientsTable');
+        HttpsCallable getIngrID = FirebaseFunctions.instance.httpsCallable('getLastIngredientsTableID');
+        final ingrIDQuery = await getIngrID();
+        List<dynamic> data = ingrIDQuery.data;
+        int last_ingr_id = data[0]['row_id'];
+        ingredient_obj new_ing = ingredient_obj(last_ingr_id + 1, menu_item_name, ingredient.key, ingredient.value);
+        await adder.call({'values': new_ing.get_values()});
+      }
+    }
   }
 
-  Future<void> edit_ingredient_row(int row_id, int new_amount) async
+  Future<void> edit_item_price(int menu_item_id, double new_price) async
   {
-    HttpsCallable editIngredient = FirebaseFunctions.instance.httpsCallable('updateIngredientsTableRow');
-    await editIngredient.call({
-      'row_id': row_id,
-      'new_amount': new_amount
+    HttpsCallable editor = FirebaseFunctions.instance.httpsCallable('editItemPrice');
+    await editor.call({
+      'menu_item_id': menu_item_id,
+      'new_price': new_price
     });
   }
 
-  // Deletes a single row from the ingredients_table table specified by row_id
-  Future<void> delete_ingredient_row(int row_id) async
+  Future<void> delete_menu_item(int menu_item_id) async
   {
-    HttpsCallable deleteIngredient = FirebaseFunctions.instance.httpsCallable('deleteIngredientsTableRow');
-    await deleteIngredient.call({'row_id': row_id});
-  }
-
-
-  Future<void> process_order(order_obj order) async
-  {
-
-  }
-
-  // Takes in an order_obj.item_ids_in_order, and will return a list of ints of item ids that do not have enough stock
-  // If this list is empty, then the order is valid!
-  Future<List<int>> is_order_valid(List<int> items) async
-  {
-    List<int> invalid_item_ids = [];
-    for(int item_id in items)
-    {
-
+    String menu_item = await gen_helper.get_item_name(menu_item_id);
+    String type = await gen_helper.get_item_type(menu_item_id);
+    if(type == "smoothie") {
+      menu_item = menu_item.substring(0, menu_item.length - 6);
     }
-
-
-    return invalid_item_ids;
-
+    HttpsCallable remover = FirebaseFunctions.instance.httpsCallable('deleteMenuItem');
+    await remover.call({'menu_item': menu_item});
   }
-
-  Future<int> get_item_stock(int menu_item_id) async
-  {
-
-    return 0;
-  }
-
-  Future<int> recalculate_item_stock(int menu_item_id) async
-  {
-    String menu_item_name = await get_item_name(menu_item_id);
-
-    return 0;
-  }
-
-  // Returns false if the item requested does not have enough stock to decrement by
-  Future<bool> inventory_decrement(String ingredient, int amount_used) async
-  {
-
-
-    return true;
-  }
-
-  Future<String> get_item_name(int menu_item_id) async
-  {
-    HttpsCallable getter = FirebaseFunctions.instance.httpsCallable('getMenuItemName');
-    final item_name_query = await getter.call({'menu_item_id': menu_item_id});
-    List<dynamic> data = item_name_query.data;
-    String menu_item = data[0]['menu_item'];
-
-    return menu_item;
-  }
-
 }
-

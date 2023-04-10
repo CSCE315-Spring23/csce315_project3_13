@@ -4,7 +4,7 @@ import 'package:csce315_project3_13/GUI/Pages/Login/Win_Reset_Password.dart';
 import 'package:csce315_project3_13/GUI/Pages/Test%20Pages/Win_Functions_Test_Page.dart';
 import 'package:csce315_project3_13/Services/login_helper.dart';
 import 'package:flutter/material.dart';
-import '../Win_Manager_View.dart';
+import '../../../Manager_View/Win_Manager_View.dart';
 
 class Win_Login extends StatefulWidget {
   static const String route = '/login';
@@ -65,9 +65,8 @@ class _Win_LoginState extends State<Win_Login> {
                 padding: const EdgeInsets.all(8.0),
                 child: Login_Button(onTap: (){
                   Navigator.pushReplacementNamed(context, Win_Create_Account.route);
-                },
-                    buttonName: "Create account",
-                fontSize: 15,
+                }, buttonName: "Create account",
+                    fontSize: 15
                 ),
               ),
 
@@ -75,9 +74,8 @@ class _Win_LoginState extends State<Win_Login> {
                 padding: const EdgeInsets.all(8.0),
                 child: Login_Button(onTap: (){
                   Navigator.pushReplacementNamed(context, Win_Reset_Password.route);
-                },
-                    buttonName: "Reset password",
-                fontSize: 15,
+                }, buttonName: "Reset password",
+                fontSize: 15
                 ),
               ),
             ],
@@ -143,10 +141,7 @@ class _Win_LoginState extends State<Win_Login> {
                 padding: const EdgeInsets.all(8.0),
                 child: Login_Button(onTap: (){
                   _login(context);
-                },
-                  buttonName: "Login"
-
-                )
+                }, buttonName: "Login"),
               ),
 
 

@@ -1,6 +1,8 @@
 import 'package:csce315_project3_13/GUI/Components/ExampleButton.dart';
+import 'package:csce315_project3_13/GUI/Components/Login_Button.dart';
 import 'package:csce315_project3_13/GUI/Pages/Login/Win_Login.dart';
-import 'package:csce315_project3_13/GUI/Pages/Management/Win_View_Menu.dart';
+import 'package:csce315_project3_13/GUI/Pages/Loading/Loading_Order_Win.dart';
+import 'package:csce315_project3_13/Services/login_helper.dart';
 import 'package:flutter/material.dart';
 
 class Win_Manager_View extends StatefulWidget {
@@ -12,6 +14,9 @@ class Win_Manager_View extends StatefulWidget {
 }
 
 class _Win_Manager_ViewState extends State<Win_Manager_View> {
+
+  login_helper login_helper_instance = login_helper();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,28 +26,28 @@ class _Win_Manager_ViewState extends State<Win_Manager_View> {
       body: Center(
 
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
-            ElevatedButton(
-                onPressed: (){
-                  Navigator.pushNamed(context, Win_View_Menu.route);
-                },
-                child: const Text('Menu Management')
-            ),
+
             const Text(
               'Logged in',
             ),
-            ExampleButton(
-                onTap: (){
-              print("Logging out");
+
+
+
+            Login_Button(onTap: (){
+              Navigator.pushReplacementNamed(context,Loading_Order_Win.route);
+            }, buttonName: "Order"),
+
+
+            Login_Button(onTap: (){
+              login_helper_instance.sign_out();
               Navigator.pushReplacementNamed(context, Win_Login.route);
-            },
-            buttonName: "Log out"
-            ),
+            }, buttonName: "Log out"),
+
           ],
         ),
       ),
-      bottomSheet: Container(height: 100, color: Colors.red,),
       // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
