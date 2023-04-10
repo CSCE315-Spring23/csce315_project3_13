@@ -54,7 +54,7 @@ class _Win_Functions_Test_Page_StartState extends State<Win_Functions_Test_Page>
               height: 20,
             ),
             ElevatedButton(onPressed: (){
-              weather.get_user_city();
+              // weather.get_user_city();
             }, child: const Text("Get UID")),
             const SizedBox(
               height: 20,
