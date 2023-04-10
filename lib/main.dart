@@ -2,6 +2,8 @@ import 'package:csce315_project3_13/Constants/constants.dart';
 import 'package:csce315_project3_13/GUI/Pages/Loading/Loading_Page.dart';
 import 'package:csce315_project3_13/GUI/Pages/Login/Win_Create_Account.dart';
 import 'package:csce315_project3_13/GUI/Pages/Login/Win_Reset_Password.dart';
+import 'package:csce315_project3_13/GUI/Pages/Management/Win_Add_Smoothie.dart';
+import 'package:csce315_project3_13/GUI/Pages/Management/Win_View_Menu.dart';
 import 'package:csce315_project3_13/GUI/Pages/Order/Win_Order.dart';
 import 'package:csce315_project3_13/GUI/Pages/Test%20Pages/Win_Functions_Test_Page.dart';
 import 'package:csce315_project3_13/GUI/Pages/Loading/Loading_Order_Win.dart';
@@ -37,8 +39,10 @@ class MyApp extends StatelessWidget {
         Win_Loading_Page.route: (BuildContext context) => Win_Loading_Page(),
         Loading_Order_Win.route: (BuildContext context) => Loading_Order_Win(),
         Win_Order.route: (BuildContext context) => Win_Order(),
+        Win_View_Menu.route: (BuildContext context) => Win_View_Menu(),
+        Win_Add_Smoothie.route: (BuildContext context) => Win_Add_Smoothie(),
       },
-      initialRoute: Win_Functions_Test_Page.route,
+      initialRoute: Win_View_Menu.route,
     );
   }
 }
