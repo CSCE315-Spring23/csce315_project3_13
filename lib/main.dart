@@ -64,12 +64,12 @@ class _MyAppState extends State<MyApp> {
   void color_blind_option_1(){
     setState(() {
       is_high_contrast = true;
-      primary_color = Colors.green[900] as Color;
-      secondary_color = Colors.green[900] as Color;
-      background_color = Color(0xFFE38286);
+      primary_color = Colors.purple[500] as Color;
+      secondary_color = Colors.purple[400] as Color;
+      background_color = Colors.purple[200] as Color;
       text_color = Colors.black;
-      active_color = Colors.blue[900] as Color;
-      hover_color = Colors.blue[900] as Color;
+      active_color = Colors.yellow[500] as Color;
+      hover_color = Colors.yellow[100] as Color;
       inactive_color = Color(0xFF00716C);
       active_size_color = Color(0xFF3088D1);
       active_confirm_color = Color(0xFF6BCF54);
