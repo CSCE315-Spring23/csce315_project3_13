@@ -1,5 +1,7 @@
 import 'package:csce315_project3_13/Colors/Color_Manager.dart';
+import 'package:csce315_project3_13/GUI/Components/Contrast_Button.dart';
 import 'package:csce315_project3_13/GUI/Components/Login_Button.dart';
+import 'package:csce315_project3_13/GUI/Components/Login_TextField.dart';
 import 'package:csce315_project3_13/GUI/Components/Page_Header.dart';
 import 'package:csce315_project3_13/GUI/Pages/Login/Win_Login.dart';
 import 'package:csce315_project3_13/Services/login_helper.dart';
@@ -49,8 +51,10 @@ class _Win_Reset_PasswordState extends State<Win_Reset_Password> {
 
     return Scaffold(
       appBar: Page_Header(context: context,
-        pageName: "Rest Password",
+        pageName: "Reset Password",
         buttons: [
+          const Contrast_Button(),
+
           Login_Button(onTap: (){
             Navigator.pushReplacementNamed(context, Win_Login.route);
           }, buttonName: "Back",
@@ -78,16 +82,14 @@ class _Win_Reset_PasswordState extends State<Win_Reset_Password> {
                 ),
               ),
 
-              TextField(
-                controller: _email_controller,
+              Login_TextField(
+                context: context,
+                textController: _email_controller,
                 onSubmitted: (my_text){
                   _reset_password(user_email: _email_controller.text, context: context);
                 },
-                obscureText: false,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
                   labelText: 'Email',
-                ),),
+                ),
 
 
 
