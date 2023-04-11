@@ -89,7 +89,6 @@ class _Win_Functions_Test_Page_StartState extends State<Win_Functions_Test_Page>
               }
             }, buttonName: "Change Color scheme",
               fontSize: 10,
-              buttonColor: my_color_manager.active_color
 
             )
 

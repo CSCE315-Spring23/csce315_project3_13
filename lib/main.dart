@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'GUI/Pages/Login/Win_Login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:async';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -66,7 +67,7 @@ class _MyAppState extends State<MyApp> {
       primary_color = Colors.green[900] as Color;
       secondary_color = Colors.green[900] as Color;
       background_color = Color(0xFFE38286);
-      text_color = Color(0xFFFFFFFF);
+      text_color = Colors.black;
       active_color = Colors.blue[900] as Color;
       hover_color = Colors.blue[900] as Color;
       inactive_color = Color(0xFF00716C);
@@ -101,11 +102,35 @@ class _MyAppState extends State<MyApp> {
     await prefs.setBool('high_contrast', high_contrast);
   }
 
+
+  // timer for getting the weather
+
+  late Timer _timer;
+
+  void startTimer() {
+    _timer = Timer.periodic(Duration(seconds: 60), (timer) {
+      setState(() {
+
+          // update the weather values
+
+          print("A minute has passed, update weather data");
+
+      });
+    });
+  }
+
   @override
   void initState() {
     //gets the preferences
     get_preferences();
     super.initState();
+    startTimer();
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
   }
 
   @override
