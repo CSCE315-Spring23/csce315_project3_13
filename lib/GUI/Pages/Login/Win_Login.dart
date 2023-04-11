@@ -1,5 +1,5 @@
-
 import 'package:csce315_project3_13/Colors/Color_Manager.dart';
+import 'package:csce315_project3_13/GUI/Components/Contrast_Button.dart';
 import 'package:csce315_project3_13/GUI/Components/Login_Button.dart';
 import 'package:csce315_project3_13/GUI/Components/Login_TextField.dart';
 import 'package:csce315_project3_13/GUI/Components/Page_Header.dart';
@@ -61,27 +61,22 @@ class _Win_LoginState extends State<Win_Login> {
           context: context,
           pageName: "Login",
           buttons: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Login_Button(
-                onTap: (){
-                  Navigator.pushReplacementNamed(context, Win_Create_Account.route);
-                }, buttonName: "Create account",
-                fontSize: 15,
-                buttonColor: _color_manager.active_color,
-                textColor: _color_manager.text_color,
-              ),
+            const Contrast_Button(),
+            Login_Button(
+              onTap: (){
+                Navigator.pushReplacementNamed(context, Win_Create_Account.route);
+              }, buttonName: "Create account",
+              fontSize: 15,
+              buttonColor: _color_manager.active_color,
+              textColor: _color_manager.text_color,
             ),
 
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Login_Button(onTap: (){
-                Navigator.pushReplacementNamed(context, Win_Reset_Password.route);
-              }, buttonName: "Reset password",
-                fontSize: 15,
-                buttonColor: _color_manager.active_color,
-                textColor: _color_manager.text_color,
-              ),
+            Login_Button(onTap: (){
+              Navigator.pushReplacementNamed(context, Win_Reset_Password.route);
+            }, buttonName: "Reset password",
+              fontSize: 15,
+              buttonColor: _color_manager.active_color,
+              textColor: _color_manager.text_color,
             ),
           ],
       ),

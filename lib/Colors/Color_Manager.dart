@@ -16,7 +16,9 @@ class Color_Manager extends InheritedWidget {
   final Function reset_colors;
   final Function color_blind_option_1;
 
-  Color_Manager({required this.primary_color, required this.secondary_color, required this.background_color, required this.text_color, required this.active_color, required this.inactive_color, required this.hover_color, required this.active_size_color, required this.active_confirm_color, required this.active_deny_color,required this.color_blind_option_1, required this.reset_colors, required Widget child})
+  final bool is_high_contrast;
+
+  Color_Manager({required this.primary_color, required this.secondary_color, required this.background_color, required this.text_color, required this.active_color, required this.inactive_color, required this.hover_color, required this.active_size_color, required this.active_confirm_color, required this.active_deny_color,required this.color_blind_option_1, required this.reset_colors, required this.is_high_contrast, required Widget child})
       : super(child: child);
 
   @override
@@ -30,7 +32,8 @@ class Color_Manager extends InheritedWidget {
         (active_size_color != old.active_size_color) ||
         (active_confirm_color != old.active_confirm_color) ||
         (active_deny_color != old.active_deny_color)||
-        (hover_color != old.hover_color)
+        (hover_color != old.hover_color)||
+        (is_high_contrast != old.is_high_contrast)
     ){
       return true;
     }else {
@@ -39,5 +42,5 @@ class Color_Manager extends InheritedWidget {
   }
 
   static Color_Manager of(BuildContext context) =>
-      context.dependOnInheritedWidgetOfExactType<Color_Manager>() ?? Color_Manager(child: const Text("Color manager failed"), primary_color: Colors.blue, secondary_color: Colors.blue, background_color : Colors.blue, text_color : Colors.blue, active_color : Colors.blue, inactive_color : Colors.blue, active_size_color : Colors.blue, active_confirm_color : Colors.blue, active_deny_color : Colors.blue, hover_color: Colors.blue,  color_blind_option_1: (){}, reset_colors: (){},);
+      context.dependOnInheritedWidgetOfExactType<Color_Manager>() ?? Color_Manager(child: const Text("Color manager failed"), primary_color: Colors.blue, secondary_color: Colors.blue, background_color : Colors.blue, text_color : Colors.blue, active_color : Colors.blue, inactive_color : Colors.blue, active_size_color : Colors.blue, active_confirm_color : Colors.blue, active_deny_color : Colors.blue, hover_color: Colors.blue, is_high_contrast: false,  color_blind_option_1: (){}, reset_colors: (){},);
 }
