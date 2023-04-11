@@ -1,3 +1,4 @@
+import 'package:csce315_project3_13/GUI/Pages/Management/Win_View_Menu.dart';
 import 'package:csce315_project3_13/Services/ingredients_table_helper.dart';
 import 'package:csce315_project3_13/Services/menu_item_helper.dart';
 
@@ -113,7 +114,7 @@ class _Win_Add_Smoothie_State extends State<Win_Add_Smoothie> {
         children: <Widget>[
           SizedBox(
             height: text_deco == 'Add New Ingredient...' ? 75 : 45,
-            width: screenWidth / 5,
+            width: text_deco == 'Add New Ingredient...' ? screenWidth / 5 : screenWidth / 7,
             child: TextField(
               controller: ctrl,
               decoration: InputDecoration(
@@ -123,26 +124,26 @@ class _Win_Add_Smoothie_State extends State<Win_Add_Smoothie> {
                 setState(() {
                   if (text_deco == 'Add New Ingredient...')
                   {
-                    _new_ingredient_name = text;
+                    _new_ingredient_name = ctrl.text;
                   }
                   else if (text_deco == 'New Smoothie Name... ')
                   {
-                    _new_item_name = text;
+                    _new_item_name = ctrl.text;
                   }
-                  else if (text_deco == 'New Smoothie Price of Medium...')
-                  {
-                    _new_item_price = double.parse(text);
-                  }
-                  else if (text_deco == 'New Smoothie Amount in Stock...')
-                  {
-                    _new_item_amount = int.parse(text);
-                  }
+                    else if (text_deco == 'Price of Medium...')
+                    {
+                    _new_item_price = double.parse(ctrl.text);
+                    }
+                    else if (text_deco == 'Amount in Stock...')
+                    {
+                    _new_item_amount = int.parse(ctrl.text);
+                    }
 
                 });
               },
             ),
           ),
-          SizedBox(width: 10,),
+          const SizedBox(width: 10,),
           (text_deco == 'Add New Ingredient...') ?
           ElevatedButton(
             child: Text(
@@ -165,7 +166,13 @@ class _Win_Add_Smoothie_State extends State<Win_Add_Smoothie> {
     getNames();
     return Scaffold(
       appBar: AppBar(
-        title: Text("Create New Smoothie"),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pushReplacementNamed(context,Win_View_Menu.route);
+            },
+        ),
+        title: const Text("Create New Smoothie"),
         centerTitle: true,
       ),
       body: _isLoading
@@ -176,41 +183,85 @@ class _Win_Add_Smoothie_State extends State<Win_Add_Smoothie> {
         children: <Widget>[
           Container(
             width: screenWidth / 2,
-            color: Colors.blue,
             child: Column(
               children: [
                 Expanded(flex: 1, child: ingTable(context)),
                 SizedBox(
                   height: 175,
                   child: Container(
-                    color: Colors.yellow,
-                    child: Row(
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Colors.black,
+                        width: 0.5,
+                      ),
+                      color: Colors.white38,
+                    ),
+                    child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Column(
+                        Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: <Widget>[
                             custTextfield(context, _new_name_ctrl, 'New Smoothie Name... ', ''),
-                            SizedBox(height: 5,),
-                            custTextfield(context, _new_price_ctrl, 'New Smoothie Price of Medium...', ''),
-                            SizedBox(height: 5,),
-                            custTextfield(context, _new_amount_ctrl, 'New Smoothie Amount in Stock...', ''),
+                            SizedBox(width: 10,),
+                            custTextfield(context, _new_price_ctrl, 'Price of Medium...', ''),
+                            SizedBox(width: 10,),
+                            custTextfield(context, _new_amount_ctrl, 'Amount in Stock...', ''),
                           ],
                         ),
-                        SizedBox(width: 20,),
-                        ElevatedButton(onPressed: (){
-                          List<String> new_item_ings = [];
-                          for (int i = 0; i < _ing_table.length; ++i)
-                            {
-                              new_item_ings.add(_ing_table[i]['name']!);
-                            }
-                          if (_new_item_name == '' || _new_item_amount == 0 || new_item_ings.length != 0){
-                            menu_item_obj new_item = menu_item_obj(0, _new_item_name, _new_item_price, _new_item_amount, 'Smoothie', 'available', new_item_ings);
-                            menu_item_helper().add_menu_item(new_item);
-                          }
-                        }, child: Text('Add New Item')),
+                        const SizedBox(height: 20,),
+                        ElevatedButton(
+                            onPressed: () async{
+                              Icon message_icon = const Icon(Icons.check);
+                              String message_text = 'Successfully Added Item';
+                              List<String> new_item_ings = [];
+                              for (int i = 0; i < _ing_table.length; ++i)
+                                {
+                                  new_item_ings.add(_ing_table[i]['name']!);
+                                }
+                              if (_new_item_name != '' && new_item_ings.length != 0 && _new_item_price != 0){
+                                try {
+                                  print(_new_item_price.toStringAsFixed(2));
+                                  menu_item_obj new_item = menu_item_obj(
+                                      0,
+                                      _new_item_name,
+                                      double.parse(_new_item_price.toStringAsFixed(2)),
+                                      _new_item_amount,
+                                      'smoothie',
+                                      'available',
+                                      new_item_ings);
+                                  await menu_item_helper().add_menu_item(
+                                      new_item);
+                                }
+
+                                catch(exception)
+                              {
+                                print(exception);
+                                message_icon = const Icon(Icons.error_outline_outlined);
+                                message_text = 'Unable to add item';
+                              }
+                              finally{
+                                showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: message_icon,
+                                        content: Text(message_text),
+                                        actions: [
+                                          TextButton(
+                                              onPressed: (){
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: const Text('OK'))
+                                        ],
+                                      );
+                                    });
+                              }
+                              }
+                        },
+                            child: const Text('Add New Item')),
                       ],
                     ),
                   ),
@@ -220,7 +271,7 @@ class _Win_Add_Smoothie_State extends State<Win_Add_Smoothie> {
           ),
           Container(
             width: screenWidth / 2,
-            color: Colors.purple,
+            color: const Color.fromRGBO(255, 204, 204, 1),
             child: Column(
               children: [
                 Container(
