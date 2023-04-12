@@ -533,5 +533,41 @@ exports.getAllSmoothieInfo = functions.https.onCall(async (data, context) => {
 });
 
 
+exports.getAllSnacksInfo = functions.https.onCall(async (data, context) => {
+    const client = new Client({
+        host: 'csce-315-db.engr.tamu.edu',
+        user: 'csce315331_team_13_master',
+        password: 'Lucky_13',
+        database: 'csce315331_team_13',
+        port: 5432,
+    });
+
+    await client.connect()
+
+    const res = await client.query("SELECT menu_item_id, menu_item, item_price FROM menu_items WHERE type='snack' ORDER BY menu_item_id");
+
+    client.end()
+
+    return res.rows
+});
+
+exports.getAllAddonInfo = functions.https.onCall(async (data, context) => {
+    const client = new Client({
+        host: 'csce-315-db.engr.tamu.edu',
+        user: 'csce315331_team_13_master',
+        password: 'Lucky_13',
+        database: 'csce315331_team_13',
+        port: 5432,
+    });
+
+    await client.connect()
+
+    const res = await client.query("SELECT menu_item_id, menu_item, item_price FROM menu_items WHERE type='addon' ORDER BY menu_item_id");
+
+    client.end()
+
+    return res.rows
+});
+
 
 

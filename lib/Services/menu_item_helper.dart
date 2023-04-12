@@ -142,7 +142,39 @@ class menu_item_helper
     for (int i = 0; i < result.length; i++)
     {
       String item_price_str = result[i]['item_price'];
-      items.add(menu_item_obj(result[i]['menu_item_id'], result[i]['menu_item'], double.parse(item_price_str.replaceAll('\$', '')), 0, 'Smoothie', 'available', []));
+      items.add(menu_item_obj(result[i]['menu_item_id'], result[i]['menu_item'], double.parse(item_price_str.replaceAll('\$', '')), 0, 'smoothie', 'available', []));
+    }
+
+    return items;
+  }
+
+  Future<List<menu_item_obj>> getAllSnackInfo() async
+  {
+    HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('getAllSnacksInfo');
+    final snack_query = await callable();
+    List result = snack_query.data;
+    List<menu_item_obj> items = [];
+
+    for (int i = 0; i < result.length; i++)
+    {
+      String item_price_str = result[i]['item_price'];
+      items.add(menu_item_obj(result[i]['menu_item_id'], result[i]['menu_item'], double.parse(item_price_str.replaceAll('\$', '')), 0, 'Snack', 'available', []));
+    }
+
+    return items;
+  }
+
+  Future<List<menu_item_obj>> getAllAddonInfo() async
+  {
+    HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('getAllAddonInfo');
+    final addon_query = await callable();
+    List result = addon_query.data;
+    List<menu_item_obj> items = [];
+
+    for (int i = 0; i < result.length; i++)
+    {
+      String item_price_str = result[i]['item_price'];
+      items.add(menu_item_obj(result[i]['menu_item_id'], result[i]['menu_item'], double.parse(item_price_str.replaceAll('\$', '')), 0, 'Addon', 'available', []));
     }
 
     return items;

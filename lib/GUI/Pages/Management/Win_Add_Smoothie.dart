@@ -244,6 +244,7 @@ class _Win_Add_Smoothie_State extends State<Win_Add_Smoothie> {
                               }
                               finally{
                                 showDialog(
+                                    barrierDismissible: false,
                                     context: context,
                                     builder: (BuildContext context) {
                                       return AlertDialog(
