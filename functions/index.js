@@ -537,6 +537,26 @@ exports.getZReport = functions.https.onCall(async (data, context) => {
     return res.rows
 });
 
+exports.getAllZReports = functions.https.onCall(async (data, context) => {
+    const client = new Client({
+        host: 'csce-315-db.engr.tamu.edu',
+        user: 'csce315331_team_13_master',
+        password: 'Lucky_13',
+        database: 'csce315331_team_13',
+        port: 5432,
+    });
+
+    await client.connect()
+
+    const res = await client.query("SELECT to_char(date, 'DD-MM-YYYY') AS date_field_string, sales FROM z_reports ORDER BY date ASC");
+
+    client.end()
+
+    return res.rows
+});
+
+
+
 exports.updateXReport = functions.https.onCall(async (data, context) => {
     const client = new Client({
         host: 'csce-315-db.engr.tamu.edu',
