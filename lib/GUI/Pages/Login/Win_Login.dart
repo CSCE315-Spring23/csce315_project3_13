@@ -67,16 +67,12 @@ class _Win_LoginState extends State<Win_Login> {
                 Navigator.pushReplacementNamed(context, Win_Create_Account.route);
               }, buttonName: "Create account",
               fontSize: 15,
-              buttonColor: _color_manager.active_color,
-              textColor: _color_manager.text_color,
             ),
 
             Login_Button(onTap: (){
               Navigator.pushReplacementNamed(context, Win_Reset_Password.route);
             }, buttonName: "Reset password",
               fontSize: 15,
-              buttonColor: _color_manager.active_color,
-              textColor: _color_manager.text_color,
             ),
           ],
       ),
@@ -144,8 +140,6 @@ class _Win_LoginState extends State<Win_Login> {
                 child: Login_Button(onTap: (){
                   _login(context);
                 }, buttonName: "Login",
-                buttonColor: _color_manager.active_color,
-                  textColor: _color_manager.text_color,
                 ),
               ),
 

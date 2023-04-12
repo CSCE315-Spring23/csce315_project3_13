@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'GUI/Pages/Login/Win_Login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:async';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -63,12 +64,12 @@ class _MyAppState extends State<MyApp> {
   void color_blind_option_1(){
     setState(() {
       is_high_contrast = true;
-      primary_color = Colors.green[900] as Color;
-      secondary_color = Colors.green[900] as Color;
-      background_color = Color(0xFFE38286);
-      text_color = Color(0xFFFFFFFF);
-      active_color = Colors.blue[900] as Color;
-      hover_color = Colors.blue[900] as Color;
+      primary_color = Colors.purple[500] as Color;
+      secondary_color = Colors.purple[400] as Color;
+      background_color = Colors.purple[200] as Color;
+      text_color = Colors.black;
+      active_color = Colors.yellow[500] as Color;
+      hover_color = Colors.yellow[100] as Color;
       inactive_color = Color(0xFF00716C);
       active_size_color = Color(0xFF3088D1);
       active_confirm_color = Color(0xFF6BCF54);
@@ -101,11 +102,35 @@ class _MyAppState extends State<MyApp> {
     await prefs.setBool('high_contrast', high_contrast);
   }
 
+
+  // timer for getting the weather
+
+  late Timer _timer;
+
+  void startTimer() {
+    _timer = Timer.periodic(Duration(seconds: 60), (timer) {
+      setState(() {
+
+          // update the weather values
+
+          print("A minute has passed, update weather data");
+
+      });
+    });
+  }
+
   @override
   void initState() {
     //gets the preferences
     get_preferences();
     super.initState();
+    startTimer();
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
   }
 
   @override
@@ -141,7 +166,7 @@ class _MyAppState extends State<MyApp> {
           Loading_Order_Win.route: (BuildContext context) => Loading_Order_Win(),
           Win_Order.route: (BuildContext context) => Win_Order(),
         },
-        initialRoute: Win_Login.route,
+        initialRoute:  Win_Login.route,
       ),
     );
   }

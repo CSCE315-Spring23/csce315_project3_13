@@ -6,12 +6,11 @@ import 'package:flutter/material.dart';
 class Login_Button extends StatefulWidget {
   final VoidCallback onTap;
   final String buttonName;
-  final Color textColor;
-  final Color buttonColor;
+  final Color? textColor;
   final double fontSize;
   final double buttonWidth;
 
-  Login_Button({required this.onTap, required this.buttonName, this.textColor = Colors.white, this.buttonColor = k_active_color, this.fontSize = 24.0, this.buttonWidth = 130});
+  Login_Button({required this.onTap, required this.buttonName, this.textColor, this.fontSize = 24.0, this.buttonWidth = 130});
 
   @override
   _Login_ButtonState createState() => _Login_ButtonState();
@@ -44,7 +43,7 @@ class _Login_ButtonState extends State<Login_Button> {
                     Center(child: Text(widget.buttonName,
                       style: TextStyle(
                         fontSize: widget.fontSize,
-                        color: widget.textColor,
+                        color: widget.textColor?? Color_Manager.of(context).text_color,
                       ),
                     )),
                     Center(
