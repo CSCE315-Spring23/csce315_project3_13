@@ -114,13 +114,20 @@ class _MyAppState extends State<MyApp> {
 
   late Timer _timer;
 
-  String current_condition = "!";
-  String current_tempurature = "!";
+  String current_condition = "Can't fetch";
+  String current_tempurature = "weather";
 
   void startTimer() async {
 
-    String current_weather_cond = await _weather_api.get_condition();
-    String current_weather_temp = await _weather_api.get_temperature();
+    String current_weather_cond = "Can't fetch";
+    String current_weather_temp = "weather";
+    try{
+      current_weather_cond = await _weather_api.get_condition();
+      current_weather_temp = await _weather_api.get_temperature();
+    }catch(e){
+     print("could not fetch weather");
+    }
+
 
     setState(() {
 
@@ -133,8 +140,12 @@ class _MyAppState extends State<MyApp> {
     });
 
     _timer = Timer.periodic(Duration(seconds: 60), (timer) async {
-      current_weather_cond = await _weather_api.get_condition();
-      current_weather_temp = await _weather_api.get_temperature();
+      try{
+        current_weather_cond = await _weather_api.get_condition();
+        current_weather_temp = await _weather_api.get_temperature();
+      }catch(e){
+        print("could not fetch weather");
+      }
       print(current_weather_cond);
       print(current_weather_temp);
       setState(() {
