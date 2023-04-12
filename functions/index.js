@@ -578,8 +578,30 @@ exports.updateXReport = functions.https.onCall(async (data, context) => {
     return "Successfully updated today's X report"
 });
 
+exports.getItemsInOrder = functions.https.onCall(async (data, context) => {
+    const client = new Client({
+        host: 'csce-315-db.engr.tamu.edu',
+        user: 'csce315331_team_13_master',
+        password: 'Lucky_13',
+        database: 'csce315331_team_13',
+        port: 5432,
+    });
 
+    await client.connect()
 
+    const {date1} = data
+    const {date2} = data
+
+    var cast1 = "CAST('" + date1 + "' as date)";
+    var cast2 = "CAST('" + date2 + "' as date)";
+
+    const res = await client.query("SELECT item_ids_in_order FROM order_history WHERE date_of_order>=" + cast1 + " AND date_of_order<=" + cast2);
+
+    client.end()
+
+    return res.rows
+
+});
 
 
 

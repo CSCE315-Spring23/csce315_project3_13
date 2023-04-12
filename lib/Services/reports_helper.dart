@@ -1,6 +1,7 @@
 import 'dart:collection';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:csce315_project3_13/Services/general_helper.dart';
+import '../Models/models_library.dart';
 
 class reports_helper
 {
@@ -59,5 +60,35 @@ class reports_helper
       });
     }
 
+  }
+
+  Future<Map<pair, int>> what_sales_together(String date1, String date2) async
+  {
+    Map<pair, int> report = {};
+    HttpsCallable get_items = FirebaseFunctions.instance.httpsCallable('getItemsInOrder');
+    final res = await get_items.call({
+      'date1': date1,
+      'date2': date2
+    });
+    List<dynamic> data = res.data;
+    for(int index = 0; index < data.length; ++index) {
+      List<dynamic> l = data[index]['item_ids_in_order'];
+      l.sort();
+      if(l.length > 1) {
+        for(int i = 0; i < l.length; ++i) {
+          pair curr_pair = pair(l[i], null);
+          for(int j = i + 1; j < l.length; ++j) {
+            curr_pair.right = l[j];
+            report.update(curr_pair, (value) => value + 1, ifAbsent: () => 1);
+          }
+        }
+      }
+    }
+    report = Map.fromEntries(report.entries.toList()..sort((e1,e2) => e2.value.compareTo(e1.value)));
+    for(MapEntry<pair, int> e in report.entries) {
+      print("${e.key.left}, ${e.key.right} \t ${e.value}");
+    }
+
+    return report;
   }
 }
