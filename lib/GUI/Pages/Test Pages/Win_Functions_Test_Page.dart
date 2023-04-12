@@ -1,3 +1,5 @@
+import 'package:csce315_project3_13/Models/inventory_item_obj.dart';
+import 'package:csce315_project3_13/Services/get_inventory_helper.dart';
 import 'package:csce315_project3_13/Services/menu_item_helper.dart';
 import 'package:flutter/material.dart';
 import '../../../Models/menu_item_obj.dart';
@@ -16,6 +18,7 @@ class _Win_Functions_Test_Page_StartState extends State<Win_Functions_Test_Page>
 
   testing_cloud_functions cloud_functions_tester = testing_cloud_functions();
   menu_item_helper menu_cloud_tester = menu_item_helper();
+  inventory_item_helper inv_tester = inventory_item_helper();
 
   @override
   Widget build(BuildContext context) {
@@ -36,8 +39,21 @@ class _Win_Functions_Test_Page_StartState extends State<Win_Functions_Test_Page>
               height: 20,
             ),
             ElevatedButton(onPressed: (){
-              cloud_functions_tester.getEmployeeByID(2);
-            }, child: const Text("Test Firebase Function with parameter")),
+              inv_tester.get_inventory_items();
+            }, child: const Text("Test Get Inventory")),
+            const SizedBox(
+              height: 20,
+            ),
+            ElevatedButton(onPressed: (){
+              inventory_item_obj inv_item = inventory_item_obj(1, 'available', 'test', 1, 1, 'box', '4/05/23', '4/1/24', 1);
+              inv_tester.add_inventory_row(inv_item);
+            }, child: const Text("Test add Inventory")),
+            const SizedBox(
+              height: 20,
+            ),
+            ElevatedButton(onPressed: (){
+              inv_tester.deleteInventoryItem('test');
+            }, child: const Text("Test delete Inventory")),
             const SizedBox(
               height: 20,
             ),
