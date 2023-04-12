@@ -6,6 +6,8 @@ import 'package:csce315_project3_13/GUI/Pages/Order/Win_Order.dart';
 import 'package:csce315_project3_13/GUI/Pages/Test%20Pages/Win_Functions_Test_Page.dart';
 import 'package:csce315_project3_13/GUI/Pages/Loading/Loading_Order_Win.dart';
 import 'package:csce315_project3_13/Manager_View/Win_Manager_View.dart';
+import 'package:csce315_project3_13/Services/Weather_Manager.dart';
+import 'package:csce315_project3_13/Services/weather_API.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'GUI/Pages/Login/Win_Login.dart';
@@ -103,17 +105,45 @@ class _MyAppState extends State<MyApp> {
   }
 
 
+
+
+
   // timer for getting the weather
+
+  late weather_API _weather_api;
 
   late Timer _timer;
 
-  void startTimer() {
-    _timer = Timer.periodic(Duration(seconds: 60), (timer) {
+  String current_condition = "!";
+  String current_tempurature = "!";
+
+  void startTimer() async {
+
+    String current_weather_cond = await _weather_api.get_condition();
+    String current_weather_temp = await _weather_api.get_temperature();
+
+    setState(() {
+
+      // update the weather values
+      print("Get weather data");
+
+      current_condition = current_weather_cond;
+      current_tempurature = current_weather_temp;
+
+    });
+
+    _timer = Timer.periodic(Duration(seconds: 60), (timer) async {
+      current_weather_cond = await _weather_api.get_condition();
+      current_weather_temp = await _weather_api.get_temperature();
+      print(current_weather_cond);
+      print(current_weather_temp);
       setState(() {
 
           // update the weather values
-
           print("A minute has passed, update weather data");
+
+          current_condition = current_weather_cond;
+          current_tempurature = current_weather_temp;
 
       });
     });
@@ -121,6 +151,8 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void initState() {
+    _weather_api = weather_API();
+
     //gets the preferences
     get_preferences();
     super.initState();
@@ -135,38 +167,42 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return Color_Manager(
-      // This class stores the color values for the web app
-      is_high_contrast: is_high_contrast,
-      reset_colors: reset_colors,
-      color_blind_option_1: color_blind_option_1,
-      primary_color: primary_color,
-      secondary_color: secondary_color,
-      background_color: background_color,
-      text_color: text_color,
-      active_color: active_color,
-      hover_color: hover_color,
-      inactive_color: inactive_color,
-      active_size_color: active_size_color,
-      active_confirm_color: active_confirm_color,
-      active_deny_color: active_deny_color,
+    return Weather_Manager(
+      current_tempurature: current_tempurature,
+      current_condition: current_condition,
+      child: Color_Manager(
+        // This class stores the color values for the web app
+        is_high_contrast: is_high_contrast,
+        reset_colors: reset_colors,
+        color_blind_option_1: color_blind_option_1,
+        primary_color: primary_color,
+        secondary_color: secondary_color,
+        background_color: background_color,
+        text_color: text_color,
+        active_color: active_color,
+        hover_color: hover_color,
+        inactive_color: inactive_color,
+        active_size_color: active_size_color,
+        active_confirm_color: active_confirm_color,
+        active_deny_color: active_deny_color,
 
-      child: MaterialApp(
-        title: 'Smoothie King App',
-        theme: ThemeData(
-          primarySwatch: Colors.red,
+        child: MaterialApp(
+          title: 'Smoothie King App',
+          theme: ThemeData(
+            primarySwatch: Colors.red,
+          ),
+          routes:  <String, WidgetBuilder>{
+            Win_Login.route: (BuildContext context) => Win_Login(),
+            Win_Reset_Password.route: (BuildContext context) => Win_Reset_Password(),
+            Win_Create_Account.route: (BuildContext context) => Win_Create_Account(),
+            Win_Manager_View.route: (BuildContext context) => Win_Manager_View(),
+            Win_Functions_Test_Page.route: (BuildContext context) => Win_Functions_Test_Page(),
+            Win_Loading_Page.route: (BuildContext context) => Win_Loading_Page(),
+            Loading_Order_Win.route: (BuildContext context) => Loading_Order_Win(),
+            Win_Order.route: (BuildContext context) => Win_Order(),
+          },
+          initialRoute:  Win_Login.route,
         ),
-        routes:  <String, WidgetBuilder>{
-          Win_Login.route: (BuildContext context) => Win_Login(),
-          Win_Reset_Password.route: (BuildContext context) => Win_Reset_Password(),
-          Win_Create_Account.route: (BuildContext context) => Win_Create_Account(),
-          Win_Manager_View.route: (BuildContext context) => Win_Manager_View(),
-          Win_Functions_Test_Page.route: (BuildContext context) => Win_Functions_Test_Page(),
-          Win_Loading_Page.route: (BuildContext context) => Win_Loading_Page(),
-          Loading_Order_Win.route: (BuildContext context) => Loading_Order_Win(),
-          Win_Order.route: (BuildContext context) => Win_Order(),
-        },
-        initialRoute:  Win_Login.route,
       ),
     );
   }
