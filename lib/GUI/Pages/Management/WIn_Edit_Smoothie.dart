@@ -22,6 +22,7 @@ class _Win_Edit_Smoothie_State extends State<Win_Edit_Smoothie> with AutomaticKe
   ingredients_table_helper ing_helper = ingredients_table_helper();
   bool _isLoading = true;
   bool _add_curr_ings = false;
+  bool _adding_item = false;
   double screenWidth =  0;
   String _curr_item_name = '';
   int _curr_item_id = 0;
@@ -189,19 +190,24 @@ class _Win_Edit_Smoothie_State extends State<Win_Edit_Smoothie> with AutomaticKe
                       color: Colors.white38,
                     ),
                     child: ElevatedButton(
-                        onPressed: args != null ? () async{
+                        onPressed: args != null && !_adding_item ? () async{
                           Icon message_icon = const Icon(Icons.check);
                           String message_text = 'Successfully Edited Item';
-                          List<String> new_item_ings = [];
+                          Map<String, int> new_item_ings = {};
                           for (int i = 0; i < _ing_table.length; ++i)
                           {
-                            new_item_ings.add(_ing_table[i]['name']!);
+                            new_item_ings[_ing_table[i]['name']!] = int.parse(_ing_table[i]['amount']!);
                           }
                           if (new_item_ings.length != 0){
                             try {
-
+                              setState(() {
+                                _adding_item = true;
+                              });
+                              await menu_item_helper().edit_smoothie_ingredients(_curr_item_id, new_item_ings);
+                              setState(() {
+                                _adding_item = false;
+                              });
                             }
-
                             catch(exception)
                             {
                               print(exception);
@@ -228,7 +234,7 @@ class _Win_Edit_Smoothie_State extends State<Win_Edit_Smoothie> with AutomaticKe
                             }
                           }
                         } : null,
-                        child: const Text('Add New Item')
+                        child: const Text('Confirm Edits'),
                     ),
                   ),
                 ),
