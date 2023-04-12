@@ -1,4 +1,8 @@
+import 'package:csce315_project3_13/Colors/Color_Manager.dart';
+import 'package:csce315_project3_13/GUI/Components/Contrast_Button.dart';
 import 'package:csce315_project3_13/GUI/Components/Login_Button.dart';
+import 'package:csce315_project3_13/GUI/Components/Login_TextField.dart';
+import 'package:csce315_project3_13/GUI/Components/Page_Header.dart';
 import 'package:csce315_project3_13/GUI/Pages/Login/Win_Login.dart';
 import 'package:csce315_project3_13/Services/login_helper.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +18,6 @@ class Win_Reset_Password extends StatefulWidget {
 
 class _Win_Reset_PasswordState extends State<Win_Reset_Password> {
 
-  String _page_name = "Reset Password";
 
   late TextEditingController _email_controller;
 
@@ -43,22 +46,24 @@ class _Win_Reset_PasswordState extends State<Win_Reset_Password> {
 
   @override
   Widget build(BuildContext context) {
+    final _color_manager = Color_Manager.of(context);
+
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text(_page_name),
-        actions: [
+      appBar: Page_Header(context: context,
+        pageName: "Reset Password",
+        buttons: [
+          const Contrast_Button(),
 
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Login_Button(onTap: (){
-              Navigator.pushReplacementNamed(context, Win_Login.route);
-            }, buttonName: "Back",
-            fontSize: 15
-            ),
+          Login_Button(onTap: (){
+            Navigator.pushReplacementNamed(context, Win_Login.route);
+          }, buttonName: "Back",
+              fontSize: 15
           ),
-
         ],
       ),
+
+      backgroundColor: _color_manager.background_color,
       body: Center(
         child: Container(
           width: MediaQuery.of(context).size.width/2,
@@ -66,26 +71,25 @@ class _Win_Reset_PasswordState extends State<Win_Reset_Password> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
 
-              const Padding(
-                padding: EdgeInsets.all(15.0),
+              Padding(
+                padding: const EdgeInsets.all(15.0),
                 child: Text(
                   'Enter your email',
                   style: TextStyle(
+                    color: _color_manager.text_color,
                     fontSize: 30,
                   ),
                 ),
               ),
 
-              TextField(
-                controller: _email_controller,
+              Login_TextField(
+                context: context,
+                textController: _email_controller,
                 onSubmitted: (my_text){
                   _reset_password(user_email: _email_controller.text, context: context);
                 },
-                obscureText: false,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
                   labelText: 'Email',
-                ),),
+                ),
 
 
 
