@@ -1,5 +1,6 @@
 import 'package:csce315_project3_13/GUI/Components/Login_Button.dart';
 import 'package:csce315_project3_13/GUI/Pages/Management/Win_Add_Smoothie.dart';
+import 'package:csce315_project3_13/Services/general_helper.dart';
 import 'package:csce315_project3_13/Services/menu_item_helper.dart';
 import 'package:csce315_project3_13/Services/view_helper.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -30,6 +31,7 @@ class _Win_View_Menu_State extends State<Win_View_Menu> {
     _smoothie_items = await item_helper.getAllSmoothiesInfo();
     _snack_items = await item_helper.getAllSnackInfo();
     _addon_items = await item_helper.getAllAddonInfo();
+
     setState(() {
       _isLoading = false;
     });
@@ -193,7 +195,7 @@ class _Win_View_Menu_State extends State<Win_View_Menu> {
                   ),
                   textAlign: TextAlign.center,
                 ),
-                trailing: Container(
+                trailing: SizedBox(
                   width: 300,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -210,7 +212,11 @@ class _Win_View_Menu_State extends State<Win_View_Menu> {
                         tooltip: 'Edit Ingredients',
                         icon: const Icon(Icons.edit),
                         onPressed: () {
-
+                          Navigator.pushReplacementNamed(
+                            context,
+                            '/edit-smoothie-manager',
+                            arguments:  {'name': items[index].menu_item, 'id': items[index].menu_item_id.toString()},
+                          );
                         },
                       ) : Container(),
                       IconButton(
