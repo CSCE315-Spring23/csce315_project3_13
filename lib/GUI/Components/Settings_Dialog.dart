@@ -1,3 +1,4 @@
+import 'package:csce315_project3_13/Colors/Color_Manager.dart';
 import 'package:flutter/material.dart';
 
 
@@ -12,37 +13,71 @@ class _Settings_DialogState extends State<Settings_Dialog> {
 
   String dropdownValue = 'English';
 
-  List<bool> _isSelected = [false, false, false];
+  List<bool> _isSelected = [true, false, false, false];
+
+
 
   @override
   Widget build(BuildContext context) {
+
+
+    final _color_manager = Color_Manager.of(context);
+
+    void change_color({required int color_choice_index}){
+      setState(() {
+        if(color_choice_index == 0){
+          _color_manager.reset_colors();
+        }else if(color_choice_index == 1){
+          _color_manager.option_protanopia();
+        }else if(color_choice_index == 2){
+          _color_manager.option_deuteranopia();
+        }else if(color_choice_index == 3){
+          _color_manager.option_tritanopia();
+        }
+      });
+
+      }
+
+
+
+
     return AlertDialog(
       title: Text('Settings'),
       content: Column(
         children: [
-          Column(
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
 
-            children: [
-              Text("Select Color option"),
+              children: [
+                Text("Select Color option"),
 
 
-              ToggleButtons(
-                direction: Axis.vertical,
-                isSelected: _isSelected,
-                onPressed: (int index) {
-                  setState(() {
-                    _isSelected[index] = !_isSelected[index];
-                  });
-                },
-                children: [
-                  Text("Standard"),
-                  Text("Protanopia"),
-                  Text("Deuteranopia"),
-                  Text("Tritanopia"),
-                ],
-              )
-            ],
+                ToggleButtons(
+                  direction: Axis.vertical,
+                  isSelected: _isSelected,
+                  onPressed: (int index) {
+                    setState(() {
+                      for(int i =0; i < _isSelected.length; i++){
+                        _isSelected[i] = false;
+                      }
 
+                      _isSelected[index] = true;
+                      change_color(
+                        color_choice_index: index,
+                      );
+                    });
+                  },
+                  children: [
+                    Text("Standard"),
+                    Text("Protanopia"),
+                    Text("Deuteranopia"),
+                    Text("Tritanopia"),
+                  ],
+                )
+              ],
+
+            ),
           ),
 
           Column(

@@ -82,9 +82,9 @@ class _MyAppState extends State<MyApp> {
   // color pallet for protanopia
   void option_protanopia(){
     setState(() {
-      primary_color = Colors.purple[500] as Color;
-      secondary_color = Colors.purple[400] as Color;
-      background_color = Colors.purple[200] as Color;
+      primary_color = Colors.blue[500] as Color;
+      secondary_color = Colors.blue[400] as Color;
+      background_color = Colors.blue[200] as Color;
       text_color = Colors.black;
       active_color = Colors.yellow[500] as Color;
       hover_color = Colors.yellow[100] as Color;
@@ -99,9 +99,9 @@ class _MyAppState extends State<MyApp> {
   // color pallet for tritanopia
   void option_tritanopia(){
     setState(() {
-      primary_color = Colors.purple[500] as Color;
-      secondary_color = Colors.purple[400] as Color;
-      background_color = Colors.purple[200] as Color;
+      primary_color = Colors.green[500] as Color;
+      secondary_color = Colors.green[400] as Color;
+      background_color = Colors.green[200] as Color;
       text_color = Colors.black;
       active_color = Colors.yellow[500] as Color;
       hover_color = Colors.yellow[100] as Color;
