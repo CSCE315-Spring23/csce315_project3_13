@@ -24,13 +24,9 @@ class _Contrast_ButtonState extends State<Contrast_Button> {
         }else{
           _color_manager.color_blind_option_1();
         }
-
-
       },
       buttonName: "High Contrast",
       fontSize: 15,
-      buttonColor: _color_manager.active_color,
-      textColor: _color_manager.text_color,
     );
   }
 }

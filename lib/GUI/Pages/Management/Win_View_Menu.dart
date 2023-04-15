@@ -1,12 +1,14 @@
 import 'package:csce315_project3_13/GUI/Components/Login_Button.dart';
 import 'package:csce315_project3_13/GUI/Pages/Management/Win_Add_Smoothie.dart';
+import 'package:csce315_project3_13/Manager_View/Win_Manager_View.dart';
 import 'package:csce315_project3_13/Services/general_helper.dart';
 import 'package:csce315_project3_13/Services/menu_item_helper.dart';
 import 'package:csce315_project3_13/Services/view_helper.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-
+import '../../../Colors/Color_Manager.dart';
 import '../../../Models/models_library.dart';
 import 'package:flutter/material.dart';
+import '../../Components/Page_Header.dart';
 
 class Win_View_Menu extends StatefulWidget {
   static const String route = '/view-menu-manager';
@@ -28,7 +30,9 @@ class _Win_View_Menu_State extends State<Win_View_Menu> {
   TextEditingController new_price = TextEditingController();
 
   void getData() async {
+    print('Building Page...');
     _smoothie_items = await item_helper.getAllSmoothiesInfo();
+    print('Obtained Smoothies...');
     _snack_items = await item_helper.getAllSnackInfo();
     _addon_items = await item_helper.getAllAddonInfo();
 
@@ -332,6 +336,25 @@ class _Win_View_Menu_State extends State<Win_View_Menu> {
     );
   }
 
+  Widget tab(Function tabChange, String tab_text, Color backgroundColor, Color headColor)
+  {
+    return TextButton(
+      style: ButtonStyle(
+        shape: MaterialStateProperty.all<OutlinedBorder>(
+          const RoundedRectangleBorder(
+            borderRadius: BorderRadius.zero,
+          ),
+        ),
+        minimumSize: MaterialStateProperty.all(Size(100, 65)),
+        backgroundColor: MaterialStateProperty.all<Color>(backgroundColor),
+        foregroundColor: MaterialStateProperty.all<Color>(Colors.white70),
+      ),
+      onPressed: (){
+
+      }, child: Text(tab_text),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -340,8 +363,24 @@ class _Win_View_Menu_State extends State<Win_View_Menu> {
 
   @override
   Widget build(BuildContext context){
+    final _color_manager = Color_Manager.of(context);
     return Scaffold(
-      appBar: AppBar(
+      appBar: Page_Header(
+        context: context,
+        pageName: "Manager View",
+        buttons: [
+          tab((){}, 'Manage Smoothies', _color_manager.background_color, _color_manager.primary_color),
+          tab((){}, 'Manage Snacks', _color_manager.primary_color, _color_manager.primary_color),
+          tab((){}, 'Manage Addons', _color_manager.primary_color, _color_manager.primary_color),
+    ],),
+
+      /*AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pushReplacementNamed(context,Win_Manager_View.route);
+          },
+        ),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -409,7 +448,7 @@ class _Win_View_Menu_State extends State<Win_View_Menu> {
         ),
         centerTitle: true,
         toolbarHeight: 100,
-      ),
+      ),*/
       body: _isLoading ? const Center(
         child: CircularProgressIndicator() ,
           ) : Padding(
@@ -432,6 +471,7 @@ class _Win_View_Menu_State extends State<Win_View_Menu> {
 
               ),
             ),
+      backgroundColor: _color_manager.background_color,
       bottomSheet: Container
       (
         height: 125,

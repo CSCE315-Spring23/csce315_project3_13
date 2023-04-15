@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:csce315_project3_13/Colors/Color_Manager.dart';
+import 'package:csce315_project3_13/GUI/Components/Page_Header.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -25,12 +27,14 @@ class _Win_Loading_PageState extends State<Win_Loading_Page> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Loading..."),
-      ),
+      appBar: Page_Header(
+          context: context,
+          pageName: "Loading...",
+          buttons: []),
+      backgroundColor: Color_Manager.of(context).background_color,
       body: Container(
         child: Center(
-          child: const SpinKitRing(color: Colors.red),
+          child: SpinKitRing(color: Color_Manager.of(context).active_color),
         ),
       ),
     );

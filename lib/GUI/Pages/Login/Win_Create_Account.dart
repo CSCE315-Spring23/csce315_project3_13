@@ -1,4 +1,8 @@
+import 'package:csce315_project3_13/Colors/Color_Manager.dart';
+import 'package:csce315_project3_13/GUI/Components/Contrast_Button.dart';
 import 'package:csce315_project3_13/GUI/Components/Login_Button.dart';
+import 'package:csce315_project3_13/GUI/Components/Login_TextField.dart';
+import 'package:csce315_project3_13/GUI/Components/Page_Header.dart';
 import 'package:csce315_project3_13/GUI/Pages/Login/Win_Login.dart';
 import 'package:csce315_project3_13/Services/login_helper.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +18,6 @@ class Win_Create_Account extends StatefulWidget {
 
 class _Win_Create_AccountState extends State<Win_Create_Account> {
 
-  String _page_name = "Create account";
   bool _show_password = false;
 
   late TextEditingController _username_controller;
@@ -30,15 +33,11 @@ class _Win_Create_AccountState extends State<Win_Create_Account> {
   }
 
   void _create_account({required BuildContext context}){
-
     if(_password_controller1.text == _password_controller2.text){
       //  If both passwords are the same calls the login helper function
-
       _login_helper_instance.create_account(context: context, user_email: _username_controller.text, user_password: _password_controller1.text);
-
     }else{
       //  If the passwords are different
-
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -83,87 +82,93 @@ class _Win_Create_AccountState extends State<Win_Create_Account> {
 
   @override
   Widget build(BuildContext context) {
+    final _color_manager = Color_Manager.of(context);
     return Scaffold(
-      appBar: AppBar(
-        title: Text(_page_name),
-        actions: [
-
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Login_Button(onTap: (){
+      appBar: Page_Header(
+          context: context,
+          pageName: "Create account",
+          buttons: [
+            const Contrast_Button(),
+            Login_Button(onTap: (){
               Navigator.pushReplacementNamed(context, Win_Login.route);
             }, buttonName: "Back",
-            fontSize: 15,
+              fontSize: 15,
             ),
-          ),
+          ]),
 
-        ],
-      ),
+      backgroundColor: _color_manager.background_color,
       body: Center(
         child: Container(
           width: MediaQuery.of(context).size.width/2,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-
-              const Padding(
-                padding: EdgeInsets.all(15.0),
+              Padding(
+                padding: const EdgeInsets.all(15.0),
                 child: Text(
                   'Enter your email and password:',
                   style: TextStyle(
                     fontSize: 30,
+                    color: _color_manager.text_color,
                   ),
                 ),
               ),
 
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextField(
-                  controller: _username_controller,
-                  obscureText: false,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Email',
-                  ),),
+              Login_TextField(
+                context: context,
+                textController: _username_controller,
+                onSubmitted: (){
+                  _create_account(context: context);
+                },
+                labelText: "Email",
               ),
 
 
-
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextField(
-                  controller: _password_controller1,
-                  obscureText: !_show_password,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Password',
-                  ),),
+              Login_TextField(
+                context: context,
+                textController: _password_controller1,
+                onSubmitted: (){
+                  _create_account(context: context);
+                },
+                obscureText: !_show_password,
+                labelText: "Password",
               ),
 
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextField(
-                  controller: _password_controller2,
-                  onSubmitted: (String pass_string){
+              Login_TextField(
+                  context: context,
+                  textController: _password_controller2,
+                  onSubmitted: (){
                     _create_account(context: context);
                   },
                   obscureText: !_show_password,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Re-enter Password',
-                  ),),
+                  labelText: "Re-enter Password",
               ),
 
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Checkbox(
+                      fillColor: MaterialStateProperty.resolveWith((Set<MaterialState> states) {
+                        Set<MaterialState> interactiveStates = <MaterialState>{
+                          MaterialState.pressed,
+                          MaterialState.hovered,
+                          MaterialState.focused,
+                        };
+                        return _color_manager.active_color;
+                      }),
+                      hoverColor: _color_manager.hover_color,
+                      activeColor: _color_manager.active_color,
+                      checkColor: _color_manager.text_color,
                       value: _show_password,
                       onChanged: (changed_value){
                         _switch_show_password();
                       }),
 
-                  Text("Show password"),
+                  Text("Show password",
+                  style: TextStyle(
+                    color: _color_manager.text_color,
+                  ),
+                  ),
                 ],
               ),
 
@@ -174,8 +179,6 @@ class _Win_Create_AccountState extends State<Win_Create_Account> {
                 }, buttonName: "Create",
                 ),
               ),
-
-
             ],
           ),
         ),

@@ -23,6 +23,9 @@ class weather_API
   {
     Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
     http.Response response = await http.get(Uri.parse("https://api.openweathermap.org/data/2.5/weather?lat=${position.latitude}&lon=${position.longitude}&appid=${access_key}&units=imperial"));
+    // http.Response response = await http.get(Uri.parse("https://api.openweathermap.org/data/2.5/weather?lat=-43.13&lon=50.13&appid=${access_key}&units=imperial"));
+
+
     Map<String, dynamic> json = jsonDecode(response.body);
     String condition = json['weather'][0]['main'];
     return condition;

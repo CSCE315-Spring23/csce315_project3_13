@@ -525,7 +525,7 @@ exports.getAllSmoothieInfo = functions.https.onCall(async (data, context) => {
 
     await client.connect()
 
-    const res = await client.query("SELECT menu_item_id, menu_item, item_price FROM menu_items WHERE type='smoothie' ORDER BY menu_item_id");
+    const res = await client.query("SELECT menu_item_id, menu_item, item_price FROM menu_items WHERE (type='smoothie' AND status= 'available') ORDER BY menu_item_id");
 
     client.end()
 
@@ -544,7 +544,7 @@ exports.getAllSnacksInfo = functions.https.onCall(async (data, context) => {
 
     await client.connect()
 
-    const res = await client.query("SELECT menu_item_id, menu_item, item_price FROM menu_items WHERE type='snack' ORDER BY menu_item_id");
+    const res = await client.query("SELECT menu_item_id, menu_item, item_price FROM menu_items WHERE (type='snack' AND status= 'available') ORDER BY menu_item_id");
 
     client.end()
 
@@ -562,7 +562,7 @@ exports.getAllAddonInfo = functions.https.onCall(async (data, context) => {
 
     await client.connect()
 
-    const res = await client.query("SELECT menu_item_id, menu_item, item_price FROM menu_items WHERE type='addon' ORDER BY menu_item_id");
+    const res = await client.query("SELECT menu_item_id, menu_item, item_price FROM menu_items WHERE (type='addon' AND status= 'available') ORDER BY menu_item_id");
 
     client.end()
 

@@ -1,7 +1,10 @@
+import 'package:csce315_project3_13/Colors/Color_Manager.dart';
 import 'package:csce315_project3_13/GUI/Components/ExampleButton.dart';
 import 'package:csce315_project3_13/GUI/Components/Login_Button.dart';
+import 'package:csce315_project3_13/GUI/Components/Page_Header.dart';
 import 'package:csce315_project3_13/GUI/Pages/Login/Win_Login.dart';
 import 'package:csce315_project3_13/GUI/Pages/Loading/Loading_Order_Win.dart';
+import 'package:csce315_project3_13/GUI/Pages/Management/Win_View_Menu.dart';
 import 'package:csce315_project3_13/Services/login_helper.dart';
 import 'package:flutter/material.dart';
 
@@ -19,31 +22,32 @@ class _Win_Manager_ViewState extends State<Win_Manager_View> {
 
   @override
   Widget build(BuildContext context) {
+    final _color_manager = Color_Manager.of(context);
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Manager View"),
-      ),
-      body: Center(
-
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-
-            const Text(
-              'Logged in',
-            ),
-
-
-
-            Login_Button(onTap: (){
-              Navigator.pushReplacementNamed(context,Loading_Order_Win.route);
-            }, buttonName: "Order"),
-
-
+      appBar: Page_Header(
+          context: context,
+          pageName: "Manager View",
+          buttons: [
             Login_Button(onTap: (){
               login_helper_instance.sign_out();
               Navigator.pushReplacementNamed(context, Win_Login.route);
-            }, buttonName: "Log out"),
+            }, buttonName: "Log out",
+            fontSize: 15,
+            ),
+          ],
+
+      ),
+      backgroundColor: _color_manager.background_color,
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+            Login_Button(onTap: (){
+              Navigator.pushReplacementNamed(context,Loading_Order_Win.route);
+            }, buttonName: "Order"),
+            Login_Button(onTap: (){
+              Navigator.pushReplacementNamed(context,Win_View_Menu.route);
+            }, buttonName: "Manage Menu Items", fontSize: 18, buttonWidth: 180,),
 
           ],
         ),
