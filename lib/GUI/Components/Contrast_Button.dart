@@ -12,6 +12,7 @@ class Contrast_Button extends StatefulWidget {
 
 class _Contrast_ButtonState extends State<Contrast_Button> {
 
+  bool is_standard = true;
 
   @override
   Widget build(BuildContext context) {
@@ -19,11 +20,8 @@ class _Contrast_ButtonState extends State<Contrast_Button> {
 
     return Login_Button(
       onTap: (){
-        if(_color_manager.is_high_contrast){
-          _color_manager.reset_colors();
-        }else{
-          _color_manager.color_blind_option_1();
-        }
+          _color_manager.option_deuteranopia();
+
       },
       buttonName: "High Contrast",
       fontSize: 15,

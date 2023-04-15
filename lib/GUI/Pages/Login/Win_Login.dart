@@ -145,15 +145,6 @@ class _Win_LoginState extends State<Win_Login> {
                 ),
               ),
 
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Login_Button(onTap: (){
-                 Navigator.pushReplacementNamed(context, Win_Manager_View.route);
-                }, buttonName: "Login as guest",
-                  fontSize: 14,
-                ),
-              ),
-
 
 
             ],

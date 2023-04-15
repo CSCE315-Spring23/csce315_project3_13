@@ -18,7 +18,7 @@ class _Settings_DialogState extends State<Settings_Dialog> {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text('Settings'),
-      content: ListView(
+      content: Column(
         children: [
           Column(
 
@@ -26,19 +26,21 @@ class _Settings_DialogState extends State<Settings_Dialog> {
               Text("Select Color option"),
 
 
-              // ToggleButtons(
-              //   isSelected: _isSelected,
-              //   onPressed: (int index) {
-              //     setState(() {
-              //       _isSelected[index] = !_isSelected[index];
-              //     });
-              //   },
-              //   children: [
-              //     Icon(Icons.ac_unit),
-              //     Icon(Icons.call),
-              //     Icon(Icons.cake),
-              //   ],
-              // )
+              ToggleButtons(
+                direction: Axis.vertical,
+                isSelected: _isSelected,
+                onPressed: (int index) {
+                  setState(() {
+                    _isSelected[index] = !_isSelected[index];
+                  });
+                },
+                children: [
+                  Text("Standard"),
+                  Text("Protanopia"),
+                  Text("Deuteranopia"),
+                  Text("Tritanopia"),
+                ],
+              )
             ],
 
           ),
@@ -47,21 +49,21 @@ class _Settings_DialogState extends State<Settings_Dialog> {
             children: [
               Text("Select language"),
 
-              // DropdownButton<String>(
-              //   value: dropdownValue,
-              //   onChanged: (newValue) {
-              //     setState(() {
-              //       dropdownValue = newValue as String;
-              //     });
-              //   },
-              //   items: <String>['English', 'Spanish']
-              //       .map<DropdownMenuItem<String>>((String value) {
-              //     return DropdownMenuItem<String>(
-              //       value: value,
-              //       child: Text(value),
-              //     );
-              //   }).toList(),
-              // )
+              DropdownButton<String>(
+                value: dropdownValue,
+                onChanged: (newValue) {
+                  setState(() {
+                    dropdownValue = newValue as String;
+                  });
+                },
+                items: <String>['English', 'Spanish']
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+              )
 
 
             ],

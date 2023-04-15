@@ -41,13 +41,10 @@ class _MyAppState extends State<MyApp> {
   Color active_confirm_color = Color(0xFF6BCF54);
   Color active_deny_color = Color(0xFFC30F0E);
 
-  // keeps track of if it's high contrast or not
-  bool is_high_contrast = false;
 
   // changes back to original colors
   void reset_colors(){
     setState(() {
-      is_high_contrast = false;
       primary_color = Color(0xFF932126);
       secondary_color = Color(0xFF932126);
       background_color = Color(0xFFE38286);
@@ -59,13 +56,15 @@ class _MyAppState extends State<MyApp> {
       active_confirm_color = Color(0xFF6BCF54);
       active_deny_color = Color(0xFFC30F0E);
     });
-    set_high_contrast(false);
+    set_color_option_pref('standard');
   }
 
-  // changes to high contrast colors
-  void color_blind_option_1(){
+
+
+  // option for deuteranopia
+  void option_deuteranopia(){
+    print("deuteranopia selected");
     setState(() {
-      is_high_contrast = true;
       primary_color = Colors.purple[500] as Color;
       secondary_color = Colors.purple[400] as Color;
       background_color = Colors.purple[200] as Color;
@@ -77,31 +76,73 @@ class _MyAppState extends State<MyApp> {
       active_confirm_color = Color(0xFF6BCF54);
       active_deny_color = Color(0xFFC30F0E);
     });
-    set_high_contrast(true);
+    set_color_option_pref('deuteranopia');
   }
+
+  // color pallet for protanopia
+  void option_protanopia(){
+    setState(() {
+      primary_color = Colors.purple[500] as Color;
+      secondary_color = Colors.purple[400] as Color;
+      background_color = Colors.purple[200] as Color;
+      text_color = Colors.black;
+      active_color = Colors.yellow[500] as Color;
+      hover_color = Colors.yellow[100] as Color;
+      inactive_color = Color(0xFF00716C);
+      active_size_color = Color(0xFF3088D1);
+      active_confirm_color = Color(0xFF6BCF54);
+      active_deny_color = Color(0xFFC30F0E);
+    });
+    set_color_option_pref('protanopia');
+  }
+
+  // color pallet for tritanopia
+  void option_tritanopia(){
+    setState(() {
+      primary_color = Colors.purple[500] as Color;
+      secondary_color = Colors.purple[400] as Color;
+      background_color = Colors.purple[200] as Color;
+      text_color = Colors.black;
+      active_color = Colors.yellow[500] as Color;
+      hover_color = Colors.yellow[100] as Color;
+      inactive_color = Color(0xFF00716C);
+      active_size_color = Color(0xFF3088D1);
+      active_confirm_color = Color(0xFF6BCF54);
+      active_deny_color = Color(0xFFC30F0E);
+    });
+    set_color_option_pref('tritanopia');
+  }
+
+
 
   // finds what the value for high_contrast is
   void get_preferences() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool? got_high_contrast = prefs.getBool('high_contrast');
-    if(got_high_contrast == null){
-      await prefs.setBool('high_contrast', false);
-      got_high_contrast = false;
+    String? got_color_choice = prefs.getString('color_option');
+    if(got_color_choice == null){
+      await prefs.setString('color_option', 'standard');
+      got_color_choice = 'standard';
     }
-    set_color_scheme(got_high_contrast);
+    set_color_scheme(got_color_choice);
   }
 
   // changes the color depending on the preferences
-  void set_color_scheme(bool pref_high_contrast){
-    if(pref_high_contrast){
-      color_blind_option_1();
+  void set_color_scheme(String pref_color_choice){
+    if(pref_color_choice == 'standard'){
+
+    }else if(pref_color_choice == 'deuteranopia'){
+      option_deuteranopia();
+    }else if(pref_color_choice == 'protanopia'){
+      option_protanopia();
+    }else if(pref_color_choice == 'tritanopia'){
+      option_tritanopia();
     }
   }
 
   // stores the value of high_contrast as a preference
-  void set_high_contrast(bool high_contrast) async {
+  void set_color_option_pref(String color_pref_choice) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('high_contrast', high_contrast);
+    await prefs.setString('color_option', color_pref_choice);
   }
 
 
@@ -183,9 +224,10 @@ class _MyAppState extends State<MyApp> {
       current_condition: current_condition,
       child: Color_Manager(
         // This class stores the color values for the web app
-        is_high_contrast: is_high_contrast,
         reset_colors: reset_colors,
-        color_blind_option_1: color_blind_option_1,
+        option_deuteranopia: option_deuteranopia,
+        option_protanopia: option_protanopia,
+        option_tritanopia: option_tritanopia,
         primary_color: primary_color,
         secondary_color: secondary_color,
         background_color: background_color,
