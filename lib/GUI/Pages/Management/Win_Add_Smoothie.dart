@@ -40,7 +40,7 @@ class _Win_Add_Smoothie_State extends State<Win_Add_Smoothie> {
     });
   }
 
-  Widget buttonGrid(BuildContext context)
+  Widget buttonGrid(BuildContext context, Color _button_color)
   {
     return GridView.count(
       shrinkWrap: true,
@@ -49,6 +49,10 @@ class _Win_Add_Smoothie_State extends State<Win_Add_Smoothie> {
       mainAxisSpacing: 20,
       crossAxisSpacing: 20,
       children: _ing_names.map((name) => ElevatedButton(
+        style: ButtonStyle(
+          backgroundColor: MaterialStatePropertyAll(_button_color),
+          minimumSize: MaterialStateProperty.all(const Size(125, 50)),
+        ),
         onPressed: () {
           setState(() {
             _ing_table.add({'index': (_ing_table.length + 1).toString(), 'name': name});
@@ -60,8 +64,10 @@ class _Win_Add_Smoothie_State extends State<Win_Add_Smoothie> {
           children: [
             Text(
               name,
-              style: const TextStyle(fontSize: 12,),
+              style: const TextStyle(fontSize: 20,),
               textAlign: TextAlign.center,
+              maxLines: 2, // Limits the number of lines to 2
+              overflow: TextOverflow.ellipsis, // Truncates the text with "..." if it overflows
             ),
           ],
         ),
@@ -122,7 +128,12 @@ class _Win_Add_Smoothie_State extends State<Win_Add_Smoothie> {
             child: TextField(
               controller: ctrl,
               decoration: InputDecoration(
-                  hintText: text_deco,
+                hintText: text_deco,
+                filled: true,
+                fillColor: Colors.white,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
               ),
               onChanged: (text) {
                 setState(() {
@@ -148,18 +159,6 @@ class _Win_Add_Smoothie_State extends State<Win_Add_Smoothie> {
             ),
           ),
           const SizedBox(width: 10,),
-          (text_deco == 'Add New Ingredient...') ?
-          ElevatedButton(
-            child: Text(
-              buttonText,
-            ),
-            onPressed: () {
-              if (text_deco == 'Add New Ingredient...')
-                {
-                  _ing_table.add({'index': (_ing_table.length + 1).toString(), 'name': _new_ingredient_name});
-                }
-            },
-          ) : Container(),
         ],
       );
   }
@@ -187,6 +186,7 @@ class _Win_Add_Smoothie_State extends State<Win_Add_Smoothie> {
           ),
         ],
       ),
+   backgroundColor: Colors.white,
    body: _isLoading
           ? Center(
           child: SpinKitRing(color: _color_manager.primary_color),
@@ -197,6 +197,7 @@ class _Win_Add_Smoothie_State extends State<Win_Add_Smoothie> {
               child: Row(
               children: <Widget>[
                 Container(
+                  color: _color_manager.background_color.withOpacity(0.5),
                   width: screenWidth / 2,
                   child: Column(
                     children: [
@@ -209,7 +210,7 @@ class _Win_Add_Smoothie_State extends State<Win_Add_Smoothie> {
                               color: Colors.black,
                               width: 0.5,
                             ),
-                            color: Colors.white38,
+                            color: _color_manager.background_color.withAlpha(120),
                           ),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -227,57 +228,63 @@ class _Win_Add_Smoothie_State extends State<Win_Add_Smoothie> {
                                 ],
                               ),
                               const SizedBox(height: 20,),
-                              ElevatedButton(
-                                  onPressed: () async{
-                                    Icon message_icon = const Icon(Icons.check);
-                                    String message_text = 'Successfully Added Item';
-                                    List<String> new_item_ings = [];
-                                    for (int i = 0; i < _ing_table.length; ++i)
-                                      {
-                                        new_item_ings.add(_ing_table[i]['name']!);
-                                      }
-                                    if (_new_item_name != '' && new_item_ings.length != 0 && _new_item_price != 0){
-                                      try {
-                                        print(_new_item_price.toStringAsFixed(2));
-                                        menu_item_obj new_item = menu_item_obj(
-                                            0,
-                                            _new_item_name,
-                                            double.parse(_new_item_price.toStringAsFixed(2)),
-                                            _new_item_amount,
-                                            'smoothie',
-                                            'available',
-                                            new_item_ings);
-                                        await menu_item_helper().add_menu_item(
-                                            new_item);
-                                      }
+                              SizedBox(
+                                width: (screenWidth / 2) - (screenWidth / 10),
+                                height: 50,
+                                child: ElevatedButton(
+                                    onPressed: () async{
+                                      Icon message_icon = const Icon(Icons.check);
+                                      String message_text = 'Successfully Added Item';
+                                      List<String> new_item_ings = [];
+                                      for (int i = 0; i < _ing_table.length; ++i)
+                                        {
+                                          new_item_ings.add(_ing_table[i]['name']!);
+                                        }
+                                      if (_new_item_name != '' && new_item_ings.length != 0 && _new_item_price != 0){
+                                        try {
+                                          menu_item_obj new_item = menu_item_obj(
+                                              0,
+                                              _new_item_name,
+                                              double.parse(_new_item_price.toStringAsFixed(2)),
+                                              _new_item_amount,
+                                              'smoothie',
+                                              'available',
+                                              new_item_ings);
+                                          await menu_item_helper().add_menu_item(
+                                              new_item);
+                                        }
 
-                                      catch(exception)
-                                    {
-                                      print(exception);
-                                      message_icon = const Icon(Icons.error_outline_outlined);
-                                      message_text = 'Unable to add item';
-                                    }
-                                    finally{
-                                      showDialog(
-                                          barrierDismissible: false,
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return AlertDialog(
-                                              title: message_icon,
-                                              content: Text(message_text),
-                                              actions: [
-                                                TextButton(
-                                                    onPressed: (){
-                                                      Navigator.of(context).pop();
-                                                    },
-                                                    child: const Text('OK'))
-                                              ],
-                                            );
-                                          });
-                                    }
-                                    }
-                              },
-                                  child: const Text('Add New Item')),
+                                        catch(exception)
+                                      {
+                                        print(exception);
+                                        message_icon = const Icon(Icons.error_outline_outlined);
+                                        message_text = 'Unable to add item';
+                                      }
+                                      finally{
+                                        showDialog(
+                                            barrierDismissible: false,
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                title: message_icon,
+                                                content: Text(message_text),
+                                                actions: [
+                                                  TextButton(
+                                                      onPressed: (){
+                                                        Navigator.of(context).pop();
+                                                      },
+                                                      child: const Text('OK'))
+                                                ],
+                                              );
+                                            });
+                                      }
+                                      }
+                                },
+                                    child: const Text(
+                                      'Add New Item',
+                                    )
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -292,27 +299,58 @@ class _Win_Add_Smoothie_State extends State<Win_Add_Smoothie> {
                     children: [
                       Container(
                         height: 75,
-                        color: Colors.white,
+                        color: _color_manager.secondary_color.withOpacity(0.25),
                         child: Center(
-                  //        child: custTextfield(context, _new_ingredient , 'Add New Ingredient...', 'Add Ingredient'),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              const Text(
+                              Text(
                                 "Ingredients",
                                 style: TextStyle(
                                   fontSize: 40,
                                   fontWeight: FontWeight.bold,
+                                  color: _color_manager.text_color.withOpacity(0.75)
                                 ),
                               ),
                               IconButton(
                                   tooltip: "Add new ingredient",
-                                  padding: const EdgeInsets.only(left: 30),
+                                  padding: const EdgeInsets.symmetric(horizontal: 30),
                                   onPressed: (){
-
+                                    TextEditingController _new_ingredient = TextEditingController();
+                                    showDialog(
+                                      barrierDismissible: false,
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: const Text('New Ingredient'),
+                                          content: SizedBox(
+                                            width: (screenWidth / 5) + 10,
+                                            height: 45,
+                                            child: custTextfield(context, _new_ingredient , 'Add New Ingredient...', 'Add Ingredient'),
+                                          ),
+                                          actions: <Widget>[
+                                            TextButton(
+                                              child: const Text('CANCEL'),
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                            ),
+                                            TextButton(
+                                                onPressed: () {
+                                                  _ing_table.add({'index': (_ing_table.length + 1).toString(), 'name': _new_ingredient_name});
+                                                  Navigator.of(context).pop();
+                                                },
+                                                child: Text("ADD"))
+                                          ],
+                                        );
+                                      },
+                                    );
                                   },
-                                  icon: const Icon(Icons.add_circle)
+                                  icon:  Icon(
+                                      Icons.add_circle,
+                                      color: _color_manager.text_color.withOpacity(0.75),
+                                  )
                               )
                             ],
                           ),
@@ -321,7 +359,7 @@ class _Win_Add_Smoothie_State extends State<Win_Add_Smoothie> {
                       ),
                       Expanded(
                           flex: 1,
-                          child: buttonGrid(context)),
+                          child: buttonGrid(context, _color_manager.active_color)),
                     ],
                   ),
                 )

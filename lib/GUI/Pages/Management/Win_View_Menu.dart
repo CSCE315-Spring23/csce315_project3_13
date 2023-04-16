@@ -291,7 +291,14 @@ class _Win_View_Menu_State extends State<Win_View_Menu>
               children: <Widget>[
                 TextFormField(
                   controller: _new_item_name,
-                  decoration: const InputDecoration(hintText: 'Name...'),
+                  decoration:  InputDecoration(
+                    hintText: 'Name...',
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                  ),
                 ),
                 TextFormField(
                   controller: _new_item_price,

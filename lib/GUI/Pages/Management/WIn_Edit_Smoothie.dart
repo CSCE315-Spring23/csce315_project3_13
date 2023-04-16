@@ -1,11 +1,14 @@
 import 'package:csce315_project3_13/GUI/Pages/Management/Win_View_Menu.dart';
 import 'package:csce315_project3_13/Services/ingredients_table_helper.dart';
 import 'package:csce315_project3_13/Services/menu_item_helper.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
+import '../../../Colors/Color_Manager.dart';
 import '../../../Models/models_library.dart';
 import 'package:flutter/material.dart';
 
 import '../../../Services/general_helper.dart';
+import '../../Components/Page_Header.dart';
 
 class Win_Edit_Smoothie extends StatefulWidget {
   static const String route = '/edit-smoothie-manager';
@@ -54,7 +57,7 @@ class _Win_Edit_Smoothie_State extends State<Win_Edit_Smoothie> with AutomaticKe
     });
   }
 
-  Widget buttonGrid(BuildContext context)
+  Widget buttonGrid(BuildContext context,Color _button_color)
   {
     return GridView.count(
       shrinkWrap: true,
@@ -63,6 +66,10 @@ class _Win_Edit_Smoothie_State extends State<Win_Edit_Smoothie> with AutomaticKe
       mainAxisSpacing: 20,
       crossAxisSpacing: 20,
       children: _ing_names.map((name) => ElevatedButton(
+        style: ButtonStyle(
+          backgroundColor: MaterialStatePropertyAll(_button_color),
+          minimumSize: MaterialStateProperty.all(const Size(125, 50)),
+        ),
         onPressed: () {
           bool is_in_table = false;
           for (Map<String, String> item in _ing_table)
@@ -88,8 +95,10 @@ class _Win_Edit_Smoothie_State extends State<Win_Edit_Smoothie> with AutomaticKe
           children: [
             Text(
               name,
-              style: const TextStyle(fontSize: 12,),
+              style: const TextStyle(fontSize: 20,),
               textAlign: TextAlign.center,
+              maxLines: 2, // Limits the number of lines to 2
+              overflow: TextOverflow.ellipsis, // Truncates the text with "..." if it overflows
             ),
           ],
         ),
@@ -145,6 +154,7 @@ class _Win_Edit_Smoothie_State extends State<Win_Edit_Smoothie> with AutomaticKe
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final args = ModalRoute.of(context)!.settings.arguments;
     // check if argument are null, in the case of a reload
     if (args != null)
@@ -156,86 +166,101 @@ class _Win_Edit_Smoothie_State extends State<Win_Edit_Smoothie> with AutomaticKe
     else{_add_curr_ings = true;}
     getData();
     screenWidth = MediaQuery.of(context).size.width;
+    final _color_manager = Color_Manager.of(context);
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pushReplacementNamed(context,Win_View_Menu.route);
-          },
-        ),
-        title: Text("Currently Editing: $_curr_item_name"),
-        centerTitle: true,
+      appBar: Page_Header(
+        context: context,
+        pageName: "Currently Editing: $_curr_item_name",
+        buttons: [
+          IconButton(
+            tooltip: "Return to Menu Management",
+            padding: const EdgeInsets.only(left: 25, right: 10),
+            onPressed: ()
+            {
+              Navigator.pushReplacementNamed(context,Win_View_Menu.route);
+            },
+            icon: const Icon(Icons.close_rounded),
+            iconSize: 40,
+          ),
+        ],
       ),
       body: _isLoading
           ? Center(
-        child: CircularProgressIndicator(),
+        child: SpinKitRing(color: _color_manager.primary_color),
       )
           : Row(
         children: <Widget>[
           Container(
+            color: _color_manager.background_color.withOpacity(0.5),
             width: screenWidth / 2,
             child: Column(
               children: [
                 Expanded(flex: 1, child: ingTable(context)),
-                SizedBox(
+                Container(
                   height: 125,
                   width: screenWidth / 2,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Colors.black,
-                        width: 0.25,
-                      ),
-                      color: Colors.white38,
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Colors.black,
+                      width: 0.25,
                     ),
-                    child: ElevatedButton(
-                        onPressed: args != null && !_adding_item ? () async{
-                          Icon message_icon = const Icon(Icons.check);
-                          String message_text = 'Successfully Edited Item';
-                          Map<String, int> new_item_ings = {};
-                          for (int i = 0; i < _ing_table.length; ++i)
+                    color: Colors.white38,
+                  ),
+                  child: ElevatedButton(
+                      onPressed: args != null && !_adding_item ? () async{
+                        Icon message_icon = const Icon(Icons.check);
+                        String message_text = 'Successfully Edited Item';
+                        Map<String, int> new_item_ings = {};
+                        for (int i = 0; i < _ing_table.length; ++i)
+                        {
+                          new_item_ings[_ing_table[i]['name']!] = int.parse(_ing_table[i]['amount']!);
+                        }
+                        if (new_item_ings.length != 0){
+                          try {
+                            setState(() {
+                              _adding_item = true;
+                            });
+                            await menu_item_helper().edit_smoothie_ingredients(_curr_item_id, new_item_ings);
+                            setState(() {
+                              _adding_item = false;
+                            });
+                          }
+                          catch(exception)
                           {
-                            new_item_ings[_ing_table[i]['name']!] = int.parse(_ing_table[i]['amount']!);
+                            print(exception);
+                            message_icon = const Icon(Icons.error_outline_outlined);
+                            message_text = 'Unable to edit item';
                           }
-                          if (new_item_ings.length != 0){
-                            try {
-                              setState(() {
-                                _adding_item = true;
-                              });
-                              await menu_item_helper().edit_smoothie_ingredients(_curr_item_id, new_item_ings);
-                              setState(() {
-                                _adding_item = false;
-                              });
-                            }
-                            catch(exception)
-                            {
-                              print(exception);
-                              message_icon = const Icon(Icons.error_outline_outlined);
-                              message_text = 'Unable to edit item';
-                            }
-                            finally{
-                              showDialog(
-                                  barrierDismissible: false,
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: message_icon,
-                                      content: Text(message_text),
-                                      actions: [
-                                        TextButton(
-                                            onPressed: (){
-                                              Navigator.of(context).pop();
-                                            },
-                                            child: const Text('OK'))
-                                      ],
-                                    );
-                                  });
-                            }
+                          finally{
+                            showDialog(
+                                barrierDismissible: false,
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: message_icon,
+                                    content: Text(message_text),
+                                    actions: [
+                                      TextButton(
+                                          onPressed: (){
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: const Text('OK'))
+                                    ],
+                                  );
+                                });
                           }
-                        } : null,
-                        child: const Text('Confirm Edits'),
-                    ),
+                        }
+                      } : null,
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStatePropertyAll(_color_manager.active_color.withAlpha(100)),
+                      ),
+                      child: const Text(
+                        'Confirm Edits',
+                        style: TextStyle(
+                          fontSize: 25,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                   ),
                 ),
               ],
@@ -243,20 +268,20 @@ class _Win_Edit_Smoothie_State extends State<Win_Edit_Smoothie> with AutomaticKe
           ),
           Container(
             width: screenWidth / 2,
-            color: const Color.fromRGBO(255, 204, 204, 1),
+            color: _color_manager.background_color.withOpacity(0.9),
             child: Column(
               children: [
                 Container(
-                  height: 50,
-                  color: Colors.pink,
-                  child: Center(
+                  height: 75,
+                  color: _color_manager.secondary_color.withOpacity(0.25),
+                  child: const Center(
                     child: Text(
                       'Available Ingredients',
                       style: TextStyle(color: Colors.white, fontSize: 30),),),
                 ),
                 Expanded(
                     flex: 1,
-                    child: buttonGrid(context)),
+                    child: buttonGrid(context, _color_manager.active_color)),
               ],
             ),
           )
