@@ -5,7 +5,9 @@ import 'package:csce315_project3_13/Models/Order%20Models/smoothie_order.dart';
 import 'package:csce315_project3_13/Models/Order%20Models/snack_order.dart';
 import 'package:csce315_project3_13/Services/order_processing_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
+import '../../../Services/menu_item_helper.dart';
 import '../../../Services/view_helper.dart';
 import '../Login/Win_Login.dart';
 import '../Loading/Loading_Order_Win.dart';
@@ -21,11 +23,15 @@ class Win_Order extends StatefulWidget {
 class Win_Order_State extends State<Win_Order>{
 
   // Todo: get smoothie names from database
-  List<String> Smoothie_names = [];
+  List<String> _smoothie_names = [];
   // Todo: get snack names from database
-  List<String> Snack_names = [];
+  List<String> _snack_names = [];
   // Todo" get addon names from database
-  List<String> Addon_names = [];
+  List<String> _addon_names = [];
+
+  List<menu_item_obj> _smoothie_items = [];
+  List<menu_item_obj> _snack_items = [];
+  List<menu_item_obj> _addon_items = [];
 
   // controls visibility between smoothies and snacks menu
   int _activeMenu = 0;
@@ -36,6 +42,7 @@ class Win_Order_State extends State<Win_Order>{
   // controls visibility of table (order or addon)
   int _active_table = 0;
 
+  menu_item_helper item_helper = menu_item_helper();
 
   TextEditingController customer = TextEditingController();
   String _curr_customer = 'None';
@@ -46,6 +53,22 @@ class Win_Order_State extends State<Win_Order>{
   // data displayed on tables
   final List<Map<String, String>> _orderTable = [];
   final List<Map<String, String>> _addonTable = [];
+
+  bool _isLoading = true;
+
+  Future<void> getData() async {
+    // Simulate fetching data from an API
+    view_helper name_helper = view_helper();
+    _smoothie_names = await name_helper.get_unique_smoothie_names();
+    _snack_names = await name_helper.get_snack_names();
+    _addon_names =  await name_helper.get_addon_names();
+  //  _smoothie_items = await item_helper.getAllSmoothiesInfo();
+  //  _snack_items = await item_helper.getAllSnackInfo();
+  //  _addon_items = await item_helper.getAllAddonInfo();
+    setState(() {
+      _isLoading = false;
+    });
+  }
 
   // adds row to order table
   Future<void> _addToOrder(String item, String size, String type) async {
@@ -226,11 +249,13 @@ class Win_Order_State extends State<Win_Order>{
   }
 
   @override
+  void initState() {
+    super.initState();
+    getData();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final args = ModalRoute.of(context)!.settings.arguments as NextScreenArguments;
-    Smoothie_names = args.smoothieNames;
-    Snack_names = args.snackNames;
-    Addon_names = args.addonNames;
 
     return Scaffold(
         appBar: AppBar(
@@ -246,7 +271,9 @@ class Win_Order_State extends State<Win_Order>{
           ),
           centerTitle: true,
         ),
-        body: Row(
+        body: _isLoading ? const Center(
+          child: SpinKitCircle(color: Colors.redAccent,),
+        ) : Row(
           children: <Widget>[
             Expanded(
               child:  Column(
@@ -512,7 +539,7 @@ class Win_Order_State extends State<Win_Order>{
                                     primary: true,
                                     child: Container(
                                       color: Colors.pink,
-                                      child: buttonGrid(context, Smoothie_names, "Smoothie"),
+                                      child: buttonGrid(context, _smoothie_names, "Smoothie"),
                                     ),
                                   ),
                                 ),
@@ -529,7 +556,7 @@ class Win_Order_State extends State<Win_Order>{
                                     primary: true,
                                     child: Container(
                                       color: Colors.pink,
-                                      child: buttonGrid(context, Snack_names, "Snack"),
+                                      child: buttonGrid(context, _snack_names, "Snack"),
                                     ),
                                   ),
                                 ),
@@ -657,7 +684,7 @@ class Win_Order_State extends State<Win_Order>{
                               primary: true,
                               child: Container(
                                   color: Colors.pink,
-                                  child: buttonGrid(context, Addon_names, 'Addon')
+                                  child: buttonGrid(context, _addon_names, 'Addon')
                               ),
                             ),
                           ),
