@@ -171,7 +171,7 @@ class _Win_View_Menu_State extends State<Win_View_Menu>
         itemBuilder: (context, index) {
           return Card(
               child:  ListTile(
-                tileColor: tile_color.withOpacity(0.75),
+                tileColor: tile_color.withAlpha(200),
                 minVerticalPadding: 5,
                 onTap: () {},
                 leading: SizedBox(
@@ -193,7 +193,7 @@ class _Win_View_Menu_State extends State<Win_View_Menu>
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
                         fontStyle: FontStyle.italic,
-                        color: _text_color.withOpacity(0.35),
+                        color: _text_color.withAlpha(75),
                         ),
                       ),
                     ]
@@ -204,7 +204,7 @@ class _Win_View_Menu_State extends State<Win_View_Menu>
                   child: Text(
                     items[index].menu_item,
                     style: TextStyle(
-                      color: _text_color.withOpacity(0.75),
+                      color: _text_color.withAlpha(200),
                       fontWeight: FontWeight.bold,
                       fontStyle: FontStyle.italic,
                       fontSize: 35,
@@ -216,7 +216,7 @@ class _Win_View_Menu_State extends State<Win_View_Menu>
                   '\$${items[index].item_price.toStringAsFixed(2)}',
                   style: TextStyle(
                     fontSize: 20,
-                    color: _text_color.withOpacity(0.50),
+                    color: _text_color.withAlpha(122),
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -228,7 +228,7 @@ class _Win_View_Menu_State extends State<Win_View_Menu>
                       IconButton(
                         tooltip: 'Edit Price',
                         icon: const Icon(Icons.attach_money),
-                        color: _text_color.withOpacity(0.50),
+                        color: _text_color.withAlpha(122),
                         onPressed: () {
                           //_menu_info.removeAt(index);
                           editPrice(items, items[index].menu_item_id, index);
@@ -238,7 +238,7 @@ class _Win_View_Menu_State extends State<Win_View_Menu>
                       type == 'smoothie' ? IconButton(
                         tooltip: 'Edit Ingredients',
                         icon: const Icon(Icons.edit),
-                        color: _text_color.withOpacity(0.50),
+                        color: _text_color.withAlpha(122),
                         onPressed: () {
                           Navigator.pushReplacementNamed(
                             context,
@@ -252,7 +252,7 @@ class _Win_View_Menu_State extends State<Win_View_Menu>
                       IconButton(
                         tooltip: 'Remove from Menu',
                         icon: const Icon(Icons.delete),
-                        color: _text_color.withOpacity(0.50),
+                        color: _text_color.withAlpha(122),
                         iconSize: 35,
                         onPressed: () {
                           confirmRemoval(items, items[index].menu_item,

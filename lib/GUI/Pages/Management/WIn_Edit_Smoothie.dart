@@ -107,7 +107,7 @@ class _Win_Edit_Smoothie_State extends State<Win_Edit_Smoothie> with AutomaticKe
 
   }
 
-  Widget ingTable(BuildContext context)
+  Widget ingTable(BuildContext context, Color text_color)
   {
     return Container(
       alignment: Alignment.topCenter,
@@ -115,6 +115,13 @@ class _Win_Edit_Smoothie_State extends State<Win_Edit_Smoothie> with AutomaticKe
         shrinkWrap: true,
         children: [
           DataTable(
+            headingTextStyle: TextStyle(
+              color: text_color.withAlpha(220),
+              fontWeight: FontWeight.bold,
+            ),
+            dataTextStyle: TextStyle(
+              color: text_color.withAlpha(200),
+            ),
             columnSpacing: 10,
             columns: const [
               DataColumn(label: Text('Index'),),
@@ -130,7 +137,7 @@ class _Win_Edit_Smoothie_State extends State<Win_Edit_Smoothie> with AutomaticKe
                 DataCell(Text('${rowData['amount']}')),
                 DataCell(
                   IconButton(
-                    icon: const Icon(Icons.delete),
+                    icon: Icon(Icons.delete, color: text_color.withAlpha(150),),
                     onPressed: () {
                       setState(() {
                         _ing_table.removeAt(rowIndex);
@@ -191,11 +198,11 @@ class _Win_Edit_Smoothie_State extends State<Win_Edit_Smoothie> with AutomaticKe
           : Row(
         children: <Widget>[
           Container(
-            color: _color_manager.background_color.withOpacity(0.5),
+            color: _color_manager.secondary_color.withAlpha(100),
             width: screenWidth / 2,
             child: Column(
               children: [
-                Expanded(flex: 1, child: ingTable(context)),
+                Expanded(flex: 1, child: ingTable(context, _color_manager.text_color)),
                 Container(
                   height: 125,
                   width: screenWidth / 2,
@@ -252,7 +259,7 @@ class _Win_Edit_Smoothie_State extends State<Win_Edit_Smoothie> with AutomaticKe
                         }
                       } : null,
                       style: ButtonStyle(
-                        backgroundColor: MaterialStatePropertyAll(_color_manager.active_color.withAlpha(100)),
+                        backgroundColor: MaterialStatePropertyAll(_color_manager.active_confirm_color.withAlpha(200)),
                       ),
                       child: const Text(
                         'Confirm Edits',
@@ -268,12 +275,12 @@ class _Win_Edit_Smoothie_State extends State<Win_Edit_Smoothie> with AutomaticKe
           ),
           Container(
             width: screenWidth / 2,
-            color: _color_manager.background_color.withOpacity(0.9),
+            color: _color_manager.background_color.withAlpha(220),
             child: Column(
               children: [
                 Container(
                   height: 75,
-                  color: _color_manager.secondary_color.withOpacity(0.25),
+                  color: _color_manager.secondary_color.withAlpha(175),
                   child: const Center(
                     child: Text(
                       'Available Ingredients',

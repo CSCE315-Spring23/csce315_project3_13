@@ -76,7 +76,18 @@ class _Win_Add_Smoothie_State extends State<Win_Add_Smoothie> {
 
   }
 
-  Widget ingTable(BuildContext context)
+  Widget tableText({required String data, required bool bold, required Color text_color})
+  {
+    return Text(
+        data,
+      style: TextStyle(
+        color: text_color,
+        fontWeight: bold ? FontWeight.bold : FontWeight.normal,
+      ) ,
+    );
+  }
+
+  Widget ingTable(BuildContext context, Color text_color)
   {
     return Container(
       alignment: Alignment.topCenter,
@@ -84,6 +95,13 @@ class _Win_Add_Smoothie_State extends State<Win_Add_Smoothie> {
         shrinkWrap: true,
         children: [
           DataTable(
+            headingTextStyle: TextStyle(
+              color: text_color.withAlpha(220),
+              fontWeight: FontWeight.bold,
+            ),
+            dataTextStyle: TextStyle(
+              color: text_color.withAlpha(200),
+            ),
             columnSpacing: 10,
             columns: const [
               DataColumn(label: Text('Index'),),
@@ -97,7 +115,7 @@ class _Win_Add_Smoothie_State extends State<Win_Add_Smoothie> {
                 DataCell(Text('${rowData['name']}')),
                 DataCell(
                   IconButton(
-                    icon: const Icon(Icons.delete),
+                    icon: Icon(Icons.delete, color: text_color.withAlpha(150),),
                     onPressed: () {
                       setState(() {
                         _ing_table.removeAt(rowIndex);
@@ -186,7 +204,7 @@ class _Win_Add_Smoothie_State extends State<Win_Add_Smoothie> {
           ),
         ],
       ),
-   backgroundColor: Colors.white,
+   backgroundColor: _color_manager.background_color,
    body: _isLoading
           ? Center(
           child: SpinKitRing(color: _color_manager.primary_color),
@@ -197,11 +215,11 @@ class _Win_Add_Smoothie_State extends State<Win_Add_Smoothie> {
               child: Row(
               children: <Widget>[
                 Container(
-                  color: _color_manager.background_color.withOpacity(0.5),
+                  color: _color_manager.secondary_color.withAlpha(50),
                   width: screenWidth / 2,
                   child: Column(
                     children: [
-                      Expanded(flex: 1, child: ingTable(context)),
+                      Expanded(flex: 1, child: ingTable(context, _color_manager.text_color)),
                       SizedBox(
                         height: 175,
                         child: Container(
@@ -232,6 +250,9 @@ class _Win_Add_Smoothie_State extends State<Win_Add_Smoothie> {
                                 width: (screenWidth / 2) - (screenWidth / 10),
                                 height: 50,
                                 child: ElevatedButton(
+                                    style: ButtonStyle(
+                                      backgroundColor: MaterialStatePropertyAll(_color_manager.active_confirm_color.withAlpha(200)),
+                                    ),
                                     onPressed: () async{
                                       Icon message_icon = const Icon(Icons.check);
                                       String message_text = 'Successfully Added Item';
@@ -282,6 +303,7 @@ class _Win_Add_Smoothie_State extends State<Win_Add_Smoothie> {
                                 },
                                     child: const Text(
                                       'Add New Item',
+                                      style: TextStyle(fontWeight: FontWeight.bold),
                                     )
                                 ),
                               ),
@@ -294,12 +316,12 @@ class _Win_Add_Smoothie_State extends State<Win_Add_Smoothie> {
                 ),
                 Container(
                   width: screenWidth / 2,
-                  color: _color_manager.background_color.withOpacity(0.9),
+                  color: _color_manager.background_color.withAlpha(200),
                   child: Column(
                     children: [
                       Container(
                         height: 75,
-                        color: _color_manager.secondary_color.withOpacity(0.25),
+                        color: _color_manager.secondary_color.withAlpha(75),
                         child: Center(
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -310,7 +332,7 @@ class _Win_Add_Smoothie_State extends State<Win_Add_Smoothie> {
                                 style: TextStyle(
                                   fontSize: 40,
                                   fontWeight: FontWeight.bold,
-                                  color: _color_manager.text_color.withOpacity(0.75)
+                                  color: _color_manager.text_color.withAlpha(200),
                                 ),
                               ),
                               IconButton(
@@ -349,7 +371,7 @@ class _Win_Add_Smoothie_State extends State<Win_Add_Smoothie> {
                                   },
                                   icon:  Icon(
                                       Icons.add_circle,
-                                      color: _color_manager.text_color.withOpacity(0.75),
+                                      color: _color_manager.text_color.withAlpha(200),
                                   )
                               )
                             ],
