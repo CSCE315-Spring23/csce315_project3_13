@@ -1,6 +1,7 @@
 import 'dart:collection';
 import '../Models/models_library.dart';
 import 'package:cloud_functions/cloud_functions.dart';
+import 'package:intl/intl.dart';
 
 class general_helper
 {
@@ -64,6 +65,14 @@ class general_helper
       'ingredient_name': ingredient_name
     });
     return (res.data[0]['row_id'] as int);
+  }
+
+  Future<String> get_current_date() async
+  {
+    var now = new DateTime.now();
+    var formatter = new DateFormat('dd/MM/yyyy');
+    String formattedDate = formatter.format(now);
+    return formattedDate;
   }
 
 }

@@ -75,22 +75,6 @@ class _Win_Functions_Test_Page_StartState extends State<Win_Functions_Test_Page>
             const SizedBox(
               height: 20,
             ),
-            Login_Button(onTap: (){
-              if(is_high_contrast){
-                my_color_manager.reset_colors();
-                setState(() {
-                  is_high_contrast = !is_high_contrast;
-                });
-              }else{
-                my_color_manager.color_blind_option_1();
-                setState(() {
-                  is_high_contrast = !is_high_contrast;
-                });
-              }
-            }, buttonName: "Change Color scheme",
-              fontSize: 10,
-
-            )
 
 
 
