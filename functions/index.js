@@ -578,8 +578,156 @@ exports.updateXReport = functions.https.onCall(async (data, context) => {
     return "Successfully updated today's X report"
 });
 
+exports.getIngredientNames = functions.https.onCall(async (data, context) => {
+    const client = new Client({
+        host: 'csce-315-db.engr.tamu.edu',
+        user: 'csce315331_team_13_master',
+        password: 'Lucky_13',
+        database: 'csce315331_team_13',
+        port: 5432,
+    });
+
+    await client.connect()
+
+    const res = await client.query("SELECT DISTINCT ingredient_name FROM ingredients_table ORDER BY ingredient_name");
+
+    client.end()
+
+    return res.rows
+});
+
+exports.getAllSmoothieInfo = functions.https.onCall(async (data, context) => {
+    const client = new Client({
+        host: 'csce-315-db.engr.tamu.edu',
+        user: 'csce315331_team_13_master',
+        password: 'Lucky_13',
+        database: 'csce315331_team_13',
+        port: 5432,
+    });
+
+    await client.connect()
+
+    const res = await client.query("SELECT menu_item_id, menu_item, item_price FROM menu_items WHERE (type='smoothie' AND status= 'available') ORDER BY menu_item");
+
+    client.end()
+
+    return res.rows
+});
 
 
+exports.getAllSnacksInfo = functions.https.onCall(async (data, context) => {
+    const client = new Client({
+        host: 'csce-315-db.engr.tamu.edu',
+        user: 'csce315331_team_13_master',
+        password: 'Lucky_13',
+        database: 'csce315331_team_13',
+        port: 5432,
+    });
 
+    await client.connect()
+
+    const res = await client.query("SELECT menu_item_id, menu_item, item_price FROM menu_items WHERE (type='snack' AND status= 'available') ORDER BY menu_item");
+
+    client.end()
+
+    return res.rows
+});
+
+exports.getAllAddonInfo = functions.https.onCall(async (data, context) => {
+    const client = new Client({
+        host: 'csce-315-db.engr.tamu.edu',
+        user: 'csce315331_team_13_master',
+        password: 'Lucky_13',
+        database: 'csce315331_team_13',
+        port: 5432,
+    });
+
+    await client.connect()
+
+    const res = await client.query("SELECT menu_item_id, menu_item, item_price FROM menu_items WHERE (type='addon' AND status= 'available') ORDER BY menu_item");
+
+    client.end()
+
+    return res.rows
+});
+
+exports.getInventoryItems = functions.https.onCall(async (data, context) =>
+{
+      const client = new Client({
+        host: 'csce-315-db.engr.tamu.edu',
+        user: 'csce315331_team_13_master',
+        password: 'Lucky_13',
+        database: 'csce315331_team_13',
+        port: 5432,
+      });
+
+      await client.connect();
+
+      const res = await client.query("SELECT * FROM inventory WHERE expiration_date > CURRENT_TIMESTAMP ORDER BY inv_order_id ASC");
+
+      client.end();
+
+      return res.rows;
+});
+
+exports.addInventoryRow = functions.https.onCall(async (data, context) =>
+{
+
+    const client = new Client({
+          host: 'csce-315-db.engr.tamu.edu',
+          user: 'csce315331_team_13_master',
+          password: 'Lucky_13',
+          database: 'csce315331_team_13',
+          port: 5432,
+    });
+
+    await client.connect()
+
+    const values = data.values;
+    const maxIdResult = await client.query('SELECT MAX(inv_order_id) AS max_id FROM inventory');
+    const maxId = maxIdResult.rows[0].max_id;
+
+    const valuesWithId =
+    {
+        ...values,
+        inv_order_id: maxId + 1
+    };
+
+    const query =
+    {
+        text: 'INSERT INTO inventory(inv_order_id, status, ingredient, amount_inv_stock, amount_ordered, unit, date_ordered, expiration_date, conversion) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)',
+        values: Object.values(valuesWithId)
+    };
+
+    const res = await client.query(query);
+
+    client.end()
+
+    return maxId + 1;
+});
+
+exports.deleteInventoryItem = functions.https.onCall(async (data, context) => {
+  const client = new Client({
+    host: 'csce-315-db.engr.tamu.edu',
+    user: 'csce315331_team_13_master',
+    password: 'Lucky_13',
+    database: 'csce315331_team_13',
+    port: 5432,
+  });
+
+  await client.connect();
+
+  const itemName = data.itemName;
+
+  const query =
+  {
+    text: 'UPDATE inventory SET status = $1 WHERE ingredient = $2',
+    values: ['unavailable', itemName],
+  };
+
+  const res = await client.query(query);
+
+  client.end();
+});
 
 
