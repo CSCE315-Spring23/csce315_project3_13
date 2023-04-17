@@ -3,6 +3,7 @@ import 'package:csce315_project3_13/GUI/Components/Contrast_Button.dart';
 import 'package:csce315_project3_13/GUI/Components/Login_Button.dart';
 import 'package:csce315_project3_13/GUI/Components/Login_TextField.dart';
 import 'package:csce315_project3_13/GUI/Components/Page_Header.dart';
+import 'package:csce315_project3_13/GUI/Components/Settings_Button.dart';
 import 'package:csce315_project3_13/GUI/Pages/Login/Win_Login.dart';
 import 'package:csce315_project3_13/Services/login_helper.dart';
 import 'package:flutter/material.dart';
@@ -88,7 +89,7 @@ class _Win_Create_AccountState extends State<Win_Create_Account> {
           context: context,
           pageName: "Create account",
           buttons: [
-            const Contrast_Button(),
+            const Settings_Button(),
             Login_Button(onTap: (){
               Navigator.pushReplacementNamed(context, Win_Login.route);
             }, buttonName: "Back",

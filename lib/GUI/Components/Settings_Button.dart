@@ -3,14 +3,14 @@ import 'package:csce315_project3_13/GUI/Components/Settings_Dialog.dart';
 import 'package:flutter/material.dart';
 
 
-class Settings_Buttons extends StatefulWidget {
-  const Settings_Buttons({Key? key}) : super(key: key);
+class Settings_Button extends StatefulWidget {
+  const Settings_Button({Key? key}) : super(key: key);
 
   @override
-  State<Settings_Buttons> createState() => _Settings_ButtonsState();
+  State<Settings_Button> createState() => _Settings_ButtonState();
 }
 
-class _Settings_ButtonsState extends State<Settings_Buttons> {
+class _Settings_ButtonState extends State<Settings_Button> {
 
 
   @override
