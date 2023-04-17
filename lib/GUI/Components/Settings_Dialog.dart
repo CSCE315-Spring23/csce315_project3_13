@@ -48,11 +48,8 @@ class _Settings_DialogState extends State<Settings_Dialog> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
-
               children: [
                 Text("Select Color option"),
-
-
                 ToggleButtons(
                   direction: Axis.vertical,
                   isSelected: _isSelected,

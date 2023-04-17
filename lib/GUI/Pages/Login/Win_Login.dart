@@ -66,8 +66,6 @@ class _Win_LoginState extends State<Win_Login> {
           buttons: <Widget>[
             const Settings_Buttons(),
 
-            const Contrast_Button(),
-
 
 
             Login_Button(onTap: (){

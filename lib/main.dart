@@ -65,13 +65,13 @@ class _MyAppState extends State<MyApp> {
   void option_deuteranopia(){
     print("deuteranopia selected");
     setState(() {
-      primary_color = Colors.purple[500] as Color;
-      secondary_color = Colors.purple[400] as Color;
-      background_color = Colors.purple[200] as Color;
+      primary_color = Color(0xFF009E73);
+      secondary_color = Color(0xFF009E73);
+      background_color = Color(0xFFF0E442);
       text_color = Colors.black;
-      active_color = Colors.yellow[500] as Color;
-      hover_color = Colors.yellow[100] as Color;
-      inactive_color = Color(0xFF00716C);
+      active_color = Color(0xFFE69F00);
+      hover_color = Color(0xFFD55E00);
+      inactive_color = Color(0x55E69F00);
       active_size_color = Color(0xFF3088D1);
       active_confirm_color = Color(0xFF6BCF54);
       active_deny_color = Color(0xFFC30F0E);
@@ -82,13 +82,13 @@ class _MyAppState extends State<MyApp> {
   // color pallet for protanopia
   void option_protanopia(){
     setState(() {
-      primary_color = Colors.blue[500] as Color;
-      secondary_color = Colors.blue[400] as Color;
-      background_color = Colors.blue[200] as Color;
+      primary_color = Color(0xFF009E73);
+      secondary_color = Color(0xFF009E73);
+      background_color = Color(0xFFF0E442);
       text_color = Colors.black;
-      active_color = Colors.yellow[500] as Color;
-      hover_color = Colors.yellow[100] as Color;
-      inactive_color = Color(0xFF00716C);
+      active_color = Color(0xFFE69F00);
+      hover_color = Color(0xFFD55E00);
+      inactive_color = Color(0x55E69F00);
       active_size_color = Color(0xFF3088D1);
       active_confirm_color = Color(0xFF6BCF54);
       active_deny_color = Color(0xFFC30F0E);
@@ -99,13 +99,13 @@ class _MyAppState extends State<MyApp> {
   // color pallet for tritanopia
   void option_tritanopia(){
     setState(() {
-      primary_color = Colors.green[500] as Color;
-      secondary_color = Colors.green[400] as Color;
-      background_color = Colors.green[200] as Color;
+      primary_color = Color(0xFF009E73);
+      secondary_color = Color(0xFF009E73);
+      background_color = Color(0xFF56B4E9);
       text_color = Colors.black;
-      active_color = Colors.yellow[500] as Color;
-      hover_color = Colors.yellow[100] as Color;
-      inactive_color = Color(0xFF00716C);
+      active_color = Color(0xFFF0E442);
+      hover_color = Color(0xFFD55E00);
+      inactive_color = Color(0xFFCC79A7);
       active_size_color = Color(0xFF3088D1);
       active_confirm_color = Color(0xFF6BCF54);
       active_deny_color = Color(0xFFC30F0E);

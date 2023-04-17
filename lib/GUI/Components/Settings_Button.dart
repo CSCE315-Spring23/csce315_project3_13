@@ -24,9 +24,9 @@ class _Settings_ButtonsState extends State<Settings_Buttons> {
             },
           );
         },
-        icon: Icon(Icons.settings,
+        icon: const Icon(Icons.settings,
         size: 15,
-          color: Color_Manager.of(context).text_color,
+          color: Colors.white,
         ),
 
 
