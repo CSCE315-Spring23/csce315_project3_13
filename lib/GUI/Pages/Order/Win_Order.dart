@@ -57,6 +57,9 @@ class Win_Order_State extends State<Win_Order>{
 
   bool _isLoading = true;
 
+  // Used to prevent errors
+  menu_item_obj _blank_item = menu_item_obj(0, "", 0, 0, "", "", []);
+
   Future<void> getData() async {
     // Simulate fetching data from an API
     view_helper name_helper = view_helper();
@@ -231,12 +234,39 @@ class Win_Order_State extends State<Win_Order>{
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(
-              name,
-              style: const TextStyle(fontSize: 15,),
-              textAlign: TextAlign.center,
-              maxLines: 3, // Limits the number of lines to 2
-              overflow: TextOverflow.ellipsis,
+            Expanded(
+              child: Center(
+                child: Text(
+                  name,
+                  style: const TextStyle(fontSize: 15,),
+                  textAlign: TextAlign.center,
+                  maxLines: 3, // Limits the number of lines to 2
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 2),
+              child: type != "Smoothie" ? Text(
+                _all_menu_items.firstWhere((menu_item_obj) => menu_item_obj.menu_item == (name)).item_price.toStringAsFixed(2),
+                style: const TextStyle(color: Colors.white24),
+              ): Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text(
+                    _all_menu_items.firstWhere((menu_item_obj) => menu_item_obj.menu_item == ("$name small"), orElse: () {return _blank_item;},).item_price.toStringAsFixed(2),
+                    style: const TextStyle(color: Colors.white24),
+                    ),
+                    Text(
+                      _all_menu_items.firstWhere((menu_item_obj) => menu_item_obj.menu_item == ("$name medium"), orElse: () {return _blank_item;}).item_price.toStringAsFixed(2),
+                      style: const TextStyle(color: Colors.white24),
+                    ),
+                    Text(
+                      _all_menu_items.firstWhere((menu_item_obj) => menu_item_obj.menu_item == ("$name large"), orElse: () {return _blank_item;}).item_price.toStringAsFixed(2),
+                      style: const TextStyle(color: Colors.white24),
+                    ),
+                  ]
+              ),
             ),
           ],
         ),
@@ -321,216 +351,219 @@ class Win_Order_State extends State<Win_Order>{
         ) : Row(
           children: <Widget>[
             Expanded(
-              child:  Column(
-                children: <Widget>[
-                  Stack(
-                    children: [
-                      // Order table
-                      Visibility(
-                        visible: _active_table == 0,
-                        child: Container(
-                          alignment: Alignment.topCenter,
-                          child: ListView(
-                            shrinkWrap: true,
-                            children: [
-                              DataTable(
-                                columnSpacing: 0,
-                                columns: const [
-                                  DataColumn(label: Text('Index'),),
-                                  DataColumn(label: Text('Name'),),
-                                  DataColumn(label: Text('Size')),
-                                  DataColumn(label: Text('Price')),
-                                  DataColumn(label: Text('Edit')),
-                                  DataColumn(label: Text('Delete')),
-                                ],
-                                rows: _orderTable.map((rowData) {
-                                  final rowIndex = _orderTable.indexOf(rowData);
-                                  return DataRow(cells: [
-                                    DataCell(Text('${rowData['index']}')),
-                                    DataCell(Text('${rowData['name']}')),
-                                    DataCell(Text('${rowData['size']}')),
-                                    DataCell(Text('${rowData['price']}')),
-                                    DataCell(
-                                      rowData['size'] != '-' ? IconButton(
-                                        icon: const Icon(Icons.edit),
-                                        onPressed: () {
-                                          if (rowData['size'] != '-') {
-                                            setState(() {
-                                              Map<String,
-                                                  dynamic> item = _orderTable
-                                                  .elementAt(rowIndex);
-                                              _orderTable.removeAt(rowIndex);
-                                              _curr_smoothie =
-                                                  _current_order.remove(
-                                                      int.parse(item['index']));
-                                              _active_table = 1;
-                                              _activeMenu2 = 1;
-                                              _addonTable.clear();
-                                              for (addon_order addon in _curr_smoothie
-                                                  .getAddons()) {
-                                                final newRow = {
-                                                  'index': (_addonTable.length + 1).toString(),
-                                                  'name': addon.name,
-                                                  'price': addon.price.toStringAsFixed(2),
-                                                };
-                                                _addonTable.add(newRow);
-                                              }
-                                              _curr_editing = true;
-                                            });
-                                          }
-                                        },
-                                      ) : Container(),
-                                    ),
-                                    DataCell(
-                                      IconButton(
-                                        icon: const Icon(Icons.delete),
-                                        onPressed: () {
-                                          setState(() {
-                                            Map<String, dynamic> item = _orderTable.elementAt(rowIndex);
-                                            // Todo: find a more efficient way to change indexes
-                                            _current_order.remove(int.parse(item['index']));
-                                            _orderTable.removeAt(rowIndex);
-                                            _current_order.reorderIndexes(rowIndex + 1);
-                                            for (int i = rowIndex; i < _orderTable.length; i++) {
-                                              _orderTable[i]['index'] = (i + 1).toString();
-                                            }
-                                          });
-                                        },
-                                      ),
-                                    ),
-                                  ]);
-                                }).toList(),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      // Addon table, appears when adding or editing smoothie in order
-                      Visibility(
-                        visible: _active_table == 1,
-                        child: Container(
-                          alignment: Alignment.topCenter,
-                          child: ListView(
-                            shrinkWrap: true,
-                            children: [
-                              DataTable(
-                                columnSpacing: 0,
-                                columns: const [
-                                  DataColumn(label: Text('Index'),),
-                                  DataColumn(label: Text('Name'),),
-                                  DataColumn(label: Text('Price')),
-                                  DataColumn(label: Text('Delete')),
-                                ],
-                                rows: _addonTable.map((rowData) {
-                                  final rowIndex = _addonTable.indexOf(rowData);
-                                  return DataRow(cells: [
-                                    // Todo: add amount column
-                                    DataCell(Text('${rowData['index']}')),
-                                    DataCell(Text('${rowData['name']}')),
-                                    DataCell(Text('${rowData['price']}')),
-                                    DataCell(
-                                      IconButton(
-                                        icon: const Icon(Icons.delete),
-                                        onPressed: () {
-                                          setState(() {
-                                            _addonTable.removeAt(rowIndex);
-                                            _curr_smoothie.removeAddon(rowIndex);
-                                            for (int i = rowIndex; i < _addonTable.length; i++) {
-                                              _addonTable[i]['index'] = (i + 1).toString();
-                                            }
-                                          });
-                                        },
-                                      ),
-                                    ),
-                                  ]);
-                                }).toList(),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const Expanded(child: SizedBox(height: 1,),),
-                  SizedBox(
-                    height: 100,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Expanded(
-                          child: TextButton(
-                            onPressed: () {
-                              customerInfo();
-                            },
-                            child: Column(
+              child:  Container(
+                color: _color_manager.background_color.withAlpha(100),
+                child: Column(
+                  children: <Widget>[
+                    Stack(
+                      children: [
+                        // Order table
+                        Visibility(
+                          visible: _active_table == 0,
+                          child: Container(
+                            alignment: Alignment.topCenter,
+                            child: ListView(
+                              shrinkWrap: true,
                               children: [
-                                const Icon(
-                                  Icons.person,
-                                  size: 75,
+                                DataTable(
+                                  columnSpacing: 0,
+                                  columns: const [
+                                    DataColumn(label: Text('Index'),),
+                                    DataColumn(label: Text('Name'),),
+                                    DataColumn(label: Text('Size')),
+                                    DataColumn(label: Text('Price')),
+                                    DataColumn(label: Text('Edit')),
+                                    DataColumn(label: Text('Delete')),
+                                  ],
+                                  rows: _orderTable.map((rowData) {
+                                    final rowIndex = _orderTable.indexOf(rowData);
+                                    return DataRow(cells: [
+                                      DataCell(Text('${rowData['index']}')),
+                                      DataCell(Text('${rowData['name']}')),
+                                      DataCell(Text('${rowData['size']}')),
+                                      DataCell(Text('${rowData['price']}')),
+                                      DataCell(
+                                        rowData['size'] != '-' ? IconButton(
+                                          icon: const Icon(Icons.edit),
+                                          onPressed: () {
+                                            if (rowData['size'] != '-') {
+                                              setState(() {
+                                                Map<String,
+                                                    dynamic> item = _orderTable
+                                                    .elementAt(rowIndex);
+                                                _orderTable.removeAt(rowIndex);
+                                                _curr_smoothie =
+                                                    _current_order.remove(
+                                                        int.parse(item['index']));
+                                                _active_table = 1;
+                                                _activeMenu2 = 1;
+                                                _addonTable.clear();
+                                                for (addon_order addon in _curr_smoothie
+                                                    .getAddons()) {
+                                                  final newRow = {
+                                                    'index': (_addonTable.length + 1).toString(),
+                                                    'name': addon.name,
+                                                    'price': addon.price.toStringAsFixed(2),
+                                                  };
+                                                  _addonTable.add(newRow);
+                                                }
+                                                _curr_editing = true;
+                                              });
+                                            }
+                                          },
+                                        ) : Container(),
+                                      ),
+                                      DataCell(
+                                        IconButton(
+                                          icon: const Icon(Icons.delete),
+                                          onPressed: () {
+                                            setState(() {
+                                              Map<String, dynamic> item = _orderTable.elementAt(rowIndex);
+                                              // Todo: find a more efficient way to change indexes
+                                              _current_order.remove(int.parse(item['index']));
+                                              _orderTable.removeAt(rowIndex);
+                                              _current_order.reorderIndexes(rowIndex + 1);
+                                              for (int i = rowIndex; i < _orderTable.length; i++) {
+                                                _orderTable[i]['index'] = (i + 1).toString();
+                                              }
+                                            });
+                                          },
+                                        ),
+                                      ),
+                                    ]);
+                                  }).toList(),
                                 ),
-                                Text(
-                                  '$_curr_customer',
-                                )
                               ],
                             ),
                           ),
                         ),
-                        Expanded(
-                          child: Center(
-                            child: Text(
-                              'Total: ${_current_order.price.toStringAsFixed(2)}',
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    height: 100,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: <Widget>[
-                        Expanded(
-                          child: TextButton(
-                            onPressed: () {
-                              Navigator.pushReplacementNamed(context, Win_Manager_View.route);
-                            },
-                            child: const Icon(
-                              Icons.logout,
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: TextButton(
-                            onPressed: () {
-                              setState(() {
-                                _current_order.clear();
-                                _orderTable.clear();
-                              });
-                            },
-                            child: const Icon(
-                              Icons.cancel_outlined,
-                            ),
-                          ),
-                        ),
-                        // Todo: Process order
-                        Expanded(
-                          child: TextButton(
-                            onPressed: () {
-                              if (!_curr_editing) {
-                                process_order();
-                              }
-                            },
-                            child: const Icon(
-                              Icons.monetization_on,
+                        // Addon table, appears when adding or editing smoothie in order
+                        Visibility(
+                          visible: _active_table == 1,
+                          child: Container(
+                            alignment: Alignment.topCenter,
+                            child: ListView(
+                              shrinkWrap: true,
+                              children: [
+                                DataTable(
+                                  columnSpacing: 0,
+                                  columns: const [
+                                    DataColumn(label: Text('Index'),),
+                                    DataColumn(label: Text('Name'),),
+                                    DataColumn(label: Text('Price')),
+                                    DataColumn(label: Text('Delete')),
+                                  ],
+                                  rows: _addonTable.map((rowData) {
+                                    final rowIndex = _addonTable.indexOf(rowData);
+                                    return DataRow(cells: [
+                                      // Todo: add amount column
+                                      DataCell(Text('${rowData['index']}')),
+                                      DataCell(Text('${rowData['name']}')),
+                                      DataCell(Text('${rowData['price']}')),
+                                      DataCell(
+                                        IconButton(
+                                          icon: const Icon(Icons.delete),
+                                          onPressed: () {
+                                            setState(() {
+                                              _addonTable.removeAt(rowIndex);
+                                              _curr_smoothie.removeAddon(rowIndex);
+                                              for (int i = rowIndex; i < _addonTable.length; i++) {
+                                                _addonTable[i]['index'] = (i + 1).toString();
+                                              }
+                                            });
+                                          },
+                                        ),
+                                      ),
+                                    ]);
+                                  }).toList(),
+                                ),
+                              ],
                             ),
                           ),
                         ),
                       ],
                     ),
-                  ),
-                ],
+                    const Expanded(child: SizedBox(height: 1,),),
+                    SizedBox(
+                      height: 100,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Expanded(
+                            child: TextButton(
+                              onPressed: () {
+                                customerInfo();
+                              },
+                              child: Column(
+                                children: [
+                                  const Icon(
+                                    Icons.person,
+                                    size: 75,
+                                  ),
+                                  Text(
+                                    '$_curr_customer',
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: Center(
+                              child: Text(
+                                'Total: ${_current_order.price.toStringAsFixed(2)}',
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 100,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: <Widget>[
+                          Expanded(
+                            child: TextButton(
+                              onPressed: () {
+                                Navigator.pushReplacementNamed(context, Win_Manager_View.route);
+                              },
+                              child: const Icon(
+                                Icons.logout,
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: TextButton(
+                              onPressed: () {
+                                setState(() {
+                                  _current_order.clear();
+                                  _orderTable.clear();
+                                });
+                              },
+                              child: const Icon(
+                                Icons.cancel_outlined,
+                              ),
+                            ),
+                          ),
+                          // Todo: Process order
+                          Expanded(
+                            child: TextButton(
+                              onPressed: () {
+                                if (!_curr_editing) {
+                                  process_order();
+                                }
+                              },
+                              child: const Icon(
+                                Icons.monetization_on,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
             // Navigation between smoothie and snack button grids
@@ -552,38 +585,7 @@ class Win_Order_State extends State<Win_Order>{
                               ),
                               Expanded(
                                 child: tab("Snacks", _color_manager.background_color, 1),
-                              )
-
-                   /*             child: ElevatedButton(
-                                  onPressed: (){
-                                    setState(() {
-                                      _activeMenu = 0;
-                                    });
-                                  },
-                                  child: Text(
-                                      "Smoothies",
-                                      style: TextStyle(
-                                      color: _color_manager.text_color,
-                                      ),
-                                  ),
-
-                                ),
                               ),
-                              Expanded(
-                                child: ElevatedButton(
-                                  onPressed: (){
-                                    setState(() {
-                                      _activeMenu = 1;
-                                    });
-                                  },
-                                  child: Text(
-                                      "Snacks",
-                                    style: TextStyle(
-                                      color: _color_manager.text_color,
-                                    ),
-                                  ),
-                                ),
-                              ),*/
                             ],
                           ),
                         ),
