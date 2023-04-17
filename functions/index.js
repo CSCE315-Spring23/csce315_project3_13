@@ -73,6 +73,14 @@ exports.getOneEmployeeByIdTest = functions.https.onCall(async (data, context) =>
 // for getting the user's info after logging in
 exports.getEmployeeByUID = functions.https.onCall(async (data, context) => {
 
+    const client = new Client({
+           host: 'csce-315-db.engr.tamu.edu',
+           user: 'csce315331_team_13_master',
+           password: 'Lucky_13',
+           database: 'csce315331_team_13',
+           port: 5432,
+     });
+
     const {employee_uid} = data;
 
     await client.connect()

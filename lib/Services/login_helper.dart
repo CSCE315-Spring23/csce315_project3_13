@@ -11,9 +11,6 @@ import 'package:flutter/material.dart';
 class login_helper{
 
   void login({required BuildContext context, required String username, required String password}) async {
-
-
-
     String cleared_username = username.replaceAll(" ", "");
     bool sign_in_successful = await sign_in_email_password(user_email: cleared_username, user_password: password);
     if(sign_in_successful){
@@ -82,26 +79,27 @@ class login_helper{
       //  TODO Add navigation to Manager page
       print("Navigating to manager page");
 
-      Navigator.pushReplacementNamed(context, Win_Manager_View.route);
 
       //Pops the loading screen
       Navigator.pop(context);
+      Navigator.pushReplacementNamed(context, Win_Manager_View.route);
 
     }else if(current_employee.role == "Server"){
       //  TODO Add navigation to Server page
       print("Navigating to server page");
 
-      Navigator.pushReplacementNamed(context, Win_Server_View.route);
+
 
       //Pops the loading screen
       Navigator.pop(context);
+      Navigator.pushReplacementNamed(context, Win_Server_View.route);
 
     }else{
       // TODO Handle the edge case
       print("!!! The role was not one of the options");
       print("Handling unknown navigation");
 
-      Navigator.pushReplacementNamed(context, Win_Manager_View.route);
+      // Navigator.pushReplacementNamed(context, Win_Manager_View.route);
 
       //Pops the loading screen
       Navigator.pop(context);
@@ -245,20 +243,22 @@ class login_helper{
     try{
 
       // Call the function with the employee UID as input
-      //TODO fix the function that is breaking here.
 
       final results = await callable.call(<String, dynamic>{
         'employee_uid': employee_uid,
       });
 
-      // Extract the name of the employee from the data returned by the function
 
+
+      // Extract the name of the employee from the data returned by the function
       List<dynamic> employeeData = results.data;
+
 
 
       String employee_name = employeeData[0]['employee_name'];
       String employee_role = employeeData[0]['employee_role'];
       int employee_id = employeeData[0]['employee_id'];
+
 
 
       String employee_hourly_rate_string = employeeData[0]['hourly_rate'];
