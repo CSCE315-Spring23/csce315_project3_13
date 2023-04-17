@@ -7,8 +7,10 @@ import 'package:csce315_project3_13/Services/order_processing_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
+import '../../../Colors/Color_Manager.dart';
 import '../../../Services/menu_item_helper.dart';
 import '../../../Services/view_helper.dart';
+import '../../Components/Page_Header.dart';
 import '../Login/Win_Login.dart';
 import '../Loading/Loading_Order_Win.dart';
 import '../../../Models/models_library.dart';
@@ -29,9 +31,7 @@ class Win_Order_State extends State<Win_Order>{
   // Todo" get addon names from database
   List<String> _addon_names = [];
 
-  List<menu_item_obj> _smoothie_items = [];
-  List<menu_item_obj> _snack_items = [];
-  List<menu_item_obj> _addon_items = [];
+  List<menu_item_obj> _all_menu_items = [];
 
   // controls visibility between smoothies and snacks menu
   int _activeMenu = 0;
@@ -41,6 +41,7 @@ class Win_Order_State extends State<Win_Order>{
 
   // controls visibility of table (order or addon)
   int _active_table = 0;
+
 
   menu_item_helper item_helper = menu_item_helper();
 
@@ -62,17 +63,22 @@ class Win_Order_State extends State<Win_Order>{
     _smoothie_names = await name_helper.get_unique_smoothie_names();
     _snack_names = await name_helper.get_snack_names();
     _addon_names =  await name_helper.get_addon_names();
-  //  _smoothie_items = await item_helper.getAllSmoothiesInfo();
-  //  _snack_items = await item_helper.getAllSnackInfo();
-  //  _addon_items = await item_helper.getAllAddonInfo();
+    _all_menu_items = await item_helper.getAllSmoothiesInfo();
+    _all_menu_items.addAll(await item_helper.getAllSnackInfo());
+    _all_menu_items.addAll(await item_helper.getAllAddonInfo());
+    for (menu_item_obj item in _all_menu_items)
+      {
+        print(item.menu_item);
+      }
     setState(() {
       _isLoading = false;
     });
   }
 
   // adds row to order table
-  Future<void> _addToOrder(String item, String size, String type) async {
-    String price = (await view_helper().get_item_price(item)).toStringAsFixed(2);
+  _addToOrder(String item, String size, String type) {
+    String item_name = size != "-" ? "$item $size" : item;
+    String price = _all_menu_items.firstWhere((menu_item_obj) => menu_item_obj.menu_item == (item_name)).item_price.toStringAsFixed(2);
 
     if (type == 'Smoothie'){
       setState(() {
@@ -109,8 +115,8 @@ class Win_Order_State extends State<Win_Order>{
   }
 
   // add addon to addon table
-  Future<void> _addAddon(String item) async {
-    String price = (await view_helper().get_item_price(item)).toStringAsFixed(2);
+  void _addAddon(String item) {
+    String price = _all_menu_items.firstWhere((menu_item_obj) => menu_item_obj.menu_item == (item)).item_price.toStringAsFixed(2);
     final newRow = {
       'index': (_addonTable.length + 1).toString(),
       'name': item,
@@ -159,7 +165,35 @@ class Win_Order_State extends State<Win_Order>{
     );
   }
 
-  Widget buttonGrid(BuildContext context, List<String> button_names, String type){
+  Widget tab(String tab_text, Color backgroundColor, int tab_ctrl)
+  {
+    return ElevatedButton(
+      style: ButtonStyle(
+        shape: MaterialStateProperty.all<OutlinedBorder>(
+          const RoundedRectangleBorder(
+            borderRadius: BorderRadius.zero,
+          ),
+        ),
+        minimumSize: MaterialStateProperty.all(const Size(100, 65)),
+        backgroundColor: MaterialStateProperty.all<Color>(_activeMenu == tab_ctrl ? backgroundColor : backgroundColor.withAlpha(100)),
+        foregroundColor: MaterialStateProperty.all<Color>(Colors.white70),
+      ),
+      onPressed: _activeMenu != tab_ctrl ?  (){
+        setState(() {
+          if (tab_text == 'Smoothies')
+          {
+            _activeMenu = 0;
+          }
+          else if (tab_text == 'Snacks')
+          {
+            _activeMenu = 1;
+          }
+        });
+      } : null, child: Text(tab_text, style: const TextStyle(fontSize: 20),),
+    );
+  }
+
+  Widget buttonGrid(BuildContext context, List<String> button_names, String type, Color _button_color){
     return GridView.count(
       shrinkWrap: true,
       crossAxisCount: 4,
@@ -167,6 +201,10 @@ class Win_Order_State extends State<Win_Order>{
       mainAxisSpacing: 20,
       crossAxisSpacing: 20,
       children: button_names.map((name) => ElevatedButton(
+        style: ButtonStyle(
+          backgroundColor: MaterialStatePropertyAll(_button_color),
+          minimumSize: MaterialStateProperty.all(const Size(125, 50)),
+        ),
         onPressed: () {
           if (type == "Smoothie" ) {
             setState(() {
@@ -197,6 +235,8 @@ class Win_Order_State extends State<Win_Order>{
               name,
               style: const TextStyle(fontSize: 15,),
               textAlign: TextAlign.center,
+              maxLines: 3, // Limits the number of lines to 2
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),
@@ -256,21 +296,26 @@ class Win_Order_State extends State<Win_Order>{
 
   @override
   Widget build(BuildContext context) {
-
+    final _color_manager = Color_Manager.of(context);
     return Scaffold(
-        appBar: AppBar(
-          toolbarHeight: 100,
-          elevation: 0,
-          backgroundColor: Colors.white,
-          title: SizedBox(
-            height: 80,
-            child: Image.asset(
-              'assets/logo.png',
-              fit: BoxFit.contain,
+      // TODO: Add smoothie king icon to page header
+        appBar: Page_Header(
+          context: context,
+          pageName: "Smoothie King at the MSC",
+          buttons: [
+            IconButton(
+              tooltip: "Return to Manager View",
+              padding: const EdgeInsets.only(left: 25, right: 10),
+              onPressed: ()
+              {
+                Navigator.pushReplacementNamed(context,Win_Manager_View.route);
+              },
+              icon: const Icon(Icons.close_rounded),
+              iconSize: 40,
             ),
-          ),
-          centerTitle: true,
+          ],
         ),
+        backgroundColor: _color_manager.background_color,
         body: _isLoading ? const Center(
           child: SpinKitCircle(color: Colors.redAccent,),
         ) : Row(
@@ -406,7 +451,7 @@ class Win_Order_State extends State<Win_Order>{
                       ),
                     ],
                   ),
-                  Expanded(child: SizedBox(height: 1,),),
+                  const Expanded(child: SizedBox(height: 1,),),
                   SizedBox(
                     height: 100,
                     child: Row(
@@ -503,25 +548,42 @@ class Win_Order_State extends State<Win_Order>{
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: <Widget>[
                               Expanded(
-                                child: TextButton(
+                                child: tab("Smoothies", _color_manager.background_color, 0),
+                              ),
+                              Expanded(
+                                child: tab("Snacks", _color_manager.background_color, 1),
+                              )
+
+                   /*             child: ElevatedButton(
                                   onPressed: (){
                                     setState(() {
                                       _activeMenu = 0;
                                     });
                                   },
-                                  child: const Text("Smoothies"),
+                                  child: Text(
+                                      "Smoothies",
+                                      style: TextStyle(
+                                      color: _color_manager.text_color,
+                                      ),
+                                  ),
+
                                 ),
                               ),
                               Expanded(
-                                child: TextButton(
+                                child: ElevatedButton(
                                   onPressed: (){
                                     setState(() {
                                       _activeMenu = 1;
                                     });
                                   },
-                                  child: const Text("Snacks"),
+                                  child: Text(
+                                      "Snacks",
+                                    style: TextStyle(
+                                      color: _color_manager.text_color,
+                                    ),
+                                  ),
                                 ),
-                              ),
+                              ),*/
                             ],
                           ),
                         ),
@@ -538,8 +600,7 @@ class Win_Order_State extends State<Win_Order>{
                                   child: SingleChildScrollView(
                                     primary: true,
                                     child: Container(
-                                      color: Colors.pink,
-                                      child: buttonGrid(context, _smoothie_names, "Smoothie"),
+                                      child: buttonGrid(context, _smoothie_names, "Smoothie", _color_manager.active_color),
                                     ),
                                   ),
                                 ),
@@ -555,8 +616,7 @@ class Win_Order_State extends State<Win_Order>{
                                   child: SingleChildScrollView(
                                     primary: true,
                                     child: Container(
-                                      color: Colors.pink,
-                                      child: buttonGrid(context, _snack_names, "Snack"),
+                                      child: buttonGrid(context, _snack_names, "Snack", _color_manager.active_color.withRed(25).withGreen(180)),
                                     ),
                                   ),
                                 ),
@@ -683,8 +743,7 @@ class Win_Order_State extends State<Win_Order>{
                             child: SingleChildScrollView(
                               primary: true,
                               child: Container(
-                                  color: Colors.pink,
-                                  child: buttonGrid(context, _addon_names, 'Addon')
+                                  child: buttonGrid(context, _addon_names, 'Addon', _color_manager.active_color.withBlue(255))
                               ),
                             ),
                           ),

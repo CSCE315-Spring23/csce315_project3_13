@@ -8,6 +8,8 @@ import 'package:csce315_project3_13/GUI/Pages/Management/Win_View_Menu.dart';
 import 'package:csce315_project3_13/Services/login_helper.dart';
 import 'package:flutter/material.dart';
 
+import '../GUI/Pages/Order/Win_Order.dart';
+
 class Win_Manager_View extends StatefulWidget {
   static const String route = '/manager-view';
   const Win_Manager_View({Key? key}) : super(key: key);
@@ -43,7 +45,7 @@ class _Win_Manager_ViewState extends State<Win_Manager_View> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
             Login_Button(onTap: (){
-              Navigator.pushReplacementNamed(context,Loading_Order_Win.route);
+              Navigator.pushReplacementNamed(context,Win_Order.route);
             }, buttonName: "Order"),
             Login_Button(onTap: (){
               Navigator.pushReplacementNamed(context,Win_View_Menu.route);
