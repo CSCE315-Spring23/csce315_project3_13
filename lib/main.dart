@@ -6,6 +6,7 @@ import 'package:csce315_project3_13/GUI/Pages/Order/Win_Order.dart';
 import 'package:csce315_project3_13/GUI/Pages/Test%20Pages/Win_Functions_Test_Page.dart';
 import 'package:csce315_project3_13/GUI/Pages/Loading/Loading_Order_Win.dart';
 import 'package:csce315_project3_13/Manager_View/Win_Manager_View.dart';
+import 'package:csce315_project3_13/Server_View/Win_Server_View.dart';
 import 'package:csce315_project3_13/Services/Weather_Manager.dart';
 import 'package:csce315_project3_13/Services/weather_API.dart';
 import 'package:flutter/material.dart';
@@ -249,6 +250,7 @@ class _MyAppState extends State<MyApp> {
             Win_Reset_Password.route: (BuildContext context) => Win_Reset_Password(),
             Win_Create_Account.route: (BuildContext context) => Win_Create_Account(),
             Win_Manager_View.route: (BuildContext context) => Win_Manager_View(),
+            Win_Server_View.route: (BuildContext context) => Win_Server_View(),
             Win_Functions_Test_Page.route: (BuildContext context) => Win_Functions_Test_Page(),
             Win_Loading_Page.route: (BuildContext context) => Win_Loading_Page(),
             Loading_Order_Win.route: (BuildContext context) => Loading_Order_Win(),
