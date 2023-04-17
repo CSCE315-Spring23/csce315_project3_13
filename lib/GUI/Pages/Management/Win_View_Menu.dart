@@ -19,7 +19,8 @@ class Win_View_Menu extends StatefulWidget {
 }
 
 
-class _Win_View_Menu_State extends State<Win_View_Menu> {
+class _Win_View_Menu_State extends State<Win_View_Menu>
+{
   int visibility_ctrl = 0;
   String title = 'Manage Smoothies';
   bool _isLoading = true;
@@ -29,19 +30,25 @@ class _Win_View_Menu_State extends State<Win_View_Menu> {
   menu_item_helper item_helper = menu_item_helper();
   TextEditingController new_price = TextEditingController();
 
-  void getData() async {
+  // - Calls appropriate firebase function
+  // - Displays a loading screen in the meantime
+  void getData() async
+  {
     print('Building Page...');
     _smoothie_items = await item_helper.getAllSmoothiesInfo();
     print('Obtained Smoothies...');
     _snack_items = await item_helper.getAllSnackInfo();
     _addon_items = await item_helper.getAllAddonInfo();
 
-    setState(() {
+    setState(()
+    {
       _isLoading = false;
     });
   }
 
-  void editPrice(List<menu_item_obj> items, int id, int index) {
+  // Popup that handle price editing
+  void editPrice(List<menu_item_obj> items, int id, int index)
+  {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -93,7 +100,9 @@ class _Win_View_Menu_State extends State<Win_View_Menu> {
       },
     );
   }
-  // INSERT INTO menu_items (menu_item_id, menu_item, item_price, amount_in_stock, type, status) VALUES(407, 'The Smoothie Squad Special small', 6.18, 60, 'smoothie', 'available')
+
+
+  // Popup that handle removal process
   void confirmRemoval(List<menu_item_obj> items, String item_name, int id, int index)
   {
     Icon message_icon = const Icon(Icons.check);
@@ -156,35 +165,51 @@ class _Win_View_Menu_State extends State<Win_View_Menu> {
     );
   }
 
-  Widget itemTable(List<menu_item_obj> items, String type)
+  // - Widget that returns a list of cards that display item info and allow for
+  //   item editing
+  Widget itemList(List<menu_item_obj> items, String type, Color tile_color, Color _text_color, Color _icon_color)
   {
-    return ListView.builder(
+    return ListView.builder
+      (
         shrinkWrap: true,
         itemCount: items.length,
         itemBuilder: (context, index) {
           return Card(
               child:  ListTile(
+                tileColor: tile_color.withAlpha(200),
                 minVerticalPadding: 5,
                 onTap: () {},
                 leading: SizedBox(
                   width: 300,
-
-                  child: Text(
-                    '${items[index].menu_item_id.toString()}',
-                    style: const TextStyle(
-                      fontSize: 50,
-                      fontWeight: FontWeight.bold,
-                      fontStyle: FontStyle.italic,
-                      color: Colors.red,
-                    ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      // TODO: (Stretch) Add icons to each type of menu item
+       /*               if (type == 'smoothie')
+                        Icon(Icons.local_cafe)
+                      else if (type == 'snack')
+                        Icon(Icons.local_dining)
+                      else if (type == 'addon')
+                          const Icon(Icons.add_circle_outline_sharp),
+                      const SizedBox(width: 20,),
+         */             Text(
+                        'Item ID: ${items[index].menu_item_id.toString()}',
+                        style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                        fontStyle: FontStyle.italic,
+                        color: _text_color.withAlpha(75),
+                        ),
+                      ),
+                    ]
                   ),
                 ),
                 title: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10.0),
                   child: Text(
                     items[index].menu_item,
-                    style: const TextStyle(
-                      color: Colors.redAccent,
+                    style: TextStyle(
+                      color: _text_color.withAlpha(200),
                       fontWeight: FontWeight.bold,
                       fontStyle: FontStyle.italic,
                       fontSize: 35,
@@ -194,8 +219,9 @@ class _Win_View_Menu_State extends State<Win_View_Menu> {
                 ),
                 subtitle: Text(
                   '\$${items[index].item_price.toStringAsFixed(2)}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 20,
+                    color: _text_color.withAlpha(122),
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -207,29 +233,36 @@ class _Win_View_Menu_State extends State<Win_View_Menu> {
                       IconButton(
                         tooltip: 'Edit Price',
                         icon: const Icon(Icons.attach_money),
+                        color: _text_color.withAlpha(122),
                         onPressed: () {
                           //_menu_info.removeAt(index);
                           editPrice(items, items[index].menu_item_id, index);
                         },
+                        iconSize: 35,
                       ),
                       type == 'smoothie' ? IconButton(
                         tooltip: 'Edit Ingredients',
                         icon: const Icon(Icons.edit),
+                        color: _text_color.withAlpha(122),
                         onPressed: () {
                           Navigator.pushReplacementNamed(
                             context,
                             '/edit-smoothie-manager',
-                            arguments:  {'name': items[index].menu_item, 'id': items[index].menu_item_id.toString()},
+                            arguments:  {'name': items[index].menu_item,
+                              'id': items[index].menu_item_id.toString()},
                           );
                         },
+                        iconSize: 35,
                       ) : Container(),
                       IconButton(
                         tooltip: 'Remove from Menu',
                         icon: const Icon(Icons.delete),
+                        color: _text_color.withAlpha(122),
+                        iconSize: 35,
                         onPressed: () {
                           confirmRemoval(items, items[index].menu_item,
                               items[index].menu_item_id, index);
-                        }
+                        },
                       ),
                     ],
                   ),
@@ -240,7 +273,8 @@ class _Win_View_Menu_State extends State<Win_View_Menu> {
     );
   }
 
-  void newItemSubWin(String item_type,)
+  // Pop-up that allows for both new snack and addon creation
+  void newItemSubWin(String item_type)
   {
     TextEditingController _new_item_name = TextEditingController();
     TextEditingController _new_item_price = TextEditingController();
@@ -262,7 +296,14 @@ class _Win_View_Menu_State extends State<Win_View_Menu> {
               children: <Widget>[
                 TextFormField(
                   controller: _new_item_name,
-                  decoration: const InputDecoration(hintText: 'Name...'),
+                  decoration:  InputDecoration(
+                    hintText: 'Name...',
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                  ),
                 ),
                 TextFormField(
                   controller: _new_item_price,
@@ -336,9 +377,10 @@ class _Win_View_Menu_State extends State<Win_View_Menu> {
     );
   }
 
-  Widget tab(Function tabChange, String tab_text, Color backgroundColor, Color headColor)
+  // Tab Widget that allows for different menu displays
+  Widget tab(Function tabChange, String tab_text, Color backgroundColor, Color headColor, int tab_ctrl)
   {
-    return TextButton(
+    return ElevatedButton(
       style: ButtonStyle(
         shape: MaterialStateProperty.all<OutlinedBorder>(
           const RoundedRectangleBorder(
@@ -346,12 +388,25 @@ class _Win_View_Menu_State extends State<Win_View_Menu> {
           ),
         ),
         minimumSize: MaterialStateProperty.all(Size(100, 65)),
-        backgroundColor: MaterialStateProperty.all<Color>(backgroundColor),
+        backgroundColor: MaterialStateProperty.all<Color>(visibility_ctrl == tab_ctrl ? backgroundColor: headColor),
         foregroundColor: MaterialStateProperty.all<Color>(Colors.white70),
       ),
       onPressed: (){
-
-      }, child: Text(tab_text),
+        setState(() {
+          if (tab_text == 'Manage Smoothies')
+          {
+            visibility_ctrl = 0;
+          }
+          else if (tab_text == 'Manage Snacks')
+          {
+            visibility_ctrl = 1;
+          }
+          else if (tab_text == 'Manage Addons')
+          {
+            visibility_ctrl = 2;
+          }
+        });
+      }, child: Text(tab_text, style: const TextStyle(fontSize: 20),),
     );
   }
 
@@ -367,105 +422,40 @@ class _Win_View_Menu_State extends State<Win_View_Menu> {
     return Scaffold(
       appBar: Page_Header(
         context: context,
-        pageName: "Manager View",
+        pageName: "Menu Item Management",
         buttons: [
-          tab((){}, 'Manage Smoothies', _color_manager.background_color, _color_manager.primary_color),
-          tab((){}, 'Manage Snacks', _color_manager.primary_color, _color_manager.primary_color),
-          tab((){}, 'Manage Addons', _color_manager.primary_color, _color_manager.primary_color),
-    ],),
+          tab((){}, 'Manage Smoothies', _color_manager.background_color, _color_manager.primary_color, 0),
+          tab((){}, 'Manage Snacks', _color_manager.background_color, _color_manager.primary_color, 1),
+          tab((){}, 'Manage Addons', _color_manager.background_color, _color_manager.primary_color, 2),
+          IconButton(
+            tooltip: "Return to Manager View",
+            padding: const EdgeInsets.only(left: 25, right: 10),
+            onPressed: ()
+            {
+              Navigator.pushReplacementNamed(context,Win_Manager_View.route);
 
-      /*AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pushReplacementNamed(context,Win_Manager_View.route);
-          },
-        ),
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children:  <Widget>[
-            IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new_rounded),
-              onPressed: () {
-                if (title == 'Manage Smoothies')
-                  {
-                    title = 'Manage Addons';
-                    setState(() {
-                      visibility_ctrl = 2;
-                    });
-                  }
-                else if (title == 'Manage Addons')
-                {
-                  title = 'Manage Snacks';
-                  setState(() {
-                    visibility_ctrl = 1;
-                  });
-                }
-                else if (title == 'Manage Snacks')
-                {
-                  title = 'Manage Smoothies';
-                  setState(() {
-                    visibility_ctrl = 0;
-                  });
-                }
-              },
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Text(
-                title,
-                style: TextStyle(fontSize: 35),
-              ),
-            ),
-            IconButton(
-              icon: const Icon(Icons.arrow_forward_ios_rounded),
-              onPressed: () {
-                if (title == 'Manage Smoothies')
-                {
-                  title = 'Manage Snacks';
-                  setState(() {
-                    visibility_ctrl = 1;
-                  });
-                }
-                else if (title == 'Manage Snacks')
-                {
-                  title = 'Manage Addons';
-                  setState(() {
-                    visibility_ctrl = 2;
-                  });
-                }
-                else if (title == 'Manage Addons')
-                {
-                  title = 'Manage Smoothies';
-                  setState(() {
-                    visibility_ctrl = 0;
-                  });
-                }
-              },
-            ),
-          ],
-        ),
-        centerTitle: true,
-        toolbarHeight: 100,
-      ),*/
-      body: _isLoading ? const Center(
-        child: CircularProgressIndicator() ,
+            },
+            icon: const Icon(Icons.close_rounded),
+            iconSize: 40,
+          ),],
+      ),
+      body: _isLoading ?  Center(
+        child: SpinKitRing(color: _color_manager.primary_color) ,
           ) : Padding(
-              padding: const EdgeInsets.only(bottom: 125),
+              padding: const EdgeInsets.only(bottom: 76),
               child: Stack(
                 children: [
                     Visibility(
                       visible: visibility_ctrl == 0,
-                      child: itemTable(_smoothie_items, 'smoothie'),
+                      child: itemList(_smoothie_items, 'smoothie', _color_manager.secondary_color, _color_manager.text_color, _color_manager.active_color),
                     ),
                   Visibility(
                     visible: visibility_ctrl == 1,
-                      child: itemTable(_snack_items, 'snack'),
+                      child: itemList(_snack_items, 'snack', _color_manager.secondary_color, _color_manager.text_color, _color_manager.active_color),
                   ),
                   Visibility(
                       visible: visibility_ctrl == 2,
-                      child: itemTable(_addon_items, 'addon')
+                      child: itemList(_addon_items, 'addon', _color_manager.secondary_color, _color_manager.text_color, _color_manager.active_color),
                   ),
                   ],
 
@@ -474,8 +464,8 @@ class _Win_View_Menu_State extends State<Win_View_Menu> {
       backgroundColor: _color_manager.background_color,
       bottomSheet: Container
       (
-        height: 125,
-        color: Colors.red,
+        height: 75,
+        color: _color_manager.primary_color,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,

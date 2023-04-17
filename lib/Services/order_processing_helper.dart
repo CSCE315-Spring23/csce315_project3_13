@@ -1,11 +1,13 @@
 import 'dart:collection';
 import 'package:csce315_project3_13/Services/general_helper.dart';
+import 'package:csce315_project3_13/Services/reports_helper.dart';
 import '../Models/models_library.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 
 class order_processing_helper
 {
   general_helper gen_helper = general_helper();
+  reports_helper report = reports_helper();
 
   Future<List<String>> process_order(order_obj order) async
   {
@@ -15,8 +17,10 @@ class order_processing_helper
       for(MapEntry entry in ingredient_amounts.entries) {
         await inventory_decrement(entry.key, entry.value);
       }
+
+      order.transaction_id = await get_new_transaction_id();
       await push_to_table(order.get_values());
-      //await push_to_table(order.get_values());
+      await report.update_x_report(order.total_price);
     }
 
     return invalid_items;

@@ -3,6 +3,7 @@ import 'package:csce315_project3_13/GUI/Components/Contrast_Button.dart';
 import 'package:csce315_project3_13/GUI/Components/Login_Button.dart';
 import 'package:csce315_project3_13/GUI/Components/Login_TextField.dart';
 import 'package:csce315_project3_13/GUI/Components/Page_Header.dart';
+import 'package:csce315_project3_13/GUI/Components/Settings_Button.dart';
 import 'package:csce315_project3_13/GUI/Pages/Loading/Loading_Order_Win.dart';
 import 'package:csce315_project3_13/GUI/Pages/Login/Win_Create_Account.dart';
 import 'package:csce315_project3_13/GUI/Pages/Login/Win_Reset_Password.dart';
@@ -63,19 +64,14 @@ class _Win_LoginState extends State<Win_Login> {
           context: context,
           pageName: "Login",
           buttons: <Widget>[
-            const Contrast_Button(),
-            Login_Button(
-              onTap: (){
-                Navigator.pushReplacementNamed(context, Win_Create_Account.route);
-              }, buttonName: "Create account",
-              fontSize: 15,
-            ),
+            const Settings_Button(),
 
             Login_Button(onTap: (){
               Navigator.pushReplacementNamed(context, Win_Reset_Password.route);
             }, buttonName: "Reset password",
               fontSize: 15,
             ),
+
           ],
       ),
       body: Center(
@@ -142,15 +138,6 @@ class _Win_LoginState extends State<Win_Login> {
                 child: Login_Button(onTap: (){
                   _login(context);
                 }, buttonName: "Login",
-                ),
-              ),
-
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Login_Button(onTap: (){
-                 Navigator.pushReplacementNamed(context, Win_Manager_View.route);
-                }, buttonName: "Login as guest",
-                  fontSize: 14,
                 ),
               ),
 
