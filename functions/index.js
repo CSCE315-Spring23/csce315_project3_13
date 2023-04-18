@@ -730,4 +730,89 @@ exports.deleteInventoryItem = functions.https.onCall(async (data, context) => {
   client.end();
 });
 
+exports.editInventoryEntry = functions.https.onCall(async (data, context) => {
+  const itemName = data.itemName;
+  const changeAmount = data.changeAmount;
+
+  const client = new Client({
+    host: 'csce-315-db.engr.tamu.edu',
+    user: 'csce315331_team_13_master',
+    password: 'Lucky_13',
+    database: 'csce315331_team_13',
+    port: 5432,
+  });
+
+  await client.connect();
+
+  try {
+    let query = {
+      text: 'SELECT * FROM inventory WHERE ingredient = $1 AND status = \'available\' ORDER BY expiration_date ASC, date_ordered ASC',
+      values: [itemName],
+    };
+
+    let result = await client.query(query);
+
+    let remainingChangeAmount = changeAmount;
+
+    for (let row of result.rows)
+    {
+      const currentAmount = row.amount_inv_stock;
+      const currentId = row.inv_order_id;
+
+      if (remainingChangeAmount > 0)
+      {
+        // Increase the freshest entry
+        const query = {
+          text: 'UPDATE inventory SET amount_inv_stock = $1 WHERE inv_order_id = $2',
+          values: [currentAmount + remainingChangeAmount, currentId],
+        };
+
+        await client.query(query);
+
+        remainingChangeAmount = 0;
+        break;
+      }
+      else
+      {
+        // Decrease the oldest entry
+        if (currentAmount >= -remainingChangeAmount) {
+          // Sufficient amount in the current entry to satisfy the change
+          const query = {
+            text: 'UPDATE inventory SET amount_inv_stock = $1 WHERE inv_order_id = $2',
+            values: [currentAmount + remainingChangeAmount, currentId],
+          };
+
+          await client.query(query);
+
+          remainingChangeAmount = 0;
+          break;
+        }
+        else
+        {
+          // Not enough amount in the current entry to satisfy the change
+          const query = {
+            text: 'UPDATE inventory SET amount_inv_stock = 0 WHERE inv_order_id = $1',
+            values: [currentId],
+          };
+
+          await client.query(query);
+
+          remainingChangeAmount += currentAmount;
+        }
+      }
+    }
+
+    if (remainingChangeAmount != 0) {
+      // Not enough inventory to satisfy the requested change
+      return false;
+    } else {
+      return true;
+    }
+  } catch (error) {
+    throw new functions.https.HttpsError('internal', error);
+  } finally {
+    client.end();
+  }
+});
+
 

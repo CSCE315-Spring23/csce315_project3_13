@@ -47,5 +47,13 @@ class inventory_item_helper
     final result = await callable.call({'itemName': itemName});
   }
 
+  Future<bool> edit_inventory_entry(String itemName, num changeAmount) async {
+    HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('editInventoryEntry');
+    final result = await callable.call({'itemName': itemName, 'changeAmount': changeAmount});
+
+    return result.data;
+  }
+
+
 
 }

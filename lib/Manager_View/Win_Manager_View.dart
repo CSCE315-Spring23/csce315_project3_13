@@ -2,6 +2,7 @@ import 'package:csce315_project3_13/Colors/Color_Manager.dart';
 import 'package:csce315_project3_13/GUI/Components/ExampleButton.dart';
 import 'package:csce315_project3_13/GUI/Components/Login_Button.dart';
 import 'package:csce315_project3_13/GUI/Components/Page_Header.dart';
+import 'package:csce315_project3_13/GUI/Pages/Inventory/Win_View_Inventory.dart';
 import 'package:csce315_project3_13/GUI/Pages/Login/Win_Login.dart';
 import 'package:csce315_project3_13/GUI/Pages/Loading/Loading_Order_Win.dart';
 import 'package:csce315_project3_13/GUI/Pages/Management/Win_View_Menu.dart';
@@ -47,8 +48,10 @@ class _Win_Manager_ViewState extends State<Win_Manager_View> {
             }, buttonName: "Order"),
             Login_Button(onTap: (){
               Navigator.pushReplacementNamed(context,Win_View_Menu.route);
-            }, buttonName: "Manage Menu Items", fontSize: 18, buttonWidth: 180,),
-
+            }, buttonName: "Manage Menu", fontSize: 18, buttonWidth: 180,),
+            Login_Button(onTap: (){
+              Navigator.pushReplacementNamed(context,Win_View_Inventory.route);
+            }, buttonName: "Manage Inventory", fontSize: 18, buttonWidth: 180,),
           ],
         ),
       ),
