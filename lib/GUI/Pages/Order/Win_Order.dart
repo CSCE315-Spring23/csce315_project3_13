@@ -32,6 +32,9 @@ class Win_Order_State extends State<Win_Order>{
   List<String> _addon_names = [];
 
   List<menu_item_obj> _all_menu_items = [];
+  List<menu_item_obj> _smoothie_items = [];
+  List<menu_item_obj> _snack_items = [];
+  List<menu_item_obj> _addon_items = [];
 
   // controls visibility between smoothies and snacks menu
   int _activeMenu = 0;
@@ -42,37 +45,108 @@ class Win_Order_State extends State<Win_Order>{
   // controls visibility of table (order or addon)
   int _active_table = 0;
 
+  // controls the smoothie category that is currently visible
+  String _curr_category = "";
 
   menu_item_helper item_helper = menu_item_helper();
 
   TextEditingController customer = TextEditingController();
   String _curr_customer = 'None';
-  smoothie_order _curr_smoothie = smoothie_order(smoothie: 'ERROR', Size: 'ERROR', price: 0, table_index: 0);
   curr_order _current_order = curr_order();
   bool _curr_editing = false;
+
+  double screenWidth = 0;
+  double screenHeight = 0;
 
   // data displayed on tables
   final List<Map<String, String>> _orderTable = [];
   final List<Map<String, String>> _addonTable = [];
 
+  Map<String, String> smoothie_cats = {};
+
+
+  List<String> category_names = [];
+
   bool _isLoading = true;
+
+
+  //Todo: get rid of these once categories are implemented
+  List<String> fitness_smoothies = [];
+  List<String> energy_smoothies = [];
+  List<String> weight_smoothies = [];
+  List<String> well_smoothies = [];
+  List<String> treat_smoothies = [];
+  List<String> other_smoothies = [];
 
   // Used to prevent errors
   menu_item_obj _blank_item = menu_item_obj(0, "", 0, 0, "", "", []);
+  smoothie_order _curr_smoothie = smoothie_order(smoothie: "Error", curr_size: "medium", curr_price: 0, table_index: -1);
 
-  Future<void> getData() async {
+  Future<void> getData() async
+  {
     // Simulate fetching data from an API
     view_helper name_helper = view_helper();
     _smoothie_names = await name_helper.get_unique_smoothie_names();
-    _snack_names = await name_helper.get_snack_names();
-    _addon_names =  await name_helper.get_addon_names();
-    _all_menu_items = await item_helper.getAllSmoothiesInfo();
-    _all_menu_items.addAll(await item_helper.getAllSnackInfo());
-    _all_menu_items.addAll(await item_helper.getAllAddonInfo());
-    for (menu_item_obj item in _all_menu_items)
+
+    // TODO: add categories to database, delete this once implemented
+    for (String name in _smoothie_names)
       {
-        print(item.menu_item);
+        if (name.contains("Espresso") || name.contains("Recharge") || name.contains("Cold Brew"))
+        {
+        energy_smoothies.add(name);
+        }
+        else  if (name.contains("Activator") || name.contains("Gladiator")
+            || name.contains("Hulk") || name.contains("High Intensity")
+            || name.contains("High Protein") || (name.contains("Power") && name.contains("Plus")))
+        {
+          fitness_smoothies.add(name);
+        }
+        else if (name.contains("Keto") || name.contains("Lean1")
+            || name.contains("MangoFest") || name.contains("Metabolism")
+            || name.contains("Shredder") || name.contains("Slim-N-Trim"))
+        {
+          weight_smoothies.add(name);
+        }
+        else if (name.contains("Kale") || name.contains("Heaven")
+            || name.contains("Collagen") || name.contains("Daily Warrior")
+            || name.contains("Gut Health") || name.contains("Greek Yogurt")
+            || name.contains("Immune Builder") || name.contains("Power Meal")
+            || name.contains("Spinach") || name.contains("Vegan"))
+        {
+          well_smoothies.add(name);
+        }
+        else if (name.contains("Angel") || name.contains("Treat")
+            || name.contains("Boat") || name.contains("Twist")
+            || name.contains("Punch") || name.contains("Way")
+            || name.contains("Tango") || name.contains("Impact")
+            || name.contains("Punch") || name.contains("Passport")
+            || name.contains("Surf") || name.contains("Breeze")
+            || name.contains("X-treme") || name.contains("D-Lite")
+            || name.contains("Kindness"))
+        {
+          treat_smoothies.add(name);
+        }
+        else{
+          other_smoothies.add(name);
+        }
+
       }
+
+
+    _smoothie_items = await item_helper.getAllSmoothiesInfo();
+    _snack_items = await item_helper.getAllSnackInfo();
+    _addon_items = await item_helper.getAllAddonInfo();
+
+    for (menu_item_obj snack in _snack_items){_snack_names.add(snack.menu_item);}
+    for (menu_item_obj addon in _addon_items){_addon_names.add(addon.menu_item);}
+
+    // TODO: get categories
+    category_names = ["Feel Energized", "Get Fit", "Manage Weight", "Be Well", "Enjoy a Treat", "Special"];
+
+    // TODO: remove the need for big list, by checking for type before calling
+    _all_menu_items = _smoothie_items;
+    _all_menu_items.addAll(_snack_items);
+    _all_menu_items.addAll(_addon_items);
     setState(() {
       _isLoading = false;
     });
@@ -80,8 +154,9 @@ class Win_Order_State extends State<Win_Order>{
 
   // adds row to order table
   _addToOrder(String item, String size, String type) {
-    String item_name = size != "-" ? "$item $size" : item;
+    String item_name = size != "-" ? '$item $size' : item;
     String price = _all_menu_items.firstWhere((menu_item_obj) => menu_item_obj.menu_item == (item_name)).item_price.toStringAsFixed(2);
+    String size_abrv = (size != "-") ? (size == "small") ? "S" : (size == "medium") ? "M" : "L" : "-";
 
     if (type == 'Smoothie'){
       setState(() {
@@ -101,9 +176,9 @@ class Win_Order_State extends State<Win_Order>{
       });
     }
     final newRow = {
-      'index': (_orderTable.length + 1).toString(),
+      'index': !_curr_editing ? (_orderTable.length + 1).toString() : _curr_smoothie.table_index.toString(),
       'name': item,
-      'size': size,
+      'size': size_abrv,
       'price': price,
     };
     setState(() {
@@ -199,7 +274,8 @@ class Win_Order_State extends State<Win_Order>{
   Widget buttonGrid(BuildContext context, List<String> button_names, String type, Color _button_color){
     return GridView.count(
       shrinkWrap: true,
-      crossAxisCount: 4,
+      crossAxisCount: type != "Category" ? 4 : 2,
+      childAspectRatio:type != "Category"? 1 : 2,
       padding: const EdgeInsets.all(10),
       mainAxisSpacing: 20,
       crossAxisSpacing: 20,
@@ -212,23 +288,31 @@ class Win_Order_State extends State<Win_Order>{
           if (type == "Smoothie" ) {
             setState(() {
               _curr_smoothie = smoothie_order(smoothie: name,
-                Size: 'medium', price: 0,
+                curr_size: 'medium', curr_price: 0,
                 table_index: _orderTable.length + 1,
               );
               _activeMenu2 = 1;
               _active_table = 1;
+              _curr_category = "";
             });
           }
-          if (type == 'Snack') {
+          else if (type == 'Snack') {
             setState(() {
               _addToOrder(name, '-', 'Snack');
             });
           }
-          if (type == 'Addon'){
+          else if (type == 'Addon'){
             setState(() {
               _addAddon(name);
             });
           }
+          else if (type == 'Category')
+            {
+              setState(() {
+                _curr_category = name;
+                _activeMenu2 = 2;
+              });
+            }
         },
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -238,14 +322,14 @@ class Win_Order_State extends State<Win_Order>{
               child: Center(
                 child: Text(
                   name,
-                  style: const TextStyle(fontSize: 15,),
+                  style: TextStyle(fontSize:type != "Category" ? 15 : 25,),
                   textAlign: TextAlign.center,
-                  maxLines: 3, // Limits the number of lines to 2
+                  maxLines: 3,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
             ),
-            Padding(
+            type != "Category" ? Padding(
               padding: const EdgeInsets.only(bottom: 2),
               child: type != "Smoothie" ? Text(
                 _all_menu_items.firstWhere((menu_item_obj) => menu_item_obj.menu_item == (name)).item_price.toStringAsFixed(2),
@@ -253,21 +337,33 @@ class Win_Order_State extends State<Win_Order>{
               ): Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    Text(
-                    _all_menu_items.firstWhere((menu_item_obj) => menu_item_obj.menu_item == ("$name small"), orElse: () {return _blank_item;},).item_price.toStringAsFixed(2),
-                    style: const TextStyle(color: Colors.white24),
+                    Expanded(
+                      child: Text(
+                        _all_menu_items.firstWhere((menu_item_obj) => menu_item_obj.menu_item == ("$name small"), orElse: () {return _blank_item;},).item_price.toStringAsFixed(2),
+                        style: const TextStyle(color: Colors.white24),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
-                    Text(
-                      _all_menu_items.firstWhere((menu_item_obj) => menu_item_obj.menu_item == ("$name medium"), orElse: () {return _blank_item;}).item_price.toStringAsFixed(2),
-                      style: const TextStyle(color: Colors.white24),
+                    Expanded(
+                      child: Text(
+                        _all_menu_items.firstWhere((menu_item_obj) => menu_item_obj.menu_item == ("$name medium"), orElse: () {return _blank_item;}).item_price.toStringAsFixed(2),
+                        style: const TextStyle(color: Colors.white24),
+                        maxLines: 1, // Limits the number of lines to 2
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
-                    Text(
-                      _all_menu_items.firstWhere((menu_item_obj) => menu_item_obj.menu_item == ("$name large"), orElse: () {return _blank_item;}).item_price.toStringAsFixed(2),
-                      style: const TextStyle(color: Colors.white24),
+                    Expanded(
+                      child: Text(
+                        _all_menu_items.firstWhere((menu_item_obj) => menu_item_obj.menu_item == ("$name large"), orElse: () {return _blank_item;}).item_price.toStringAsFixed(2),
+                        style: const TextStyle(color: Colors.white24),
+                        maxLines: 1, // Limits the number of lines to 2
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                   ]
               ),
-            ),
+            ) : Container(),
           ],
         ),
       )).toList(),
@@ -327,11 +423,13 @@ class Win_Order_State extends State<Win_Order>{
   @override
   Widget build(BuildContext context) {
     final _color_manager = Color_Manager.of(context);
+    screenWidth = MediaQuery.of(context).size.width;
+    screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       // TODO: Add smoothie king icon to page header
         appBar: Page_Header(
           context: context,
-          pageName: "Smoothie King at the MSC",
+          pageName: "Smoothie King - MSC Texas A&M",
           buttons: [
             IconButton(
               tooltip: "Return to Manager View",
@@ -345,96 +443,106 @@ class Win_Order_State extends State<Win_Order>{
             ),
           ],
         ),
-        backgroundColor: _color_manager.background_color,
+        // - set background color for loading screen as normal background color
+        // - avoid using background color when loaded widget because it messes with alphas adjustments
+        backgroundColor: _isLoading ? _color_manager.background_color : Colors.white,
         body: _isLoading ? const Center(
           child: SpinKitCircle(color: Colors.redAccent,),
         ) : Row(
           children: <Widget>[
-            Expanded(
-              child:  Container(
-                color: _color_manager.background_color.withAlpha(100),
-                child: Column(
-                  children: <Widget>[
-                    Stack(
+            Container(
+              width: screenWidth / 2,
+              decoration: BoxDecoration(
+                border: Border(
+                    right: BorderSide(width: 2.5, color: _color_manager.text_color.withAlpha(122)),
+                ),
+              ),
+              child: Column(
+                children: <Widget>[
+                  Expanded(
+                    child: Stack(
                       children: [
                         // Order table
                         Visibility(
-                          visible: _active_table == 0,
-                          child: Container(
-                            alignment: Alignment.topCenter,
-                            child: ListView(
-                              shrinkWrap: true,
-                              children: [
-                                DataTable(
-                                  columnSpacing: 0,
-                                  columns: const [
-                                    DataColumn(label: Text('Index'),),
-                                    DataColumn(label: Text('Name'),),
-                                    DataColumn(label: Text('Size')),
-                                    DataColumn(label: Text('Price')),
-                                    DataColumn(label: Text('Edit')),
-                                    DataColumn(label: Text('Delete')),
-                                  ],
-                                  rows: _orderTable.map((rowData) {
-                                    final rowIndex = _orderTable.indexOf(rowData);
-                                    return DataRow(cells: [
-                                      DataCell(Text('${rowData['index']}')),
-                                      DataCell(Text('${rowData['name']}')),
-                                      DataCell(Text('${rowData['size']}')),
-                                      DataCell(Text('${rowData['price']}')),
-                                      DataCell(
-                                        rowData['size'] != '-' ? IconButton(
-                                          icon: const Icon(Icons.edit),
-                                          onPressed: () {
-                                            if (rowData['size'] != '-') {
-                                              setState(() {
-                                                Map<String,
-                                                    dynamic> item = _orderTable
-                                                    .elementAt(rowIndex);
-                                                _orderTable.removeAt(rowIndex);
-                                                _curr_smoothie =
-                                                    _current_order.remove(
-                                                        int.parse(item['index']));
-                                                _active_table = 1;
-                                                _activeMenu2 = 1;
-                                                _addonTable.clear();
-                                                for (addon_order addon in _curr_smoothie
-                                                    .getAddons()) {
-                                                  final newRow = {
-                                                    'index': (_addonTable.length + 1).toString(),
-                                                    'name': addon.name,
-                                                    'price': addon.price.toStringAsFixed(2),
-                                                  };
-                                                  _addonTable.add(newRow);
-                                                }
-                                                _curr_editing = true;
-                                              });
-                                            }
-                                          },
-                                        ) : Container(),
-                                      ),
-                                      DataCell(
-                                        IconButton(
-                                          icon: const Icon(Icons.delete),
-                                          onPressed: () {
-                                            setState(() {
-                                              Map<String, dynamic> item = _orderTable.elementAt(rowIndex);
-                                              // Todo: find a more efficient way to change indexes
-                                              _current_order.remove(int.parse(item['index']));
-                                              _orderTable.removeAt(rowIndex);
-                                              _current_order.reorderIndexes(rowIndex + 1);
-                                              for (int i = rowIndex; i < _orderTable.length; i++) {
-                                                _orderTable[i]['index'] = (i + 1).toString();
-                                              }
-                                            });
-                                          },
-                                        ),
-                                      ),
-                                    ]);
-                                  }).toList(),
+                          visible: _activeMenu2 == 0,
+                          child: ListView(
+                            shrinkWrap: true,
+                            children: [
+                              DataTable(
+                                headingTextStyle: const TextStyle(
+                                  fontWeight: FontWeight.bold,
                                 ),
-                              ],
-                            ),
+                                columnSpacing: 0,
+                                columns: const [
+                                  DataColumn(label: Text('Index'),),
+                                  DataColumn(label: Text('Name'),),
+                                  DataColumn(label: Text('Size')),
+                                  DataColumn(label: Text('Price')),
+                                  DataColumn(label: Text('Edit')),
+                                  DataColumn(label: Text('Delete')),
+                                ],
+                                rows: _orderTable.map((rowData) {
+                                  final rowIndex = _orderTable.indexOf(rowData);
+                                  return DataRow(cells: [
+                                    DataCell(Text('${rowData['index']}')),
+                                    DataCell(Text('${rowData['name']}')),
+                                    DataCell(Text('${rowData['size']}')),
+                                    DataCell(Text('${rowData['price']}')),
+                                    DataCell(
+                                      rowData['size'] != '-' ? IconButton(
+                                        icon: const Icon(Icons.edit),
+                                        onPressed: ()
+                                        {
+                                          if (rowData['size'] != '-')
+                                          {
+                                            setState(() {
+                                              Map<String,
+                                                  dynamic> item = _orderTable
+                                                  .elementAt(rowIndex);
+                                              _orderTable.removeAt(rowIndex);
+                                              _curr_smoothie =
+                                                  _current_order.remove(
+                                                      int.parse(item['index']));
+                                              _active_table = 1;
+                                              _activeMenu2 = 1;
+                                              _addonTable.clear();
+                                              for (addon_order addon in _curr_smoothie
+                                                  .getAddons())
+                                              {
+                                                final newRow = {
+                                                  'index': (_addonTable.length + 1).toString(),
+                                                  'name': addon.name,
+                                                  'price': addon.price.toStringAsFixed(2),
+                                                };
+                                                _addonTable.add(newRow);
+                                              }
+                                              _curr_editing = true;
+                                            });
+                                          }
+                                        },
+                                      ) : Container(),
+                                    ),
+                                    DataCell(
+                                      IconButton(
+                                        icon: const Icon(Icons.delete),
+                                        onPressed: () {
+                                          setState(() {
+                                            Map<String, dynamic> item = _orderTable.elementAt(rowIndex);
+                                            // Todo: find a more efficient way to change indexes
+                                            _current_order.remove(int.parse(item['index']));
+                                            _orderTable.removeAt(rowIndex);
+                                            _current_order.reorderIndexes(rowIndex + 1);
+                                            for (int i = rowIndex; i < _orderTable.length; i++) {
+                                              _orderTable[i]['index'] = (i + 1).toString();
+                                            }
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                  ]);
+                                }).toList(),
+                              ),
+                            ],
                           ),
                         ),
                         // Addon table, appears when adding or editing smoothie in order
@@ -442,6 +550,7 @@ class Win_Order_State extends State<Win_Order>{
                           visible: _active_table == 1,
                           child: Container(
                             alignment: Alignment.topCenter,
+                            height: screenHeight - 75,
                             child: ListView(
                               shrinkWrap: true,
                               children: [
@@ -481,93 +590,133 @@ class Win_Order_State extends State<Win_Order>{
                             ),
                           ),
                         ),
+                     /*   Stack(
+                          children: List.generate(
+                            category_names.length,
+                                (index) =>
+                              buttonGrid(context, button_names, "Smoothie", _color_manager.active_color),
+                          ),
+                        ),*/
                       ],
                     ),
-                    const Expanded(child: SizedBox(height: 1,),),
-                    SizedBox(
-                      height: 100,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Expanded(
-                            child: TextButton(
-                              onPressed: () {
-                                customerInfo();
-                              },
-                              child: Column(
-                                children: [
-                                  const Icon(
-                                    Icons.person,
-                                    size: 75,
-                                  ),
-                                  Text(
-                                    '$_curr_customer',
-                                  )
-                                ],
-                              ),
+                  ),
+                  SizedBox(
+                    height: 100,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Container(
+                          width: (screenWidth / 4) - 2.5, // 2.5 accounts for border
+                          color: _color_manager.background_color.withAlpha(120),
+                          child: TextButton(
+                            onPressed: () {
+                              customerInfo();
+                            },
+                            child: Column(
+                              children: [
+                                const Icon(
+                                  Icons.person,
+                                  size: 75,
+                                ),
+                                Text(
+                                  _curr_customer,
+                                )
+                              ],
                             ),
                           ),
-                          Expanded(
-                            child: Center(
-                              child: Text(
-                                'Total: ${_current_order.price.toStringAsFixed(2)}',
-                              ),
+                        ),
+                        Container(
+                          width: screenWidth / 4,
+                          color: _color_manager.background_color.withAlpha(50),
+                          child: Center(
+                            child: Text(
+                              'Total: ${_current_order.price.toStringAsFixed(2)}',
                             ),
-                          )
-                        ],
-                      ),
+                          ),
+                        )
+                      ],
                     ),
-                    SizedBox(
-                      height: 100,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: <Widget>[
-                          Expanded(
-                            child: TextButton(
-                              onPressed: () {
-                                Navigator.pushReplacementNamed(context, Win_Manager_View.route);
-                              },
-                              child: const Icon(
-                                Icons.logout,
+                  ),
+                  SizedBox(
+                    height: 100,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
+                        Container(
+                          width: (screenWidth / 2) / 3,
+                          color: _color_manager.active_deny_color.withAlpha(200),
+                          child: ElevatedButton(
+                            style: ButtonStyle(
+                              shape: MaterialStateProperty.all<OutlinedBorder>(
+                                const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.zero,
+                                ),
                               ),
                             ),
-                          ),
-                          Expanded(
-                            child: TextButton(
-                              onPressed: () {
-                                setState(() {
-                                  _current_order.clear();
-                                  _orderTable.clear();
-                                });
-                              },
-                              child: const Icon(
-                                Icons.cancel_outlined,
-                              ),
+                            onPressed: () {
+                              Navigator.pushReplacementNamed(context, Win_Manager_View.route);
+                            },
+                            child: const Icon(
+                              Icons.logout,
                             ),
                           ),
-                          // Todo: Process order
-                          Expanded(
-                            child: TextButton(
-                              onPressed: () {
-                                if (!_curr_editing) {
-                                  process_order();
-                                }
-                              },
-                              child: const Icon(
-                                Icons.monetization_on,
+                        ),
+                        Container(
+                          width: ((screenWidth / 2) / 3) - 2.5,
+                          color: _color_manager.active_deny_color.withAlpha(100),
+                          child: ElevatedButton(
+                            style: ButtonStyle(
+                              shape: MaterialStateProperty.all<OutlinedBorder>(
+                                const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.zero,
+                                ),
                               ),
                             ),
+                            onPressed: () {
+                              setState(() {
+                                _current_order.clear();
+                                _orderTable.clear();
+                              });
+                            },
+                            child: const Icon(
+                              Icons.cancel_outlined,
+                            ),
                           ),
-                        ],
-                      ),
+                        ),
+                        // Todo: Process order
+                        SizedBox(
+                          width: (screenWidth / 2) / 3,
+                          child: ElevatedButton(
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all(_color_manager.active_confirm_color.withAlpha(200)),
+                              shape: MaterialStateProperty.all<OutlinedBorder>(
+                                const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.zero,
+                                ),
+                              ),
+                            ),
+                            onPressed: () {
+                              if (!_curr_editing) {
+                                process_order();
+                              }
+                            },
+                            child: const Icon(
+                              Icons.monetization_on,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
-            // Navigation between smoothie and snack button grids
-            Expanded(
+
+            // Second half of GUI
+            Container(
+              color: _color_manager.background_color,
+              width: screenWidth / 2,
               child: Stack(
                 children: <Widget>[
                   Visibility(
@@ -580,16 +729,19 @@ class Win_Order_State extends State<Win_Order>{
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: <Widget>[
-                              Expanded(
+                              SizedBox(
+                                width:screenWidth / 4 ,
                                 child: tab("Smoothies", _color_manager.background_color, 0),
                               ),
-                              Expanded(
+                              SizedBox(
+                                width:screenWidth / 4 ,
                                 child: tab("Snacks", _color_manager.background_color, 1),
                               ),
                             ],
                           ),
                         ),
-                        Expanded(
+                        SizedBox(
+                          height: screenHeight - 166,
                           child: Stack(
                             children: <Widget>[
                               // smoothie button grid
@@ -602,7 +754,9 @@ class Win_Order_State extends State<Win_Order>{
                                   child: SingleChildScrollView(
                                     primary: true,
                                     child: Container(
-                                      child: buttonGrid(context, _smoothie_names, "Smoothie", _color_manager.active_color),
+                                      color: _color_manager.background_color,
+                                      child: buttonGrid(context, category_names, "Category", _color_manager.active_color),
+                                      // child: buttonGrid(context, _smoothie_names, "Smoothie", _color_manager.active_color),
                                     ),
                                   ),
                                 ),
@@ -618,6 +772,7 @@ class Win_Order_State extends State<Win_Order>{
                                   child: SingleChildScrollView(
                                     primary: true,
                                     child: Container(
+                                      color: _color_manager.background_color,
                                       child: buttonGrid(context, _snack_names, "Snack", _color_manager.active_color.withRed(25).withGreen(180)),
                                     ),
                                   ),
@@ -633,41 +788,41 @@ class Win_Order_State extends State<Win_Order>{
                     visible: _activeMenu2 == 1,
                     child: Column(
                       children: <Widget>[
-                        SizedBox(
+                        Container(
+                          color: _color_manager.primary_color.withAlpha(122),
                           height: 100,
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: <Widget>[
-                              Expanded(
+                              SizedBox(
+                                width: (screenWidth / 2) / 6,
                                 child: Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 50),
-                                  child: ElevatedButton(
+                                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 30),
+                                  child: !_curr_editing ? ElevatedButton(
                                     onPressed: (){
                                       setState(() {
-                                        // if currently editing smoothie, insert it to previous index
-                                        if (_curr_editing)
-                                        {
-                                          _addToOrder(_curr_smoothie.getSmoothie(), _curr_smoothie.getSize(), 'Smoothie');
-                                        }
 
                                         _activeMenu2 = 0;
                                         _active_table = 0;
                                         _addonTable.clear();
                                       });
                                     },
+                                    style: ButtonStyle(
+                                        backgroundColor: MaterialStateProperty.all(_color_manager.active_deny_color),
+                                    ),
                                     child: const Icon(Icons.arrow_back),
-                                  ),
+                                  ) : Container(),
                                 ),
                               ),
 
                               // widget used to cycle through smoothie sizes
-                              Expanded(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    TextButton(
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                    width: (screenWidth / 2) * (2/3),
+                                    child: TextButton(
                                         onPressed: (){
                                           setState(() {
                                             if (_curr_smoothie.getSize() == 'medium'){
@@ -681,45 +836,52 @@ class Win_Order_State extends State<Win_Order>{
                                             }
                                           });
                                         },
-                                        child: const Icon(Icons.arrow_drop_up)
+                                        child: Icon(
+                                          Icons.arrow_drop_up,
+                                          color: _color_manager.text_color,
+                                        )
                                     ),
-                                    Text(
-                                      _curr_smoothie.getSmoothie(),
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16,
-                                        color: Colors.redAccent,
-                                      ),
+                                  ),
+                                  Text(
+                                    _curr_smoothie.getSmoothie(),
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                      color: _color_manager.text_color.withAlpha(200),
+                                      overflow: TextOverflow.ellipsis,
                                     ),
-                                    TextButton(
-                                        onPressed: (){
-                                          setState(() {
-                                            if (_curr_smoothie.getSize() == 'medium'){
-                                              _curr_smoothie.setSmoothieSize('small');
-                                            }
-                                            else if (_curr_smoothie.getSize() == 'small'){
-                                              _curr_smoothie.setSmoothieSize('large');
-                                            }
-                                            else if (_curr_smoothie.getSize() == 'large'){
-                                              _curr_smoothie.setSmoothieSize('medium');
-                                            }
-                                          });
-                                        },
-                                        child: const Icon(Icons.arrow_drop_down)
-                                    ),
-                                  ],
-                                ),
+                                  ),
+                                  TextButton(
+                                      onPressed: (){
+                                        setState(() {
+                                          if (_curr_smoothie.getSize() == 'medium'){
+                                            _curr_smoothie.setSmoothieSize('small');
+                                          }
+                                          else if (_curr_smoothie.getSize() == 'small'){
+                                            _curr_smoothie.setSmoothieSize('large');
+                                          }
+                                          else if (_curr_smoothie.getSize() == 'large'){
+                                            _curr_smoothie.setSmoothieSize('medium');
+                                          }
+                                        });
+                                      },
+                                      child: Icon(
+                                          Icons.arrow_drop_down,
+                                        color: _color_manager.text_color,
+                                      )
+                                  ),
+                                ],
                               ),
-
                               // Adds smoothie with addons to order
-                              Expanded(
+                              SizedBox(
+                                width: (screenWidth/ 2) / 6,
                                 child: Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 50),
-                                  child: !_curr_editing ? ElevatedButton(
+                                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                                  child: ElevatedButton(
                                       onPressed: (){
                                         setState(() {
                                           _addToOrder(
-                                            _curr_smoothie.getSmoothie(),
+                                            _curr_smoothie.getName(),
                                             _curr_smoothie.getSize(),
                                             'Smoothie',
                                           );
@@ -728,28 +890,106 @@ class Win_Order_State extends State<Win_Order>{
                                           _addonTable.clear();
                                         });
                                       },
-                                      child: const Text("Add to Order")
-                                  ) : Container(),
+                                      style: ButtonStyle(
+                                        backgroundColor: MaterialStateProperty.all(_color_manager.active_confirm_color.withAlpha(200)),
+                                      ),
+                                      child: Text(_curr_editing ? "Re-add to Order" : "Add to Order", textAlign: TextAlign.center,)
+                                  ),
                                 ),
                               ),
                             ],
                           ),
                         ),
-
                         // Addon table
-                        Expanded(
-                          child: Scrollbar(
-                            thickness: 30,
-                            interactive: true,
-                            thumbVisibility: true,
-                            child: SingleChildScrollView(
-                              primary: true,
-                              child: Container(
-                                  child: buttonGrid(context, _addon_names, 'Addon', _color_manager.active_color.withBlue(255))
+                        Container(
+                          width: screenWidth / 2,
+                          height: screenHeight - 156,
+                          color: _color_manager.background_color,
+                          child: buttonGrid(context, _addon_names, 'Addon', _color_manager.active_color.withBlue(255)),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Visibility(
+                    visible: _curr_category != "",
+                    child: Column(
+                      children: [
+                        Container(
+                          color: _color_manager.primary_color.withAlpha(122),
+                          height: 100,
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: <Widget>[
+                              SizedBox(
+                                width: (screenWidth / 2) / 6,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 30),
+                                  child: ElevatedButton(
+                                    onPressed: (){
+                                      setState(() {
+                                        _activeMenu2 = 0;
+                                        _curr_category = "";
+                                      });
+                                    },
+                                    style: ButtonStyle(
+                                      backgroundColor: MaterialStateProperty.all(_color_manager.active_deny_color),
+                                    ),
+                                    child: const Icon(Icons.arrow_back),
+                                  ),
+                                ),
                               ),
-                            ),
+                              // widget used to cycle through smoothie sizes
+                              Expanded(
+                                child: Center(
+                                  child: Text(
+                                    '$_curr_category Smoothies',
+                                    style: TextStyle(
+                                      fontSize: 30,
+                                      fontWeight: FontWeight.bold,
+                                      color: _color_manager.text_color,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              // Adds smoothie with addons to order
+                              SizedBox(
+                                width: (screenWidth/ 2) / 6,
+                              ),
+                            ],
                           ),
                         ),
+                        SizedBox(
+                          height: screenHeight - 166,
+                          child: Stack(
+                            children: <Widget>[
+                              Visibility(
+                                visible: _curr_category == "Get Fit",
+                                child: buttonGrid(context, fitness_smoothies, "Smoothie", _color_manager.active_color),
+                              ),
+                              Visibility(
+                                visible: _curr_category == "Feel Energized",
+                                child: buttonGrid(context, energy_smoothies, "Smoothie", _color_manager.active_color),
+                              ),
+                              Visibility(
+                                visible: _curr_category == "Manage Weight",
+                                child: buttonGrid(context, weight_smoothies, "Smoothie", _color_manager.active_color),
+                              ),
+                              Visibility(
+                                visible: _curr_category == "Be Well",
+                                child: buttonGrid(context, well_smoothies, "Smoothie", _color_manager.active_color),
+                              ),
+                              Visibility(
+                                visible: _curr_category == "Enjoy A Treat",
+                                child: buttonGrid(context, treat_smoothies, "Smoothie", _color_manager.active_color),
+                              ),
+                              Visibility(
+                                visible: _curr_category == "Special",
+                                child: buttonGrid(context, other_smoothies, "Smoothie", _color_manager.active_color),
+                              ),
+                            ],
+                          ),
+                        )
                       ],
                     ),
                   ),
