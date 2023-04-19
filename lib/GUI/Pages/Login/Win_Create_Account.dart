@@ -89,7 +89,6 @@ class _Win_Create_AccountState extends State<Win_Create_Account> {
           context: context,
           pageName: "Create account",
           buttons: [
-            const Settings_Button(),
             Login_Button(onTap: (){
               Navigator.pushReplacementNamed(context, Win_Login.route);
             }, buttonName: "Back",

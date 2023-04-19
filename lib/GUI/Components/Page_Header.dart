@@ -1,4 +1,5 @@
 import 'package:csce315_project3_13/Colors/Color_Manager.dart';
+import 'package:csce315_project3_13/GUI/Components/Settings_Button.dart';
 import 'package:csce315_project3_13/Services/Weather_Manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -55,7 +56,7 @@ PreferredSizeWidget Page_Header({required BuildContext context, required String 
       ),
     ),
     actions: [Row(
-      children: buttons,
+      children: <Widget>[const Settings_Button()] + buttons,
     ),]
 
   );

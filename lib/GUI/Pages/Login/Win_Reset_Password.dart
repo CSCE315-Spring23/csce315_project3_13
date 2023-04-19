@@ -54,7 +54,6 @@ class _Win_Reset_PasswordState extends State<Win_Reset_Password> {
       appBar: Page_Header(context: context,
         pageName: "Reset Password",
         buttons: [
-          const Settings_Button(),
 
           Login_Button(onTap: (){
             Navigator.pushReplacementNamed(context, Win_Login.route);

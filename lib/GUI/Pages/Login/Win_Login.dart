@@ -64,7 +64,6 @@ class _Win_LoginState extends State<Win_Login> {
           context: context,
           pageName: "Login",
           buttons: <Widget>[
-            const Settings_Button(),
 
             Login_Button(onTap: (){
               Navigator.pushReplacementNamed(context, Win_Reset_Password.route);
