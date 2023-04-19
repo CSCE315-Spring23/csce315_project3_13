@@ -17,21 +17,34 @@ class Win_Add_Smoothie extends StatefulWidget {
   State<Win_Add_Smoothie> createState() => _Win_Add_Smoothie_State();
 }
 
-class _Win_Add_Smoothie_State extends State<Win_Add_Smoothie> {
+class _Win_Add_Smoothie_State extends State<Win_Add_Smoothie>
+{
+  // data displayed on table
   List<Map<String, String>> _ing_table = [];
+
+  // Ingredient names displayed on buttons
   List<String> _ing_names = [];
+
+  // Use for firebase calls
   ingredients_table_helper ing_helper = ingredients_table_helper();
+
   bool _isLoading = true;
   double screenWidth =  0;
+
+  // Textfield Controller
   final TextEditingController _new_ingredient = TextEditingController();
   final TextEditingController _new_price_ctrl = TextEditingController();
   final TextEditingController _new_name_ctrl = TextEditingController();
   final TextEditingController _new_amount_ctrl = TextEditingController();
+
+  // New Item Attributes
   String _new_ingredient_name = '';
   String _new_item_name = '';
   double _new_item_price = 0;
   int _new_item_amount = 0;
 
+  // - Calls appropriate firebase function
+  // - Displays a loading screen in the meantime
   Future<void> getNames() async {
     // Simulate fetching data from an API
     _ing_names = await ing_helper.get_all_ingredient_names();
@@ -40,6 +53,8 @@ class _Win_Add_Smoothie_State extends State<Win_Add_Smoothie> {
     });
   }
 
+
+  // Returns a button grid for with each button allowing for an ingredient addition
   Widget buttonGrid(BuildContext context, Color _button_color)
   {
     return GridView.count(
@@ -76,17 +91,7 @@ class _Win_Add_Smoothie_State extends State<Win_Add_Smoothie> {
 
   }
 
-  Widget tableText({required String data, required bool bold, required Color text_color})
-  {
-    return Text(
-        data,
-      style: TextStyle(
-        color: text_color,
-        fontWeight: bold ? FontWeight.bold : FontWeight.normal,
-      ) ,
-    );
-  }
-
+  // Creates a dataTable that will display ingredient additions
   Widget ingTable(BuildContext context, Color text_color)
   {
     return Container(
@@ -134,6 +139,7 @@ class _Win_Add_Smoothie_State extends State<Win_Add_Smoothie> {
     );
   }
 
+  // Returns a Textfield widget with custom decoration
   Widget custTextfield(BuildContext context, TextEditingController ctrl, String text_deco, String buttonText)
   {
     return Row(
@@ -253,7 +259,10 @@ class _Win_Add_Smoothie_State extends State<Win_Add_Smoothie> {
                                     style: ButtonStyle(
                                       backgroundColor: MaterialStatePropertyAll(_color_manager.active_confirm_color.withAlpha(200)),
                                     ),
-                                    onPressed: () async{
+
+                                    // Handling of firebase error when adding new smoothie
+                                    onPressed: () async
+                                    {
                                       Icon message_icon = const Icon(Icons.check);
                                       String message_text = 'Successfully Added Item';
                                       List<String> new_item_ings = [];
@@ -338,8 +347,11 @@ class _Win_Add_Smoothie_State extends State<Win_Add_Smoothie> {
                               IconButton(
                                   tooltip: "Add new ingredient",
                                   padding: const EdgeInsets.symmetric(horizontal: 30),
-                                  onPressed: (){
+                                  onPressed: ()
+                                  {
                                     TextEditingController _new_ingredient = TextEditingController();
+
+                                    // Popup that allows for new ingredient additions through a textbox
                                     showDialog(
                                       barrierDismissible: false,
                                       context: context,
@@ -359,7 +371,8 @@ class _Win_Add_Smoothie_State extends State<Win_Add_Smoothie> {
                                               },
                                             ),
                                             TextButton(
-                                                onPressed: () {
+                                                onPressed: ()
+                                                {
                                                   _ing_table.add({'index': (_ing_table.length + 1).toString(), 'name': _new_ingredient_name});
                                                   Navigator.of(context).pop();
                                                 },

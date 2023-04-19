@@ -30,6 +30,10 @@ class _Win_Edit_Smoothie_State extends State<Win_Edit_Smoothie> with AutomaticKe
   String _curr_item_name = '';
   int _curr_item_id = 0;
 
+
+  // - Calls appropriate firebase function
+  // - Populates table with current smoothie ingredients
+  // - Displays a loading screen in the meantime
   Future<void> getData() async {
     // Simulate fetching data from an API
     _ing_names = await ing_helper.get_all_ingredient_names();
@@ -57,6 +61,7 @@ class _Win_Edit_Smoothie_State extends State<Win_Edit_Smoothie> with AutomaticKe
     });
   }
 
+  // Returns a button grid for with each button allowing for an ingredient addition
   Widget buttonGrid(BuildContext context,Color _button_color)
   {
     return GridView.count(
@@ -107,6 +112,7 @@ class _Win_Edit_Smoothie_State extends State<Win_Edit_Smoothie> with AutomaticKe
 
   }
 
+  // Creates a dataTable that will display ingredient additions
   Widget ingTable(BuildContext context, Color text_color)
   {
     return Container(
@@ -214,7 +220,8 @@ class _Win_Edit_Smoothie_State extends State<Win_Edit_Smoothie> with AutomaticKe
                     color: Colors.white38,
                   ),
                   child: ElevatedButton(
-                      onPressed: args != null && !_adding_item ? () async{
+                    // Call firebase function and display appropriate info
+                    onPressed: args != null && !_adding_item ? () async{
                         Icon message_icon = const Icon(Icons.check);
                         String message_text = 'Successfully Edited Item';
                         Map<String, int> new_item_ings = {};

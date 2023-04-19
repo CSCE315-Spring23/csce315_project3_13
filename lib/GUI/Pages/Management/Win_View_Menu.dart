@@ -30,6 +30,8 @@ class _Win_View_Menu_State extends State<Win_View_Menu>
   menu_item_helper item_helper = menu_item_helper();
   TextEditingController new_price = TextEditingController();
 
+  // - Calls appropriate firebase function
+  // - Displays a loading screen in the meantime
   void getData() async
   {
     print('Building Page...');
@@ -44,6 +46,7 @@ class _Win_View_Menu_State extends State<Win_View_Menu>
     });
   }
 
+  // Popup that handle price editing
   void editPrice(List<menu_item_obj> items, int id, int index)
   {
     showDialog(
@@ -98,6 +101,8 @@ class _Win_View_Menu_State extends State<Win_View_Menu>
     );
   }
 
+
+  // Popup that handle removal process
   void confirmRemoval(List<menu_item_obj> items, String item_name, int id, int index)
   {
     Icon message_icon = const Icon(Icons.check);
@@ -268,7 +273,7 @@ class _Win_View_Menu_State extends State<Win_View_Menu>
     );
   }
 
-  // Pop-up menu that allows for both new snack and addon creation
+  // Pop-up that allows for both new snack and addon creation
   void newItemSubWin(String item_type)
   {
     TextEditingController _new_item_name = TextEditingController();

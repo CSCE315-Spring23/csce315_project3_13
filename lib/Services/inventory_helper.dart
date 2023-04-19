@@ -24,10 +24,10 @@ class inventory_item_helper
       inventoryItems[itemName] = (inventoryItems[itemName] ?? 0) + (itemData["amount_inv_stock"] ?? 0);
 
     }
-    for (String itemName in inventoryItems.keys) {
-      num? amount = inventoryItems[itemName];
-      print("$itemName: $amount");
-    }
+    // for (String itemName in inventoryItems.keys) {
+    //   num? amount = inventoryItems[itemName];
+    //   print("$itemName: $amount");
+    // }
 
     return inventoryItems;
   }
@@ -46,6 +46,14 @@ class inventory_item_helper
     HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('deleteInventoryItem');
     final result = await callable.call({'itemName': itemName});
   }
+
+  Future<bool> edit_inventory_entry(String itemName, num changeAmount) async {
+    HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('editInventoryEntry');
+    final result = await callable.call({'itemName': itemName, 'changeAmount': changeAmount});
+
+    return result.data;
+  }
+
 
 
 }

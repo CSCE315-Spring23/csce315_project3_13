@@ -3,6 +3,7 @@ import 'package:csce315_project3_13/GUI/Components/Contrast_Button.dart';
 import 'package:csce315_project3_13/GUI/Components/Login_Button.dart';
 import 'package:csce315_project3_13/GUI/Components/Login_TextField.dart';
 import 'package:csce315_project3_13/GUI/Components/Page_Header.dart';
+import 'package:csce315_project3_13/GUI/Components/Settings_Button.dart';
 import 'package:csce315_project3_13/GUI/Pages/Login/Win_Login.dart';
 import 'package:csce315_project3_13/Services/login_helper.dart';
 import 'package:flutter/material.dart';
@@ -53,7 +54,7 @@ class _Win_Reset_PasswordState extends State<Win_Reset_Password> {
       appBar: Page_Header(context: context,
         pageName: "Reset Password",
         buttons: [
-          const Contrast_Button(),
+          const Settings_Button(),
 
           Login_Button(onTap: (){
             Navigator.pushReplacementNamed(context, Win_Login.route);
