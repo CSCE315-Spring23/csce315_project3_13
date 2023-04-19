@@ -94,6 +94,7 @@ class login_helper{
       Navigator.pop(context);
       Navigator.pushReplacementNamed(context, Win_Server_View.route);
 
+
     }else{
       // TODO Handle the edge case
       print("!!! The role was not one of the options");
@@ -103,6 +104,24 @@ class login_helper{
 
       //Pops the loading screen
       Navigator.pop(context);
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Sign in failed'),
+            content: Text('You are not an authorized user'),
+            actions: <Widget>[
+              TextButton(
+                child: Text('OK'),
+                onPressed: () {
+                  // Perform some action here
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
 
     }
 

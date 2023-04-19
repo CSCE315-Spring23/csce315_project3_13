@@ -34,6 +34,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
 
+
   // initializes colors for the app
   Color primary_color = Color(0xFF932126);
   Color secondary_color = Color(0xFF932126);
@@ -65,7 +66,6 @@ class _MyAppState extends State<MyApp> {
   }
 
 
-
   // option for deuteranopia
   void option_deuteranopia(){
     print("deuteranopia selected");
@@ -84,6 +84,7 @@ class _MyAppState extends State<MyApp> {
     set_color_option_pref('deuteranopia');
   }
 
+
   // color pallet for protanopia
   void option_protanopia(){
     setState(() {
@@ -100,6 +101,7 @@ class _MyAppState extends State<MyApp> {
     });
     set_color_option_pref('protanopia');
   }
+
 
   // color pallet for tritanopia
   void option_tritanopia(){
