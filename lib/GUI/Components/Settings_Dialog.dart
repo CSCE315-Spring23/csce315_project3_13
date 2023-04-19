@@ -1,4 +1,5 @@
 import 'package:csce315_project3_13/Inherited_Widgets/Color_Manager.dart';
+import 'package:csce315_project3_13/Inherited_Widgets/Translate_Manager.dart';
 import 'package:flutter/material.dart';
 
 
@@ -19,6 +20,27 @@ class _Settings_DialogState extends State<Settings_Dialog> {
 
   @override
   Widget build(BuildContext context) {
+
+
+    final _translate_manager = Translate_Manager.of(context);
+
+    void set_language_dropdown(){
+      if(_translate_manager.chosen_language == "en"){
+        dropdownValue = 'English';
+      }else if(_translate_manager.chosen_language == "es"){
+        dropdownValue = 'Spanish';
+      }
+    }
+
+    void set_language(String newLanguageChoice){
+      if(newLanguageChoice == "English"){
+        _translate_manager.change_language("en");
+      }else if(newLanguageChoice == "Spanish"){
+        _translate_manager.change_language("es");
+      }
+    }
+
+    set_language_dropdown();
 
 
     final _color_manager = Color_Manager.of(context);
@@ -86,6 +108,7 @@ class _Settings_DialogState extends State<Settings_Dialog> {
                 onChanged: (newValue) {
                   setState(() {
                     dropdownValue = newValue as String;
+                    set_language(dropdownValue);
                   });
                 },
                 items: <String>['English', 'Spanish']
@@ -95,7 +118,7 @@ class _Settings_DialogState extends State<Settings_Dialog> {
                     child: Text(value),
                   );
                 }).toList(),
-              )
+              ),
 
 
             ],
