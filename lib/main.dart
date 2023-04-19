@@ -1,7 +1,11 @@
 import 'package:csce315_project3_13/Colors/Color_Manager.dart';
+import 'package:csce315_project3_13/GUI/Pages/Inventory/Win_View_Inventory.dart';
 import 'package:csce315_project3_13/GUI/Pages/Loading/Loading_Page.dart';
 import 'package:csce315_project3_13/GUI/Pages/Login/Win_Create_Account.dart';
 import 'package:csce315_project3_13/GUI/Pages/Login/Win_Reset_Password.dart';
+import 'package:csce315_project3_13/GUI/Pages/Management/WIn_Edit_Smoothie.dart';
+import 'package:csce315_project3_13/GUI/Pages/Management/Win_Add_Smoothie.dart';
+import 'package:csce315_project3_13/GUI/Pages/Management/Win_View_Menu.dart';
 import 'package:csce315_project3_13/GUI/Pages/Order/Win_Order.dart';
 import 'package:csce315_project3_13/GUI/Pages/Test%20Pages/Win_Functions_Test_Page.dart';
 import 'package:csce315_project3_13/GUI/Pages/Loading/Loading_Order_Win.dart';
@@ -253,10 +257,14 @@ class _MyAppState extends State<MyApp> {
             Win_Server_View.route: (BuildContext context) => Win_Server_View(),
             Win_Functions_Test_Page.route: (BuildContext context) => Win_Functions_Test_Page(),
             Win_Loading_Page.route: (BuildContext context) => Win_Loading_Page(),
+            Win_View_Menu.route :(BuildContext context) => Win_View_Menu(),
+            Win_Edit_Smoothie.route: (BuildContext context) => Win_Edit_Smoothie(),
+            Win_Add_Smoothie.route: (BuildContext context) => Win_Add_Smoothie(),
             Loading_Order_Win.route: (BuildContext context) => Loading_Order_Win(),
             Win_Order.route: (BuildContext context) => Win_Order(),
+            Win_View_Inventory.route :(BuildContext context) => Win_View_Inventory(),
           },
-          initialRoute:  Win_Login.route,
+          initialRoute:  Win_View_Inventory.route,
         ),
       ),
     );

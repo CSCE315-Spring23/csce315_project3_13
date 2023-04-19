@@ -26,4 +26,18 @@ class ingredients_table_helper
     HttpsCallable deleteIngredient = FirebaseFunctions.instance.httpsCallable('deleteIngredientsTableRow');
     await deleteIngredient.call({'row_id': row_id});
   }
+
+  Future<List<String>> get_all_ingredient_names() async {
+
+    HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('getIngredientNames');
+    final ingredient_name_query = await callable();
+    List result = ingredient_name_query.data;
+    List<String> names = [];
+
+    for (int i = 0; i < result.length; i++) {
+      names.add(result[i]['ingredient_name']);
+    }
+
+    return names;
+  }
 }
