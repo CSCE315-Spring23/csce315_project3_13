@@ -1,4 +1,4 @@
-import 'package:csce315_project3_13/Colors/Color_Manager.dart';
+import 'package:csce315_project3_13/Inherited_Widgets/Color_Manager.dart';
 import 'package:csce315_project3_13/GUI/Pages/Inventory/Win_View_Inventory.dart';
 import 'package:csce315_project3_13/GUI/Pages/Loading/Loading_Page.dart';
 import 'package:csce315_project3_13/GUI/Pages/Login/Win_Create_Account.dart';
@@ -11,7 +11,7 @@ import 'package:csce315_project3_13/GUI/Pages/Test%20Pages/Win_Functions_Test_Pa
 import 'package:csce315_project3_13/GUI/Pages/Loading/Loading_Order_Win.dart';
 import 'package:csce315_project3_13/Manager_View/Win_Manager_View.dart';
 import 'package:csce315_project3_13/Server_View/Win_Server_View.dart';
-import 'package:csce315_project3_13/Services/Weather_Manager.dart';
+import 'package:csce315_project3_13/Inherited_Widgets/Weather_Manager.dart';
 import 'package:csce315_project3_13/Services/weather_API.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';

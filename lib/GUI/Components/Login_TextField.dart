@@ -1,4 +1,4 @@
-import 'package:csce315_project3_13/Colors/Color_Manager.dart';
+import 'package:csce315_project3_13/Inherited_Widgets/Color_Manager.dart';
 import 'package:flutter/material.dart';
 
 Widget Login_TextField({required BuildContext context, Function? onSubmitted, required TextEditingController textController, bool obscureText = false, String labelText = ""}){
