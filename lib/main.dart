@@ -123,16 +123,7 @@ class _MyAppState extends State<MyApp> {
 
 
 
-  // finds what the value for high_contrast is
-  void get_preferences() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? got_color_choice = prefs.getString('color_option');
-    if(got_color_choice == null){
-      await prefs.setString('color_option', 'standard');
-      got_color_choice = 'standard';
-    }
-    set_color_scheme(got_color_choice);
-  }
+
 
   // changes the color depending on the preferences
   void set_color_scheme(String pref_color_choice){
@@ -216,6 +207,29 @@ class _MyAppState extends State<MyApp> {
     setState(() {
       chosen_language = newLanguage;
     });
+    set_language_option_pref(newLanguage);
+  }
+
+  void set_language_option_pref(String language_pref_choice) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('language_option', language_pref_choice);
+  }
+
+  // finds what the value for high_contrast is
+  void get_preferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? got_color_choice = prefs.getString('color_option');
+    if(got_color_choice == null){
+      await prefs.setString('color_option', 'standard');
+      got_color_choice = 'standard';
+    }
+    String? got_language_choice = prefs.getString('language_option');
+    if(got_language_choice == null){
+      await prefs.setString('language_option', 'en');
+      got_language_choice = 'en';
+    }
+    set_color_scheme(got_color_choice);
+    change_language(got_language_choice as String);
   }
 
 
