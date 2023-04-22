@@ -41,44 +41,38 @@ class curr_order {
 
   void reorderIndexes(int startingIndex)
   {
-    for (int i = startingIndex; i < (smoothies.length + snacks.length); ++i){
-      for (smoothie_order smoothie in smoothies) {
-        if (smoothie.table_index == startingIndex + 1) {
-          smoothie.table_index -= 1;
-          break;
-        }
+    for (smoothie_order smoothie in [...smoothies]) {
+      if (smoothie.table_index >= startingIndex) {
+        smoothie.table_index -= 1;
+
       }
-      for (snack_order snack in snacks){
-        if (snack.table_index == startingIndex + 1){
-          snack.table_index -= 1;
-          break;
-        }
+    }
+    for (snack_order snack in [...snacks]){
+      if (snack.table_index >= startingIndex){
+        snack.table_index -= 1;
       }
     }
   }
 
-  dynamic remove(int index)
+  smoothie_order remove(int index)
   {
-    for (smoothie_order smoothie in smoothies)
-      {
-        if (smoothie.table_index == index)
-          {
-            smoothie_order copy = smoothie;
-            price -= smoothie.getCost();
-            smoothies.remove(smoothie);
-            return copy;
-          }
-      }
-    for (snack_order snack in snacks)
-      {
-        if (snack.table_index == index)
-          {
-            price -= snack.price;
-            snacks.remove(snack);
-            return 0;
-          }
-      }
+       for (smoothie_order smoothie in smoothies) {
+         if (smoothie.table_index == index) {
+           smoothie_order copy = smoothie;
+           price -= smoothie.getCost();
+           smoothies.remove(smoothie);
+           return copy;
+         }
+       }
+       for (snack_order snack in snacks) {
+         if (snack.table_index == index) {
+           price -= snack.price;
+           snacks.remove(snack);
+         }
+       }
     reorderIndexes(index);
+    return smoothie_order(smoothie: "Error", curr_size: "", curr_price: 0, table_index: 0);
+
   }
 
 

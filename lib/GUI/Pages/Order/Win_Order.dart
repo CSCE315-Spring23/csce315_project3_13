@@ -22,19 +22,20 @@ class Win_Order extends StatefulWidget {
   State<Win_Order> createState() => Win_Order_State();
 }
 
-class Win_Order_State extends State<Win_Order>{
+class Win_Order_State extends State<Win_Order>
+{
 
-  // Todo: get smoothie names from database
   List<String> _smoothie_names = [];
-  // Todo: get snack names from database
   List<String> _snack_names = [];
-  // Todo" get addon names from database
   List<String> _addon_names = [];
 
+  // Database info
   List<menu_item_obj> _all_menu_items = [];
   List<menu_item_obj> _smoothie_items = [];
   List<menu_item_obj> _snack_items = [];
   List<menu_item_obj> _addon_items = [];
+  List<String> category_names = [];
+
 
   // controls visibility between smoothies and snacks menu
   int _activeMenu = 0;
@@ -52,9 +53,18 @@ class Win_Order_State extends State<Win_Order>{
 
   TextEditingController customer = TextEditingController();
   String _curr_customer = 'None';
-  curr_order _current_order = curr_order();
-  bool _curr_editing = false;
 
+  // Tracks current order using menu item models
+  curr_order _current_order = curr_order();
+
+  // Tracks whether a smoothie is currently being edited
+  bool _curr_editing = false;
+  
+  //smoothie_order _unedit_smooth = smoothie_order(smoothie: smoothie, curr_size: curr_size, curr_price: curr_price, table_index: table_index);
+
+  // Smoothie selected for editing prior to editing
+
+  // Current screen dimensions used to track
   double screenWidth = 0;
   double screenHeight = 0;
 
@@ -64,9 +74,7 @@ class Win_Order_State extends State<Win_Order>{
 
   Map<String, String> smoothie_cats = {};
 
-
-  List<String> category_names = [];
-
+  // Tracks whether firebase calls are active
   bool _isLoading = true;
 
 
@@ -84,7 +92,6 @@ class Win_Order_State extends State<Win_Order>{
 
   Future<void> getData() async
   {
-    // Simulate fetching data from an API
     view_helper name_helper = view_helper();
     _smoothie_names = await name_helper.get_unique_smoothie_names();
 
@@ -141,7 +148,7 @@ class Win_Order_State extends State<Win_Order>{
     for (menu_item_obj addon in _addon_items){_addon_names.add(addon.menu_item);}
 
     // TODO: get categories
-    category_names = ["Feel Energized", "Get Fit", "Manage Weight", "Be Well", "Enjoy a Treat", "Special"];
+    category_names = ["Feel Energized", "Get Fit", "Manage Weight", "Be Well", "Enjoy a Treat", "Seasonal"];
 
     // TODO: remove the need for big list, by checking for type before calling
     _all_menu_items = _smoothie_items;
@@ -216,7 +223,7 @@ class Win_Order_State extends State<Win_Order>{
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Customer Information'),
+          title: const Text('Customer Name'),
           content: TextFormField(
             controller: customer,
             decoration: const InputDecoration(hintText: 'Type here...'),
@@ -267,11 +274,18 @@ class Win_Order_State extends State<Win_Order>{
             _activeMenu = 1;
           }
         });
-      } : null, child: Text(tab_text, style: const TextStyle(fontSize: 20),),
+      } : null,
+      child: Text(
+        tab_text,
+        style: const TextStyle(
+            fontSize: 25,
+            fontWeight: FontWeight.bold),
+            overflow: TextOverflow.fade
+        ,),
     );
   }
-
-  Widget buttonGrid(BuildContext context, List<String> button_names, String type, Color _button_color){
+  // Grid of Buttons used for selection of categories
+  Widget buttonGrid(List<String> button_names, String type, Color _button_color){
     return GridView.count(
       shrinkWrap: true,
       crossAxisCount: type != "Category" ? 4 : 2,
@@ -380,15 +394,18 @@ class Win_Order_State extends State<Win_Order>{
     for (snack_order snack in snacks)
     {
       int snack_id = await helper_instance.get_item_id(snack.name);
+      print(snack.name);
       item_ids.add(snack_id);
     }
     for (smoothie_order smoothie in smoothies)
     {
       int smooth_id = await helper_instance.get_item_id(smoothie.getSmoothie());
+      print(smoothie.smoothie);
       item_ids.add(smooth_id);
       List<addon_order> addons = smoothie.getAddons();
       for (addon_order addon in addons)
       {
+        print(addon.name);
         int addon_id = await helper_instance.get_item_id(addon.name);
         item_ids.add(addon_id);
       }
@@ -396,22 +413,148 @@ class Win_Order_State extends State<Win_Order>{
     return item_ids;
   }
 
-  void process_order() async {
-    // if nothing in order, then don't process
-    if ((_current_order.getSnacks().length == 0) && (_current_order.getSmoothies() == 0))
-    {
-      return;
-    }
+  // Alert popup that displays all items in order
+  void order_summary()
+  {
+    bool _order_processing = false;
+    final List<Map<String, String>> _sum = [];
+    int i = 1;
+    for (smoothie_order smoothie  in _current_order.getSmoothies())
+      {
+        final sm_row = {
+          'index': i.toString(),
+          'name': smoothie.getName(),
+          'price': smoothie.getCost().toString(),
+        };
+        _sum.add(sm_row);
+        for (addon_order addon in smoothie.getAddons())
+          {
+            final ad_row = {
+              'index': "",
+              'name': addon.name,
+              'price': addon.price.toString(),
+            };
+            _sum.add(ad_row);
+          }
+        i += 1;
+      }
+    for (snack_order snack in _current_order.getSnacks())
+      {
+        final sn_row = {
+          'index': i.toString(),
+          'name': snack.name,
+          'price': snack.price.toString(),
+        };
+        _sum.add(sn_row);
+        i +=1;
+      }
+
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return _order_processing ? const SpinKitPouringHourGlass(color: Colors.white) : AlertDialog(
+          title: Text(_curr_customer != "None" ? 'Order Summary for $_curr_customer': "Order Summary"),
+          content: SizedBox(
+            width: screenWidth /2,
+            height: screenHeight / 2,
+            child: ListView(
+            shrinkWrap: true,
+            children: [
+              DataTable(
+                headingTextStyle: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+                columnSpacing: 0,
+                columns: const [
+                  DataColumn(label: Text('Index'),),
+                  DataColumn(label: Text('Name'),),
+                  DataColumn(label: Text('Price')),
+                ],
+                rows: _sum.map((rowData) {
+                  final rowIndex = _sum.indexOf(rowData);
+                  return DataRow(cells: [
+                    DataCell(Text('${rowData['index']}')),
+                    DataCell(Text('${rowData['name']}')),
+                    DataCell(Text('${rowData['price']}')),
+                  ]);
+                }).toList(),
+              ),
+            ],
+          ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('CANCEL'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('CONFIRM'),
+              onPressed: () async
+              {
+                setState(() {
+                  _order_processing = true;
+                });
+                Icon message_icon = const Icon(Icons.check);
+                String message_text = 'Order Processed Successfully!';
+
+                  try {
+                      await process_order();
+                    }
+
+                  catch(exception)
+                  {
+                    print(exception);
+                    message_icon = const Icon(Icons.error_outline_outlined);
+                    message_text = 'Unable To Process Order.';
+                  }
+                  finally{
+                    Navigator.of(context).pop();
+                    showDialog(
+                        barrierDismissible: false,
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: message_icon,
+                            content: Text(message_text),
+                            actions: [
+                              TextButton(
+                                  onPressed: (){
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text('OK'))
+                            ],
+                          );
+                        });
+                  }
+                }
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+
+
+  Future<void> process_order() async {
+
     List<int> item_ids_in_order = await getIds();
     DateTime now = DateTime.now();
     String formattedDate = DateFormat('yyyy-MM-dd').format(now);
     order_processing_helper order_helper = order_processing_helper();
     int trans_id = await order_helper.get_new_transaction_id();
     order_obj order_to_process = order_obj(trans_id, 3, item_ids_in_order, _current_order.price , _curr_customer, formattedDate, 'completed');
-    order_helper.process_order(order_to_process);
-    _current_order.clear();
-    _orderTable.clear();
-    _addonTable.clear();
+    print(order_to_process.get_values());
+    await order_helper.process_order(order_to_process);
+    setState(() {
+      _current_order.clear();
+      _orderTable.clear();
+      _addonTable.clear();
+      _curr_customer = "";
+    });
   }
 
   @override
@@ -429,7 +572,7 @@ class Win_Order_State extends State<Win_Order>{
       // TODO: Add smoothie king icon to page header
         appBar: Page_Header(
           context: context,
-          pageName: "Smoothie King - MSC Texas A&M",
+          pageName: "Smoothie King - Texas A&M MSC",
           buttons: [
             IconButton(
               tooltip: "Return to Manager View",
@@ -527,11 +670,9 @@ class Win_Order_State extends State<Win_Order>{
                                         icon: const Icon(Icons.delete),
                                         onPressed: () {
                                           setState(() {
-                                            Map<String, dynamic> item = _orderTable.elementAt(rowIndex);
                                             // Todo: find a more efficient way to change indexes
-                                            _current_order.remove(int.parse(item['index']));
+                                            _current_order.remove(int.parse(_orderTable.elementAt(rowIndex)['index']!));
                                             _orderTable.removeAt(rowIndex);
-                                            _current_order.reorderIndexes(rowIndex + 1);
                                             for (int i = rowIndex; i < _orderTable.length; i++) {
                                               _orderTable[i]['index'] = (i + 1).toString();
                                             }
@@ -590,13 +731,6 @@ class Win_Order_State extends State<Win_Order>{
                             ),
                           ),
                         ),
-                     /*   Stack(
-                          children: List.generate(
-                            category_names.length,
-                                (index) =>
-                              buttonGrid(context, button_names, "Smoothie", _color_manager.active_color),
-                          ),
-                        ),*/
                       ],
                     ),
                   ),
@@ -630,7 +764,7 @@ class Win_Order_State extends State<Win_Order>{
                           color: _color_manager.background_color.withAlpha(50),
                           child: Center(
                             child: Text(
-                              'Total: ${_current_order.price.toStringAsFixed(2)}',
+                              'Total: ${_current_order.price.abs().toStringAsFixed(2)}',
                             ),
                           ),
                         )
@@ -655,7 +789,7 @@ class Win_Order_State extends State<Win_Order>{
                               ),
                             ),
                             onPressed: () {
-                              Navigator.pushReplacementNamed(context, Win_Manager_View.route);
+                              Navigator.pushReplacementNamed(context, Win_Login.route);
                             },
                             child: const Icon(
                               Icons.logout,
@@ -674,9 +808,17 @@ class Win_Order_State extends State<Win_Order>{
                               ),
                             ),
                             onPressed: () {
-                              setState(() {
-                                _current_order.clear();
-                                _orderTable.clear();
+                               setState(() {
+                                 for (smoothie_order smoothie in _current_order.getSmoothies())
+                                 {
+                                   print("${smoothie.getName()}: ${smoothie.table_index}");
+                                 }
+                                 for (snack_order snack in _current_order.getSnacks())
+                                 {
+                                   print("${snack.name}: ${snack.table_index}");
+                                 }
+                               /* _current_order.clear();
+                                _orderTable.clear();*/
                               });
                             },
                             child: const Icon(
@@ -696,11 +838,12 @@ class Win_Order_State extends State<Win_Order>{
                                 ),
                               ),
                             ),
-                            onPressed: () {
-                              if (!_curr_editing) {
-                                process_order();
-                              }
-                            },
+                            onPressed: (!_curr_editing
+                                && (_current_order.getSmoothies().isNotEmpty
+                                 || _current_order.getSnacks().isNotEmpty)
+                            ) ? () {
+                                order_summary();
+                            } : null,
                             child: const Icon(
                               Icons.monetization_on,
                             ),
@@ -755,7 +898,7 @@ class Win_Order_State extends State<Win_Order>{
                                     primary: true,
                                     child: Container(
                                       color: _color_manager.background_color,
-                                      child: buttonGrid(context, category_names, "Category", _color_manager.active_color),
+                                      child: buttonGrid(category_names, "Category", _color_manager.active_color),
                                       // child: buttonGrid(context, _smoothie_names, "Smoothie", _color_manager.active_color),
                                     ),
                                   ),
@@ -773,7 +916,7 @@ class Win_Order_State extends State<Win_Order>{
                                     primary: true,
                                     child: Container(
                                       color: _color_manager.background_color,
-                                      child: buttonGrid(context, _snack_names, "Snack", _color_manager.active_color.withRed(25).withGreen(180)),
+                                      child: buttonGrid(_snack_names, "Snack", _color_manager.active_color.withRed(25).withGreen(180)),
                                     ),
                                   ),
                                 ),
@@ -893,7 +1036,7 @@ class Win_Order_State extends State<Win_Order>{
                                       style: ButtonStyle(
                                         backgroundColor: MaterialStateProperty.all(_color_manager.active_confirm_color.withAlpha(200)),
                                       ),
-                                      child: Text(_curr_editing ? "Re-add to Order" : "Add to Order", textAlign: TextAlign.center,)
+                                      child: _curr_editing ? const Icon(Icons.check, size: 35,) : const Icon(Icons.add_circle, size: 35),
                                   ),
                                 ),
                               ),
@@ -905,7 +1048,7 @@ class Win_Order_State extends State<Win_Order>{
                           width: screenWidth / 2,
                           height: screenHeight - 156,
                           color: _color_manager.background_color,
-                          child: buttonGrid(context, _addon_names, 'Addon', _color_manager.active_color.withBlue(255)),
+                          child: buttonGrid(_addon_names, 'Addon', _color_manager.active_color.withBlue(255)),
                         ),
                       ],
                     ),
@@ -965,27 +1108,27 @@ class Win_Order_State extends State<Win_Order>{
                             children: <Widget>[
                               Visibility(
                                 visible: _curr_category == "Get Fit",
-                                child: buttonGrid(context, fitness_smoothies, "Smoothie", _color_manager.active_color),
+                                child: buttonGrid(fitness_smoothies, "Smoothie", _color_manager.active_color),
                               ),
                               Visibility(
                                 visible: _curr_category == "Feel Energized",
-                                child: buttonGrid(context, energy_smoothies, "Smoothie", _color_manager.active_color),
+                                child: buttonGrid(energy_smoothies, "Smoothie", _color_manager.active_color),
                               ),
                               Visibility(
                                 visible: _curr_category == "Manage Weight",
-                                child: buttonGrid(context, weight_smoothies, "Smoothie", _color_manager.active_color),
+                                child: buttonGrid(weight_smoothies, "Smoothie", _color_manager.active_color),
                               ),
                               Visibility(
                                 visible: _curr_category == "Be Well",
-                                child: buttonGrid(context, well_smoothies, "Smoothie", _color_manager.active_color),
+                                child: buttonGrid(well_smoothies, "Smoothie", _color_manager.active_color),
                               ),
                               Visibility(
-                                visible: _curr_category == "Enjoy A Treat",
-                                child: buttonGrid(context, treat_smoothies, "Smoothie", _color_manager.active_color),
+                                visible: _curr_category == "Enjoy a Treat",
+                                child: buttonGrid(treat_smoothies, "Smoothie", _color_manager.active_color),
                               ),
                               Visibility(
-                                visible: _curr_category == "Special",
-                                child: buttonGrid(context, other_smoothies, "Smoothie", _color_manager.active_color),
+                                visible: _curr_category == "Seasonal",
+                                child: buttonGrid(other_smoothies, "Smoothie", _color_manager.active_color),
                               ),
                             ],
                           ),

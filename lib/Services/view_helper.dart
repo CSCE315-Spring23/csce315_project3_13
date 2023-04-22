@@ -55,8 +55,6 @@ class view_helper {
       }
     }
 
-    print(names);
-
     return names;
   }
 

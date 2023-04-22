@@ -264,7 +264,7 @@ class _MyAppState extends State<MyApp> {
             Win_Order.route: (BuildContext context) => Win_Order(),
             Win_View_Inventory.route :(BuildContext context) => Win_View_Inventory(),
           },
-          initialRoute:  Win_Login.route,
+          initialRoute:  Win_Order.route,
         ),
       ),
     );
