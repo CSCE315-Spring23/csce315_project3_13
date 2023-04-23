@@ -8,7 +8,6 @@ import 'package:csce315_project3_13/GUI/Pages/Management/Win_Add_Smoothie.dart';
 import 'package:csce315_project3_13/GUI/Pages/Management/Win_View_Menu.dart';
 import 'package:csce315_project3_13/GUI/Pages/Order/Win_Order.dart';
 import 'package:csce315_project3_13/GUI/Pages/Test%20Pages/Win_Functions_Test_Page.dart';
-import 'package:csce315_project3_13/GUI/Pages/Loading/Loading_Order_Win.dart';
 import 'package:csce315_project3_13/Inherited_Widgets/Translate_Manager.dart';
 import 'package:csce315_project3_13/Manager_View/Win_Manager_View.dart';
 import 'package:csce315_project3_13/Server_View/Win_Server_View.dart';
@@ -292,7 +291,6 @@ class _MyAppState extends State<MyApp> {
               Win_View_Menu.route :(BuildContext context) => Win_View_Menu(),
               Win_Edit_Smoothie.route: (BuildContext context) => Win_Edit_Smoothie(),
               Win_Add_Smoothie.route: (BuildContext context) => Win_Add_Smoothie(),
-              Loading_Order_Win.route: (BuildContext context) => Loading_Order_Win(),
               Win_Order.route: (BuildContext context) => Win_Order(),
               Win_View_Inventory.route :(BuildContext context) => Win_View_Inventory(),
             },

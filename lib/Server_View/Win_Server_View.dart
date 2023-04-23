@@ -1,8 +1,8 @@
+import 'package:csce315_project3_13/GUI/Pages/Order/Win_Order.dart';
 import 'package:csce315_project3_13/Inherited_Widgets/Color_Manager.dart';
 import 'package:csce315_project3_13/GUI/Components/Login_Button.dart';
 import 'package:csce315_project3_13/GUI/Components/Page_Header.dart';
 import 'package:csce315_project3_13/GUI/Pages/Login/Win_Login.dart';
-import 'package:csce315_project3_13/GUI/Pages/Loading/Loading_Order_Win.dart';
 import 'package:csce315_project3_13/Services/login_helper.dart';
 import 'package:flutter/material.dart';
 
@@ -41,7 +41,7 @@ class _Win_Server_ViewState extends State<Win_Server_View> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
             Login_Button(onTap: (){
-              Navigator.pushReplacementNamed(context,Loading_Order_Win.route);
+              Navigator.pushReplacementNamed(context,Win_Order.route);
             }, buttonName: "Order"),
 
 

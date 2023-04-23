@@ -7,12 +7,11 @@ import 'package:csce315_project3_13/Services/order_processing_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
-import '../../../Colors/Color_Manager.dart';
+import '../../../Inherited_Widgets/Color_Manager.dart';
 import '../../../Services/menu_item_helper.dart';
 import '../../../Services/view_helper.dart';
 import '../../Components/Page_Header.dart';
 import '../Login/Win_Login.dart';
-import '../Loading/Loading_Order_Win.dart';
 import '../../../Models/models_library.dart';
 
 class Win_Order extends StatefulWidget {
