@@ -278,7 +278,7 @@ class Win_Order_State extends State<Win_Order>
       child: Text(
         tab_text,
         style: const TextStyle(
-M            fontSize: 30,
+            fontSize: 30,
             fontWeight: FontWeight.bold),
             overflow: TextOverflow.fade
         ,),
