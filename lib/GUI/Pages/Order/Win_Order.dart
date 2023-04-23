@@ -58,6 +58,7 @@ class Win_Order_State extends State<Win_Order>
 
   // Tracks whether a smoothie is currently being edited
   bool _curr_editing = false;
+  bool _order_processing = false;
   
   //smoothie_order _unedit_smooth = smoothie_order(smoothie: smoothie, curr_size: curr_size, curr_price: curr_price, table_index: table_index);
 
@@ -216,6 +217,7 @@ class Win_Order_State extends State<Win_Order>
       'name': item,
       'price': price,
     };
+    // TODO: Implement amounts
     addon_order new_addon = addon_order(name: item, price: double.parse(price), amount: 1);
     setState(() {
       // limit addons to 8
@@ -425,7 +427,6 @@ class Win_Order_State extends State<Win_Order>
   // Alert popup that displays all items in order
   void order_summary()
   {
-    bool _order_processing = false;
     final List<Map<String, String>> _sum = [];
     int i = 1;
     for (smoothie_order smoothie  in _current_order.getSmoothies())
@@ -433,7 +434,7 @@ class Win_Order_State extends State<Win_Order>
         final sm_row = {
           'index': i.toString(),
           'name': smoothie.getName(),
-          'price': smoothie.getCost().toString(),
+          'price': smoothie.getCost().toStringAsFixed(2),
         };
         _sum.add(sm_row);
         for (addon_order addon in smoothie.getAddons())
@@ -441,7 +442,7 @@ class Win_Order_State extends State<Win_Order>
             final ad_row = {
               'index': "",
               'name': addon.name,
-              'price': addon.price.toString(),
+              'price': addon.price.toStringAsFixed(2),
             };
             _sum.add(ad_row);
           }
@@ -452,7 +453,7 @@ class Win_Order_State extends State<Win_Order>
         final sn_row = {
           'index': i.toString(),
           'name': snack.name,
-          'price': snack.price.toString(),
+          'price': snack.price.toStringAsFixed(2),
         };
         _sum.add(sn_row);
         i +=1;
@@ -462,118 +463,142 @@ class Win_Order_State extends State<Win_Order>
       barrierDismissible: false,
       context: context,
       builder: (BuildContext context) {
-        return Stack(
-          children: [
-            Visibility(
-              visible: !_order_processing,
-              child: AlertDialog(
-                title: Text(_curr_customer != "None" ? 'Order Summary for $_curr_customer': "Order Summary"),
-                //backgroundColor: Colors.white,
-                content: SizedBox(
-                  width: screenWidth /2,
-                  height: screenHeight / 2,
-                  child: ListView(
-                  shrinkWrap: true,
-                  children: [
-                    DataTable(
-                      headingTextStyle: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
-                      columnSpacing: 0,
-                      columns: const [
-                        DataColumn(label: Text('Index'),),
-                        DataColumn(label: Text('Name'),),
-                        DataColumn(label: Text('Price')),
+          return Stack(
+            children: [
+              Visibility(
+                visible: !_order_processing,
+                child: AlertDialog(
+                  title: Text(_curr_customer != "None"
+                      ? 'Order Summary for $_curr_customer'
+                      : "Order Summary"),
+                  //backgroundColor: Colors.white,
+                  content: SizedBox(
+                    width: screenWidth / 2,
+                    height: screenHeight / 2,
+                    child: ListView(
+                      shrinkWrap: true,
+                      children: [
+                        DataTable(
+                          headingTextStyle: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                          columnSpacing: 0,
+                          columns: const [
+                            DataColumn(label: Text('Index'),),
+                            DataColumn(label: Text('Name'),),
+                            DataColumn(label: Text('Price')),
+                          ],
+                          rows: _sum.map((rowData) {
+                            final rowIndex = _sum.indexOf(rowData);
+                            return DataRow(cells: [
+                              DataCell(Text('${rowData['index']}')),
+                              DataCell(Text('${rowData['name']}')),
+                              DataCell(Text('${rowData['price']}')),
+                            ]);
+                          }).toList(),
+                        ),
                       ],
-                      rows: _sum.map((rowData) {
-                        final rowIndex = _sum.indexOf(rowData);
-                        return DataRow(cells: [
-                          DataCell(Text('${rowData['index']}')),
-                          DataCell(Text('${rowData['name']}')),
-                          DataCell(Text('${rowData['price']}')),
-                        ]);
-                      }).toList(),
+                    ),
+                  ),
+                  actions: <Widget>[
+                    TextButton(
+                      child: const Text('CANCEL'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                    TextButton(
+                        child: const Text('CONFIRM'),
+                        onPressed: ()
+                        {
+                          Navigator.of(context).pop();
+                          orderProccessing();
+                        }
                     ),
                   ],
                 ),
-                ),
-                actions: <Widget>[
-                  TextButton(
-                    child: const Text('CANCEL'),
+              ),
+              Visibility(
+                  visible: _order_processing,
+                  child: const Positioned.fill(
+                    child: SpinKitPouringHourGlass(color: Colors.red,),
+                  )
+              )
+            ],
+          );
+        }
+      );
+  }
+
+  void orderProccessing() async{
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context){
+         return const Positioned.fill(
+              child: SpinKitPouringHourGlass(color: Colors.red,));
+        });
+    Icon message_icon = const Icon(Icons.check);
+    String message_text = 'Order Processed Successfully!';
+    try {
+      setState(() {
+        _order_processing = true;
+      });
+      List<int> item_ids_in_order = await getIds();
+      DateTime now = DateTime.now();
+      String formattedDate = DateFormat('yyyy-MM-dd')
+          .format(now);
+      order_processing_helper order_helper = order_processing_helper();
+      int trans_id = await order_helper
+          .get_new_transaction_id();
+      order_obj order_to_process = order_obj(
+          trans_id,
+          3,
+          item_ids_in_order,
+          double.parse(
+              _current_order.price.toStringAsFixed(2)),
+          _curr_customer,
+          formattedDate,
+          'completed');
+      print(order_to_process.get_values());
+      await order_helper.process_order(order_to_process);
+      setState(() {
+        _current_order.clear();
+        _orderTable.clear();
+        _addonTable.clear();
+        _curr_customer = "None";
+      });
+    }
+    catch (exception) {
+      print(exception);
+      message_icon = const Icon(Icons
+          .error_outline_outlined);
+      message_text = 'Unable To Process Order.';
+    }
+    finally {
+      setState(() {
+        _order_processing = false;
+      });
+      showDialog(
+          barrierDismissible: false,
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: message_icon,
+              content: Text(message_text),
+              actions: [
+                TextButton(
                     onPressed: () {
                       Navigator.of(context).pop();
+                      Navigator.of(context).pop();
                     },
-                  ),
-                  TextButton(
-                    child: const Text('CONFIRM'),
-                    onPressed: () async
-                    {
-                      setState(() {
-                        _order_processing = true;
-                      });
-                      Icon message_icon = const Icon(Icons.check);
-                      String message_text = 'Order Processed Successfully!';
-                        try
-                        {
-                          List<int> item_ids_in_order = await getIds();
-                          DateTime now = DateTime.now();
-                          String formattedDate = DateFormat('yyyy-MM-dd').format(now);
-                          order_processing_helper order_helper = order_processing_helper();
-                          int trans_id = await order_helper.get_new_transaction_id();
-                          order_obj order_to_process = order_obj(trans_id, 3, item_ids_in_order, double.parse(_current_order.price.toStringAsFixed(2)) , _curr_customer, formattedDate, 'completed');
-                          print(order_to_process.get_values());
-                          await order_helper.process_order(order_to_process);
-                          setState(() {
-                            _current_order.clear();
-                            _orderTable.clear();
-                            _addonTable.clear();
-                            _curr_customer = "";
-                          });
-                        }
-                        catch(exception)
-                        {
-                          print(exception);
-                          message_icon = const Icon(Icons.error_outline_outlined);
-                          message_text = 'Unable To Process Order.';
-                        }
-                        finally
-                        {
-                          setState(() {
-                            _order_processing = false;
-                          });
-                          Navigator.of(context).pop();
-                          showDialog(
-                              barrierDismissible: false,
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: message_icon,
-                                  content: Text(message_text),
-                                  actions: [
-                                    TextButton(
-                                        onPressed: (){
-                                          Navigator.of(context).pop();
-                                        },
-                                        child: const Text('OK'))
-                                  ],
-                                );
-                              });
-                        }
-                      }
-                  ),
-                ],
-              ),
-            ),
-            Visibility(
-              visible: _order_processing,
-                child: const Positioned.fill(
-                    child: SpinKitPouringHourGlass(color: Colors.red,))
-            )
-          ],
-        );
-      },
-    );
-  }
+                    child: const Text('OK'))
+              ],
+            );
+          });
+    }
+}
+
 
 
 /*
@@ -997,8 +1022,8 @@ class Win_Order_State extends State<Win_Order>
                                 height: 20,
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(
-                                      vertical: 10,
-                                      horizontal: 30),
+                                      vertical: 20,
+                                      horizontal: 20),
                                   child: !_curr_editing ? ElevatedButton(
                                     onPressed: ()
                                     {
@@ -1025,7 +1050,7 @@ class Win_Order_State extends State<Win_Order>
                                 children: [
                                   Container(
                                     margin: const EdgeInsets.only(top: 15),
-                                    width: (screenWidth / 2) * (2/7),
+                                    width: (screenWidth / 2) * (2/9),
                                     height: 22,
                                     child: ElevatedButton(
                                         onPressed: ()
@@ -1082,7 +1107,7 @@ class Win_Order_State extends State<Win_Order>
                                   Expanded(child: Container()), // basically padding
                                   Container(
                                     margin: const EdgeInsets.only(bottom: 15),
-                                    width: (screenWidth / 2) * (2/7),
+                                    width: (screenWidth / 2) * (2/9),
                                     height: 22,
                                     child: ElevatedButton(
                                         onPressed: ()
@@ -1122,7 +1147,7 @@ class Win_Order_State extends State<Win_Order>
                                 width: (screenWidth/ 2) / 6,
                                 height: 20,
                                 child: Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                                  padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
                                   child: ElevatedButton(
                                       onPressed: (){
                                         setState(() {
