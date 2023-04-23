@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:csce315_project3_13/Colors/Color_Manager.dart';
+import 'package:csce315_project3_13/Inherited_Widgets/Color_Manager.dart';
 import 'package:csce315_project3_13/GUI/Components/Page_Header.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

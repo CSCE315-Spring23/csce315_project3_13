@@ -1,4 +1,4 @@
-import 'package:csce315_project3_13/Colors/Color_Manager.dart';
+import 'package:csce315_project3_13/Inherited_Widgets/Color_Manager.dart';
 import 'package:csce315_project3_13/GUI/Components/Contrast_Button.dart';
 import 'package:csce315_project3_13/GUI/Components/Login_Button.dart';
 import 'package:csce315_project3_13/GUI/Components/Login_TextField.dart';
@@ -89,7 +89,6 @@ class _Win_Create_AccountState extends State<Win_Create_Account> {
           context: context,
           pageName: "Create account",
           buttons: [
-            const Settings_Button(),
             Login_Button(onTap: (){
               Navigator.pushReplacementNamed(context, Win_Login.route);
             }, buttonName: "Back",

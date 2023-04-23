@@ -1,4 +1,4 @@
-import 'package:csce315_project3_13/Colors/Color_Manager.dart';
+import 'package:csce315_project3_13/Inherited_Widgets/Color_Manager.dart';
 import 'package:csce315_project3_13/GUI/Components/Contrast_Button.dart';
 import 'package:csce315_project3_13/GUI/Components/Login_Button.dart';
 import 'package:csce315_project3_13/GUI/Components/Login_TextField.dart';
@@ -54,7 +54,6 @@ class _Win_Reset_PasswordState extends State<Win_Reset_Password> {
       appBar: Page_Header(context: context,
         pageName: "Reset Password",
         buttons: [
-          const Settings_Button(),
 
           Login_Button(onTap: (){
             Navigator.pushReplacementNamed(context, Win_Login.route);

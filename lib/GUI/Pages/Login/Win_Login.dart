@@ -1,4 +1,4 @@
-import 'package:csce315_project3_13/Colors/Color_Manager.dart';
+import 'package:csce315_project3_13/Inherited_Widgets/Color_Manager.dart';
 import 'package:csce315_project3_13/GUI/Components/Contrast_Button.dart';
 import 'package:csce315_project3_13/GUI/Components/Login_Button.dart';
 import 'package:csce315_project3_13/GUI/Components/Login_TextField.dart';
@@ -64,7 +64,6 @@ class _Win_LoginState extends State<Win_Login> {
           context: context,
           pageName: "Login",
           buttons: <Widget>[
-            const Settings_Button(),
 
             Login_Button(onTap: (){
               Navigator.pushReplacementNamed(context, Win_Reset_Password.route);

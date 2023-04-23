@@ -1,4 +1,4 @@
-import 'package:csce315_project3_13/Colors/Color_Manager.dart';
+import 'package:csce315_project3_13/Inherited_Widgets/Color_Manager.dart';
 import 'package:csce315_project3_13/GUI/Components/Login_Button.dart';
 import 'package:csce315_project3_13/Services/login_helper.dart';
 import 'package:csce315_project3_13/Services/order_processing_helper.dart';
