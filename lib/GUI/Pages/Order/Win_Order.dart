@@ -92,56 +92,66 @@ class Win_Order_State extends State<Win_Order>
   Future<void> getData() async
   {
     view_helper name_helper = view_helper();
-    _smoothie_names = await name_helper.get_unique_smoothie_names();
-
-    // TODO: add categories to database, delete this once implemented
-    for (String name in _smoothie_names)
-      {
-        if (name.contains("Espresso") || name.contains("Recharge") || name.contains("Cold Brew"))
-        {
-        energy_smoothies.add(name);
-        }
-        else  if (name.contains("Activator") || name.contains("Gladiator")
-            || name.contains("Hulk") || name.contains("High Intensity")
-            || name.contains("High Protein") || (name.contains("Power") && name.contains("Plus")))
-        {
-          fitness_smoothies.add(name);
-        }
-        else if (name.contains("Keto") || name.contains("Lean1")
-            || name.contains("MangoFest") || name.contains("Metabolism")
-            || name.contains("Shredder") || name.contains("Slim-N-Trim"))
-        {
-          weight_smoothies.add(name);
-        }
-        else if (name.contains("Kale") || name.contains("Heaven")
-            || name.contains("Collagen") || name.contains("Daily Warrior")
-            || name.contains("Gut Health") || name.contains("Greek Yogurt")
-            || name.contains("Immune Builder") || name.contains("Power Meal")
-            || name.contains("Spinach") || name.contains("Vegan"))
-        {
-          well_smoothies.add(name);
-        }
-        else if (name.contains("Angel") || name.contains("Treat")
-            || name.contains("Boat") || name.contains("Twist")
-            || name.contains("Punch") || name.contains("Way")
-            || name.contains("Tango") || name.contains("Impact")
-            || name.contains("Punch") || name.contains("Passport")
-            || name.contains("Surf") || name.contains("Breeze")
-            || name.contains("X-treme") || name.contains("D-Lite")
-            || name.contains("Kindness"))
-        {
-          treat_smoothies.add(name);
-        }
-        else{
-          other_smoothies.add(name);
-        }
-
-      }
+  //  _smoothie_names = await name_helper.get_unique_smoothie_names();
 
 
     _smoothie_items = await item_helper.getAllSmoothiesInfo();
     _snack_items = await item_helper.getAllSnackInfo();
     _addon_items = await item_helper.getAllAddonInfo();
+
+    String clipped_name = "";
+    int unclipped_length = 0;
+    for (int i = 0; i < _smoothie_items.length; i++) {
+      if (_smoothie_items[i].menu_item.contains("small")) {
+        unclipped_length = _smoothie_items[i].menu_item.length;
+        clipped_name = _smoothie_items[i].menu_item.substring(0, unclipped_length - 6);
+        _smoothie_names.add(clipped_name);
+      }
+    }
+
+    // TODO: add categories to database, delete this once implemented
+    for (String name in _smoothie_names)
+    {
+      if (name.contains("Espresso") || name.contains("Recharge") || name.contains("Cold Brew"))
+      {
+        energy_smoothies.add(name);
+      }
+      else  if (name.contains("Activator") || name.contains("Gladiator")
+          || name.contains("Hulk") || name.contains("High Intensity")
+          || name.contains("High Protein") || (name.contains("Power") && name.contains("Plus")))
+      {
+        fitness_smoothies.add(name);
+      }
+      else if (name.contains("Keto") || name.contains("Lean1")
+          || name.contains("MangoFest") || name.contains("Metabolism")
+          || name.contains("Shredder") || name.contains("Slim-N-Trim"))
+      {
+        weight_smoothies.add(name);
+      }
+      else if (name.contains("Kale") || name.contains("Heaven")
+          || name.contains("Collagen") || name.contains("Daily Warrior")
+          || name.contains("Gut Health") || name.contains("Greek Yogurt")
+          || name.contains("Immune Builder") || name.contains("Power Meal")
+          || name.contains("Spinach") || name.contains("Vegan"))
+      {
+        well_smoothies.add(name);
+      }
+      else if (name.contains("Angel") || name.contains("Treat")
+          || name.contains("Boat") || name.contains("Twist")
+          || name.contains("Punch") || name.contains("Way")
+          || name.contains("Tango") || name.contains("Impact")
+          || name.contains("Punch") || name.contains("Passport")
+          || name.contains("Surf") || name.contains("Breeze")
+          || name.contains("X-treme") || name.contains("D-Lite")
+          || name.contains("Kindness"))
+      {
+        treat_smoothies.add(name);
+      }
+      else{
+        other_smoothies.add(name);
+      }
+
+    }
 
     for (menu_item_obj snack in _snack_items){_snack_names.add(snack.menu_item);}
     for (menu_item_obj addon in _addon_items){_addon_names.add(addon.menu_item);}
