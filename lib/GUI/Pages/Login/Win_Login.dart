@@ -24,10 +24,13 @@ class Win_Login extends StatefulWidget {
 
 class _Win_LoginState extends State<Win_Login> {
 
+  //Keeps track of whether to update name or not
+  bool call_set_translation = true;
 
+  //Strings for display
   String page_header = "Login";
 
-  bool call_set_texts = true;
+
 
 
 
@@ -73,10 +76,11 @@ class _Win_LoginState extends State<Win_Login> {
     final _color_manager = Color_Manager.of(context);
 
 
+    // ToDo Implement the below translation functionality
     final _translate_manager = Translate_Manager.of(context);
 
     Future<void> set_translation() async {
-      call_set_texts = false;
+      call_set_translation = false;
 
       //set the new Strings here
       page_header = (await _google_translate_api.translate_string("Login",_translate_manager.chosen_language) as String);
@@ -85,11 +89,13 @@ class _Win_LoginState extends State<Win_Login> {
         });
     }
 
-    if(call_set_texts){
+    if(call_set_translation){
       set_translation();
     }else{
-      call_set_texts = true;
+      call_set_translation = true;
     }
+
+    //Translation functionality end
 
 
     return Scaffold(
