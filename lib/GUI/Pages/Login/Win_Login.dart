@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:csce315_project3_13/Inherited_Widgets/Color_Manager.dart';
 import 'package:csce315_project3_13/GUI/Components/Contrast_Button.dart';
 import 'package:csce315_project3_13/GUI/Components/Login_Button.dart';
@@ -6,7 +8,9 @@ import 'package:csce315_project3_13/GUI/Components/Page_Header.dart';
 import 'package:csce315_project3_13/GUI/Components/Settings_Button.dart';
 import 'package:csce315_project3_13/GUI/Pages/Login/Win_Create_Account.dart';
 import 'package:csce315_project3_13/GUI/Pages/Login/Win_Reset_Password.dart';
+import 'package:csce315_project3_13/Inherited_Widgets/Translate_Manager.dart';
 import 'package:csce315_project3_13/Manager_View/Win_Manager_View.dart';
+import 'package:csce315_project3_13/Services/google_translate_API.dart';
 import 'package:csce315_project3_13/Services/login_helper.dart';
 import 'package:flutter/material.dart';
 
@@ -20,12 +24,22 @@ class Win_Login extends StatefulWidget {
 
 class _Win_LoginState extends State<Win_Login> {
 
+
+  String page_header = "Login";
+
+  bool call_set_texts = true;
+
+
+
+
   bool _show_password = false;
 
   late TextEditingController _username_controller;
   late TextEditingController _password_controller;
 
   login_helper _login_helper_instance = login_helper();
+
+  google_translate_API _google_translate_api = google_translate_API();
 
   void _switch_show_password(){
     setState(() {
@@ -57,13 +71,34 @@ class _Win_LoginState extends State<Win_Login> {
   @override
   Widget build(BuildContext context) {
     final _color_manager = Color_Manager.of(context);
+
+
+    final _translate_manager = Translate_Manager.of(context);
+
+    Future<void> set_translation() async {
+      call_set_texts = false;
+
+      //set the new Strings here
+      page_header = (await _google_translate_api.translate_string("Login",_translate_manager.chosen_language) as String);
+
+      setState(() {
+        });
+    }
+
+    if(call_set_texts){
+      set_translation();
+    }else{
+      call_set_texts = true;
+    }
+
+
     return Scaffold(
       backgroundColor: _color_manager.background_color,
       appBar: Page_Header(
           context: context,
-          pageName: "Login",
-          buttons: <Widget>[
+          pageName: page_header,
 
+        buttons: <Widget>[
             Login_Button(onTap: (){
               Navigator.pushReplacementNamed(context, Win_Reset_Password.route);
             }, buttonName: "Reset password",

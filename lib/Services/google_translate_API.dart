@@ -12,4 +12,22 @@ class google_translate_API
     String translated_text = json['data']['translations'][0]['translatedText'];
     print(translated_text);
   }
+
+  Future<String?> translate_string(String text, String target_language) async
+  {
+    if(target_language == "en"){
+      return text;
+    }else{
+      try{
+        http.Response response = await http.get(Uri.parse("https://translation.googleapis.com/language/translate/v2?target=${target_language}&key=${api_key}&q=${text}"));
+        Map<String, dynamic> json = jsonDecode(response.body);
+        String? translated_result = json['data']['translations'][0]['translatedText'];
+        return translated_result;
+      }catch(e){
+        return text;
+      }
+
+    }
+
+  }
 }
