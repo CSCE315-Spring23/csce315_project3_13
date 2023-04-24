@@ -17,7 +17,6 @@ class _Settings_DialogState extends State<Settings_Dialog> {
 
   int dropdown_value_index = 0;
 
-
   List<bool> _isSelected = [true, false, false, false];
 
   google_translate_API _google_translate_api = google_translate_API();

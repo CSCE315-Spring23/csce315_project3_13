@@ -32,24 +32,36 @@ class google_translate_API
   }
 
   Future<List<String>> translate_batch(List<String> items, String target_language) async {
-    String api_url = 'https://translation.googleapis.com/language/translate/v2?key=$api_key';
-    String source_text = items.join(' ||| ');
-    final request_body = {
-      'q': source_text,
-      'target': target_language,
-    };
+    if(target_language == "en"){
+      return items;
+    }else{
+      try{
+        String api_url = 'https://translation.googleapis.com/language/translate/v2?key=$api_key';
+        String source_text = items.join(' ||| ');
+        final request_body = {
+          'q': source_text,
+          'target': target_language,
+        };
 
-    final response = await http.post(Uri.parse(api_url), body: request_body);
+        final response = await http.post(Uri.parse(api_url), body: request_body);
 
-    final json = jsonDecode(response.body);
-    final translations = json['data']['translations'];
+        final json = jsonDecode(response.body);
+        final translations = json['data']['translations'];
 
-    final translated_texts = translations.map((t) => t['translatedText']).toString();
+        final translated_texts = translations.map((t) => t['translatedText']).toString();
 
-    List<String> translation_list = translated_texts.replaceAll('(', '').replaceAll(')', '').split(' ||| ');
-    // for(String s in translation_list) {
-    //   print(s);
-    // }
-    return translation_list;
+        List<String> translation_list = translated_texts.replaceAll('(', '').replaceAll(')', '').split(' ||| ');
+        // for(String s in translation_list) {
+        //   print(s);
+        // }
+        return translation_list;
+
+      }catch(e){
+        print("Could not batch translate");
+        print(e);
+        return items;
+
+      }
+    }
   }
 }

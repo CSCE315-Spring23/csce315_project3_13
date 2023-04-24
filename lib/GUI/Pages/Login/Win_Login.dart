@@ -28,6 +28,8 @@ class _Win_LoginState extends State<Win_Login> {
   bool call_set_translation = true;
 
   //Strings for display
+  List<String> list_page_texts_originals = ["Login","Reset password","Enter your email and password:","Email","Password","Show password","Login" ];
+  List<String> list_page_texts = ["Login","Reset password","Enter your email and password:","Email","Password","Show password","Login" ];
   String text_page_header = "Login";
   String text_reset_password = "Reset password";
   String text_email_prompt = "Enter your email and password:";
@@ -95,13 +97,23 @@ class _Win_LoginState extends State<Win_Login> {
       call_set_translation = false;
 
       //set the new Strings here
-      text_page_header = (await _google_translate_api.translate_string("Login",_translate_manager.chosen_language) as String);
-      text_reset_password = (await _google_translate_api.translate_string("Reset password",_translate_manager.chosen_language) as String);
-      text_email_prompt = (await _google_translate_api.translate_string("Enter your email and password:",_translate_manager.chosen_language) as String);
-      text_email_label = (await _google_translate_api.translate_string("Email",_translate_manager.chosen_language) as String);
-      text_password_label = (await _google_translate_api.translate_string("Password",_translate_manager.chosen_language) as String);
-      text_show_password = (await _google_translate_api.translate_string("Show password",_translate_manager.chosen_language) as String);
-      text_login_button = (await _google_translate_api.translate_string("Login",_translate_manager.chosen_language) as String);
+      list_page_texts = (await _google_translate_api.translate_batch(list_page_texts_originals,_translate_manager.chosen_language));
+      text_page_header =  list_page_texts[0];
+      text_reset_password = list_page_texts[1];
+      text_email_prompt = list_page_texts[2];
+      text_email_label = list_page_texts[3];
+      text_password_label = list_page_texts[4];
+      text_show_password = list_page_texts[5];
+      text_login_button = list_page_texts[6];
+
+
+      // text_page_header = (await _google_translate_api.translate_string("Login",_translate_manager.chosen_language) as String);
+      // text_reset_password = (await _google_translate_api.translate_string("Reset password",_translate_manager.chosen_language) as String);
+      // text_email_prompt = (await _google_translate_api.translate_string("Enter your email and password:",_translate_manager.chosen_language) as String);
+      // text_email_label = (await _google_translate_api.translate_string("Email",_translate_manager.chosen_language) as String);
+      // text_password_label = (await _google_translate_api.translate_string("Password",_translate_manager.chosen_language) as String);
+      // text_show_password = (await _google_translate_api.translate_string("Show password",_translate_manager.chosen_language) as String);
+      // text_login_button = (await _google_translate_api.translate_string("Login",_translate_manager.chosen_language) as String);
 
 
       setState(() {

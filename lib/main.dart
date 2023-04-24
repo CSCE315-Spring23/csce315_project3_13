@@ -156,6 +156,8 @@ class _MyAppState extends State<MyApp> {
   String current_condition = "Can't fetch";
   String current_tempurature = "weather";
 
+  List<String> conditions_list = ["Clear", "Drizzle", "Rain", "Clouds"];
+
   void startTimer() async {
 
     String current_weather_cond = "Can't fetch";
@@ -181,6 +183,7 @@ class _MyAppState extends State<MyApp> {
     _timer = Timer.periodic(Duration(seconds: 60), (timer) async {
       try{
         current_weather_cond = await _weather_api.get_condition();
+        // current_weather_cond = await
         current_weather_temp = await _weather_api.get_temperature();
       }catch(e){
         print("could not fetch weather");
@@ -203,9 +206,14 @@ class _MyAppState extends State<MyApp> {
   String chosen_language = "en";
 
   void change_language(String newLanguage){
+
+
     setState(() {
       chosen_language = newLanguage;
     });
+
+    // startTimer();
+
     set_language_option_pref(newLanguage);
   }
 
@@ -256,6 +264,7 @@ class _MyAppState extends State<MyApp> {
       chosen_language: chosen_language,
       change_language: change_language,
       child: Weather_Manager(
+        conditions_list: conditions_list,
         current_tempurature: current_tempurature,
         current_condition: current_condition,
         child: Color_Manager(
