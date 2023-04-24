@@ -12,7 +12,7 @@ class view_helper {
       names.add(result[i]['menu_item']);
     }
 
-    print(names);
+    //print(names);
 
     return names;
   }
@@ -55,7 +55,7 @@ class view_helper {
       }
     }
 
-    print(names);
+   // print(names);
 
     return names;
   }

@@ -1,7 +1,10 @@
 import 'package:csce315_project3_13/Colors/Color_Manager.dart';
 import 'package:csce315_project3_13/GUI/Components/Login_Button.dart';
+import 'package:csce315_project3_13/Services/google_translate_API.dart';
 import 'package:csce315_project3_13/Services/login_helper.dart';
 import 'package:csce315_project3_13/Services/order_processing_helper.dart';
+import 'package:csce315_project3_13/Services/reports_helper.dart';
+import 'package:csce315_project3_13/Services/view_helper.dart';
 import 'package:csce315_project3_13/Services/weather_API.dart';
 import 'package:flutter/material.dart';
 import '../../../Services/testing_cloud_functions.dart';
@@ -21,6 +24,9 @@ class _Win_Functions_Test_Page_StartState extends State<Win_Functions_Test_Page>
   order_processing_helper order_helper = order_processing_helper();
   login_helper login_helper_instance = login_helper();
   weather_API weather = weather_API();
+  reports_helper reports = reports_helper();
+  google_translate_API google_translate = google_translate_API();
+  view_helper view = view_helper();
 
   bool is_high_contrast = false;
 
@@ -63,8 +69,10 @@ class _Win_Functions_Test_Page_StartState extends State<Win_Functions_Test_Page>
             const SizedBox(
               height: 20,
             ),
-            ElevatedButton(onPressed: (){
-              // weather.get_user_city();
+            ElevatedButton(onPressed: () async{
+              List<String> l = await view.get_all_smoothie_names();
+              l = await google_translate.translate_batch(l, 'es');
+              l = await google_translate.translate_batch(l, "en");
             }, child: const Text("Get UID")),
             const SizedBox(
               height: 20,
