@@ -25,14 +25,16 @@ class _Settings_DialogState extends State<Settings_Dialog> {
   bool call_set_translation = true;
 
   //Strings for display
-  List<String> list_page_texts_originals = ["Settings", "Select Color option", "Select language", "Ok"];
-  List<String> list_page_texts = ["Settings", "Select Color option", "Select language", "Ok"];
+  List<String> list_page_texts_originals = ["Settings", "Select Color", "Select language", "Accept"];
+  List<String> list_page_texts = ["Settings", "Select Color option", "Select language", "Accept"];
 
   String text_page_header = "Settings";
-  String text_select_color_option = "Select Color option";
+  String text_select_color_option = "Select Color";
   String text_select_language = "Select language";
-  String text_save = "Ok";
-  List<String> language_choices = ["English", "Spanish"];
+  String text_save = "Accept";
+  List<String> language_choices_originals = ["English", "Spanish", "French", "Russian", "Korean"];
+  List<String> language_choices = ["English", "Spanish", "French", "Russian", "Korean"];
+  List<String> color_choices_originals = ["Standard", "Protanopia", "Deuteranopia","Tritanopia"];
   List<String> color_choices = ["Standard", "Protanopia", "Deuteranopia","Tritanopia"];
 
 
@@ -55,9 +57,9 @@ class _Settings_DialogState extends State<Settings_Dialog> {
       text_select_color_option = list_page_texts[1];
       text_select_language = list_page_texts[2];
       text_save = list_page_texts[3];
-      language_choices = (await _google_translate_api.translate_batch(<String>["English", "Spanish"],_translate_manager.chosen_language) as List<String>);
+      language_choices = (await _google_translate_api.translate_batch(language_choices_originals,_translate_manager.chosen_language));
       dropdownValue = language_choices[dropdown_value_index];
-      color_choices = (await _google_translate_api.translate_batch(<String>["Standard", "Protanopia", "Deuteranopia","Tritanopia"],_translate_manager.chosen_language) as List<String>);
+      color_choices = (await _google_translate_api.translate_batch(color_choices_originals,_translate_manager.chosen_language));
 
       setState(() {
       });
@@ -79,6 +81,18 @@ class _Settings_DialogState extends State<Settings_Dialog> {
         dropdown_value_index = 1;
         dropdownValue = language_choices[dropdown_value_index];
       }
+      else if(_translate_manager.chosen_language == "fr"){
+        dropdown_value_index = 2;
+        dropdownValue = language_choices[dropdown_value_index];
+      }
+      else if(_translate_manager.chosen_language == "ru"){
+        dropdown_value_index = 3;
+        dropdownValue = language_choices[dropdown_value_index];
+      }
+      else if(_translate_manager.chosen_language == "ko"){
+        dropdown_value_index = 4;
+        dropdownValue = language_choices[dropdown_value_index];
+      }
     }
 
     void set_language(String newLanguageChoice){
@@ -86,6 +100,12 @@ class _Settings_DialogState extends State<Settings_Dialog> {
         _translate_manager.change_language("en");
       }else if(newLanguageChoice == language_choices[1]){
         _translate_manager.change_language("es");
+      }else if(newLanguageChoice == language_choices[2]){
+        _translate_manager.change_language("fr");
+      }else if(newLanguageChoice == language_choices[3]){
+        _translate_manager.change_language("ru");
+      }else if(newLanguageChoice == language_choices[4]){
+        _translate_manager.change_language("ko");
       }
     }
 
