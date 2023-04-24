@@ -15,7 +15,8 @@ class _Settings_DialogState extends State<Settings_Dialog> {
 
   String dropdownValue = "English";
 
-  List<String> language_choices = ["English", "Spanish"];
+  int dropdown_value_index = 0;
+
 
   List<bool> _isSelected = [true, false, false, false];
 
@@ -29,6 +30,8 @@ class _Settings_DialogState extends State<Settings_Dialog> {
   String text_select_color_option = "Select Color option";
   String text_select_language = "Select language";
   String text_save = "Ok";
+  List<String> language_choices = ["English", "Spanish"];
+  List<String> color_choices = ["Standard", "Protanopia", "Deuteranopia","Tritanopia"];
 
 
 
@@ -48,6 +51,9 @@ class _Settings_DialogState extends State<Settings_Dialog> {
       text_select_color_option = (await _google_translate_api.translate_string("Select Color option",_translate_manager.chosen_language) as String );
       text_select_language =(await _google_translate_api.translate_string( "Select language",_translate_manager.chosen_language) as String);
       text_save = (await _google_translate_api.translate_string("Ok",_translate_manager.chosen_language) as String);
+      language_choices = (await _google_translate_api.translate_batch(<String>["English", "Spanish"],_translate_manager.chosen_language) as List<String>);
+      dropdownValue = language_choices[dropdown_value_index];
+      color_choices = (await _google_translate_api.translate_batch(<String>["Standard", "Protanopia", "Deuteranopia","Tritanopia"],_translate_manager.chosen_language) as List<String>);
 
       setState(() {
       });
@@ -63,16 +69,18 @@ class _Settings_DialogState extends State<Settings_Dialog> {
 
     void set_language_dropdown(){
       if(_translate_manager.chosen_language == "en"){
-        dropdownValue = 'English';
+        dropdown_value_index = 0;
+        dropdownValue = language_choices[dropdown_value_index];
       }else if(_translate_manager.chosen_language == "es"){
-        dropdownValue = 'Spanish';
+        dropdown_value_index = 1;
+        dropdownValue = language_choices[dropdown_value_index];
       }
     }
 
     void set_language(String newLanguageChoice){
-      if(newLanguageChoice == "English"){
+      if(newLanguageChoice == language_choices[0]){
         _translate_manager.change_language("en");
-      }else if(newLanguageChoice == "Spanish"){
+      }else if(newLanguageChoice == language_choices[1]){
         _translate_manager.change_language("es");
       }
     }
@@ -125,12 +133,12 @@ class _Settings_DialogState extends State<Settings_Dialog> {
                     });
                   },
                   children: [
-                    Text("Standard"),
-                    Text("Protanopia"),
-                    Text("Deuteranopia"),
-                    Text("Tritanopia"),
+                    Text(color_choices[0]),
+                    Text(color_choices[1]),
+                    Text(color_choices[2]),
+                    Text(color_choices[3]),
                   ],
-                )
+                ),
               ],
 
             ),
@@ -152,7 +160,10 @@ class _Settings_DialogState extends State<Settings_Dialog> {
                     .map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
-                    child: Text(value),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(value),
+                    ),
                   );
                 }).toList(),
               ),
