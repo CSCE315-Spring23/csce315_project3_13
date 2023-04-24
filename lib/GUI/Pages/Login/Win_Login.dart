@@ -43,12 +43,6 @@ class _Win_LoginState extends State<Win_Login> {
 
 
 
-
-
-
-
-
-
   bool _show_password = false;
 
   late TextEditingController _username_controller;
@@ -105,16 +99,6 @@ class _Win_LoginState extends State<Win_Login> {
       text_password_label = list_page_texts[4];
       text_show_password = list_page_texts[5];
       text_login_button = list_page_texts[6];
-
-
-      // text_page_header = (await _google_translate_api.translate_string("Login",_translate_manager.chosen_language) as String);
-      // text_reset_password = (await _google_translate_api.translate_string("Reset password",_translate_manager.chosen_language) as String);
-      // text_email_prompt = (await _google_translate_api.translate_string("Enter your email and password:",_translate_manager.chosen_language) as String);
-      // text_email_label = (await _google_translate_api.translate_string("Email",_translate_manager.chosen_language) as String);
-      // text_password_label = (await _google_translate_api.translate_string("Password",_translate_manager.chosen_language) as String);
-      // text_show_password = (await _google_translate_api.translate_string("Show password",_translate_manager.chosen_language) as String);
-      // text_login_button = (await _google_translate_api.translate_string("Login",_translate_manager.chosen_language) as String);
-
 
       setState(() {
       });

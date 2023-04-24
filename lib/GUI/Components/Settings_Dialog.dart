@@ -25,6 +25,9 @@ class _Settings_DialogState extends State<Settings_Dialog> {
   bool call_set_translation = true;
 
   //Strings for display
+  List<String> list_page_texts_originals = ["Settings", "Select Color option", "Select language", "Ok"];
+  List<String> list_page_texts = ["Settings", "Select Color option", "Select language", "Ok"];
+
   String text_page_header = "Settings";
   String text_select_color_option = "Select Color option";
   String text_select_language = "Select language";
@@ -46,10 +49,12 @@ class _Settings_DialogState extends State<Settings_Dialog> {
       call_set_translation = false;
 
       //set the new Strings here
-      text_page_header = (await _google_translate_api.translate_string("Settings",_translate_manager.chosen_language) as String);
-      text_select_color_option = (await _google_translate_api.translate_string("Select Color option",_translate_manager.chosen_language) as String );
-      text_select_language =(await _google_translate_api.translate_string( "Select language",_translate_manager.chosen_language) as String);
-      text_save = (await _google_translate_api.translate_string("Ok",_translate_manager.chosen_language) as String);
+      list_page_texts = (await _google_translate_api.translate_batch(list_page_texts_originals,_translate_manager.chosen_language));
+
+      text_page_header = list_page_texts[0];
+      text_select_color_option = list_page_texts[1];
+      text_select_language = list_page_texts[2];
+      text_save = list_page_texts[3];
       language_choices = (await _google_translate_api.translate_batch(<String>["English", "Spanish"],_translate_manager.chosen_language) as List<String>);
       dropdownValue = language_choices[dropdown_value_index];
       color_choices = (await _google_translate_api.translate_batch(<String>["Standard", "Protanopia", "Deuteranopia","Tritanopia"],_translate_manager.chosen_language) as List<String>);
