@@ -17,7 +17,7 @@ class _Settings_DialogState extends State<Settings_Dialog> {
 
   int dropdown_value_index = 0;
 
-  List<bool> _isSelected = [true, false, false, false];
+  List<bool> _isSelected = [false, false, false, false];
 
   google_translate_API _google_translate_api = google_translate_API();
 
@@ -113,6 +113,8 @@ class _Settings_DialogState extends State<Settings_Dialog> {
 
 
     final _color_manager = Color_Manager.of(context);
+
+    _isSelected[_color_manager.selected_option_index] = true;
 
     void change_color({required int color_choice_index}){
       setState(() {

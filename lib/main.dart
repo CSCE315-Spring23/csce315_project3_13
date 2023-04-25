@@ -12,6 +12,7 @@ import 'package:csce315_project3_13/Inherited_Widgets/Translate_Manager.dart';
 import 'package:csce315_project3_13/Manager_View/Win_Manager_View.dart';
 import 'package:csce315_project3_13/Server_View/Win_Server_View.dart';
 import 'package:csce315_project3_13/Inherited_Widgets/Weather_Manager.dart';
+import 'package:csce315_project3_13/Services/google_translate_API.dart';
 import 'package:csce315_project3_13/Services/weather_API.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -47,6 +48,8 @@ class _MyAppState extends State<MyApp> {
   Color active_confirm_color = Color(0xFF6BCF54);
   Color active_deny_color = Color(0xFFC30F0E);
 
+  int selected_option_index = 0;
+
 
   // changes back to original colors
   void reset_colors(){
@@ -61,6 +64,7 @@ class _MyAppState extends State<MyApp> {
       active_size_color = Color(0xFF3088D1);
       active_confirm_color = Color(0xFF6BCF54);
       active_deny_color = Color(0xFFC30F0E);
+      selected_option_index = 0;
     });
     set_color_option_pref('standard');
   }
@@ -80,6 +84,7 @@ class _MyAppState extends State<MyApp> {
       active_size_color = Color(0xFF3088D1);
       active_confirm_color = Color(0xFF6BCF54);
       active_deny_color = Color(0xFFC30F0E);
+      selected_option_index = 2;
     });
     set_color_option_pref('deuteranopia');
   }
@@ -98,6 +103,7 @@ class _MyAppState extends State<MyApp> {
       active_size_color = Color(0xFF3088D1);
       active_confirm_color = Color(0xFF6BCF54);
       active_deny_color = Color(0xFFC30F0E);
+      selected_option_index = 1;
     });
     set_color_option_pref('protanopia');
   }
@@ -116,6 +122,7 @@ class _MyAppState extends State<MyApp> {
       active_size_color = Color(0xFF3088D1);
       active_confirm_color = Color(0xFF6BCF54);
       active_deny_color = Color(0xFFC30F0E);
+      selected_option_index = 3;
     });
     set_color_option_pref('tritanopia');
   }
@@ -156,9 +163,11 @@ class _MyAppState extends State<MyApp> {
   String current_condition = "Can't fetch";
   String current_tempurature = "weather";
 
+  List<String> conditions_list_original = ["Clear", "Drizzle", "Rain", "Clouds"];
   List<String> conditions_list = ["Clear", "Drizzle", "Rain", "Clouds"];
 
   void startTimer() async {
+    print("timer started");
 
     String current_weather_cond = "Can't fetch";
     String current_weather_temp = "weather";
@@ -170,15 +179,20 @@ class _MyAppState extends State<MyApp> {
     }
 
 
-    setState(() {
+
 
       // update the weather values
       print("Get weather data");
 
       current_condition = current_weather_cond;
       current_tempurature = current_weather_temp;
-
-    });
+      try{
+        current_condition = (await google_translate_API().translate_batch(<String>[current_condition], chosen_language))[0];
+      }catch(e){
+      print("could not update weather condition");
+      print(e);
+      }
+    setState(() {});
 
     _timer = Timer.periodic(Duration(seconds: 60), (timer) async {
       try{
@@ -190,26 +204,50 @@ class _MyAppState extends State<MyApp> {
       }
       print(current_weather_cond);
       print(current_weather_temp);
+
+      // update the weather values
+      print("A minute has passed, update weather data");
+
+      current_condition = current_weather_cond;
+      current_tempurature = current_weather_temp;
+
+      try{
+        current_condition = (await google_translate_API().translate_batch(<String>[current_condition], chosen_language))[0];
+      }catch(e){
+        print("could not update weather condition");
+        print(e);
+      }
+
       setState(() {
 
-          // update the weather values
-          print("A minute has passed, update weather data");
 
-          current_condition = current_weather_cond;
-          current_tempurature = current_weather_temp;
 
       });
     });
   }
 
+  Future<void> change_condition_language() async {
+    try{
+      conditions_list = await google_translate_API().translate_batch(conditions_list_original, chosen_language);
+    }catch(e){
+      print("Could not change condition list language");
+      print(e);
+    }
+
+
+
+  }
+
   //Google translate
   String chosen_language = "en";
 
-  void change_language(String newLanguage){
+  void change_language(String newLanguage) async {
 
+      chosen_language = newLanguage;
+      await change_condition_language();
+      startTimer();
 
     setState(() {
-      chosen_language = newLanguage;
     });
 
     // startTimer();
@@ -269,6 +307,7 @@ class _MyAppState extends State<MyApp> {
         current_condition: current_condition,
         child: Color_Manager(
           // This class stores the color values for the web app
+          selected_option_index: selected_option_index,
           reset_colors: reset_colors,
           option_deuteranopia: option_deuteranopia,
           option_protanopia: option_protanopia,
