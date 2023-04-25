@@ -38,6 +38,7 @@ class _Win_LoginState extends State<Win_Login> {
   String text_show_password = "Show password";
   String text_login_button = "Login";
 
+  google_translate_API _google_translate_api = google_translate_API();
 
 
 
@@ -50,7 +51,7 @@ class _Win_LoginState extends State<Win_Login> {
 
   login_helper _login_helper_instance = login_helper();
 
-  google_translate_API _google_translate_api = google_translate_API();
+
 
   void _switch_show_password(){
     setState(() {
