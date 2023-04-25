@@ -1,6 +1,6 @@
 import 'package:csce315_project3_13/GUI/Components/Login_Button.dart';
+import 'package:csce315_project3_13/GUI/Pages/Manager_View/Win_Manager_View.dart';
 import 'package:csce315_project3_13/Inherited_Widgets/Translate_Manager.dart';
-import 'package:csce315_project3_13/Manager_View/Win_Manager_View.dart';
 import 'package:csce315_project3_13/Services/google_translate_API.dart';
 import 'package:csce315_project3_13/Services/inventory_helper.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -72,16 +72,12 @@ class _Win_View_Inventory_State extends State<Win_View_Inventory> {
     print("Building Page...");
     inventoryItems = await inv_helper.get_inventory_items();
 
-
-
     print("Obtained Inventory...");
   }
 
   Future<void> getData() async {
     print("Building Page...");
     inventoryItems = await inv_helper.get_inventory_items();
-
-
 
     print("Obtained Inventory...");
     setState(() {

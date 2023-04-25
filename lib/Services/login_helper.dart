@@ -1,9 +1,9 @@
 import 'package:csce315_project3_13/GUI/Pages/Loading/Loading_Page.dart';
 import 'package:csce315_project3_13/GUI/Pages/Login/Win_Login.dart';
-import 'package:csce315_project3_13/Manager_View/Win_Manager_View.dart';
+import 'package:csce315_project3_13/GUI/Pages/Manager_View/Win_Manager_View.dart';
+import 'package:csce315_project3_13/GUI/Pages/Server_View/Win_Server_View.dart';
 import 'package:csce315_project3_13/Models/employee.dart';
 import 'package:cloud_functions/cloud_functions.dart';
-import 'package:csce315_project3_13/Server_View/Win_Server_View.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

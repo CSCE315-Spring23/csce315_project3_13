@@ -2,11 +2,9 @@ import 'package:csce315_project3_13/GUI/Pages/Management/Win_View_Menu.dart';
 import 'package:csce315_project3_13/Services/ingredients_table_helper.dart';
 import 'package:csce315_project3_13/Services/menu_item_helper.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-
 import '../../../Inherited_Widgets/Color_Manager.dart';
 import '../../../Models/models_library.dart';
 import 'package:flutter/material.dart';
-
 import '../../Components/Page_Header.dart';
 
 class Win_Add_Smoothie extends StatefulWidget {

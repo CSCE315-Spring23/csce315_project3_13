@@ -1,3 +1,6 @@
+import 'package:csce315_project3_13/GUI/Pages/Manager_View/Win_Manager_View.dart';
+import 'package:csce315_project3_13/GUI/Pages/Server_View/Win_Server_View.dart';
+import 'package:csce315_project3_13/GUI/Pages/What_Sales/Win_What_Sales.dart';
 import 'package:csce315_project3_13/Inherited_Widgets/Color_Manager.dart';
 import 'package:csce315_project3_13/GUI/Pages/Inventory/Win_View_Inventory.dart';
 import 'package:csce315_project3_13/GUI/Pages/Loading/Loading_Page.dart';
@@ -9,8 +12,6 @@ import 'package:csce315_project3_13/GUI/Pages/Management/Win_View_Menu.dart';
 import 'package:csce315_project3_13/GUI/Pages/Order/Win_Order.dart';
 import 'package:csce315_project3_13/GUI/Pages/Test%20Pages/Win_Functions_Test_Page.dart';
 import 'package:csce315_project3_13/Inherited_Widgets/Translate_Manager.dart';
-import 'package:csce315_project3_13/Manager_View/Win_Manager_View.dart';
-import 'package:csce315_project3_13/Server_View/Win_Server_View.dart';
 import 'package:csce315_project3_13/Inherited_Widgets/Weather_Manager.dart';
 import 'package:csce315_project3_13/Services/google_translate_API.dart';
 import 'package:csce315_project3_13/Services/weather_API.dart';
@@ -341,6 +342,7 @@ class _MyAppState extends State<MyApp> {
               Win_Add_Smoothie.route: (BuildContext context) => Win_Add_Smoothie(),
               Win_Order.route: (BuildContext context) => Win_Order(),
               Win_View_Inventory.route :(BuildContext context) => Win_View_Inventory(),
+              Win_What_Sales.route :(BuildContext context) =>  Win_What_Sales(),
             },
             initialRoute:  Win_Login.route,
           ),
