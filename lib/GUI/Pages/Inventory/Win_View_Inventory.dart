@@ -26,8 +26,8 @@ class _Win_View_Inventory_State extends State<Win_View_Inventory> {
   google_translate_API _google_translate_api = google_translate_API();
 
   //Strings for display
-  List<String> list_page_texts_originals = ["Inventory Item Management", "Edit Item Amount", "New Amount",  "CANCEL", "CONFIRM",  "Not enough inventory to satisfy the requested change.", "OK", "Unable to change amount for this item.", "Successfully Removed Item", "Unable to remove inventory item", "Confirm Item Deletion", "Are you sure you want to delete", "Stock", "Remove from Inventory",  "Edit Amount", "Successfully Added Item",  "Unable to add item", "New Inventory Item Creation",  "Ingredient Name", "Amount in Stock", "Unit", "Date Ordered", "Expiration Date", "Conversion", "ADD ITEM", "available", "Return to Manager View", "Add Inventory" ];
-  List<String> list_page_texts = ["Inventory Item Management", "Edit Item Amount", "New Amount",  "CANCEL", "CONFIRM",  "Not enough inventory to satisfy the requested change.", "OK", "Unable to change amount for this item.", "Successfully Removed Item", "Unable to remove inventory item", "Confirm Item Deletion", "Are you sure you want to delete", "Stock", "Remove from Inventory",  "Edit Amount", "Successfully Added Item",  "Unable to add item", "New Inventory Item Creation",  "Ingredient Name", "Amount in Stock", "Unit", "Date Ordered", "Expiration Date", "Conversion", "ADD ITEM", "available", "Return to Manager View", "Add Inventory" ];
+  List<String> list_page_texts_originals = ["Inventory Item Management", "Edit Item Amount", "New Amount",  "CANCEL", "CONFIRM",  "Not enough inventory to satisfy the requested change.", "OK", "Unable to change amount for this item.", "Successfully Removed Item", "Unable to remove inventory item", "Confirm Item Deletion", "Are you sure you want to delete", "Stock", "Remove from Inventory",  "Edit Amount", "Successfully Added Item",  "Unable to add item", "New Inventory Item Creation",  "Ingredient Name", "Amount in Stock", "Unit", "Date Ordered", "Expiration Date", "Conversion", "ADD ITEM", "available", "Return to Manager View", "Add Inventory", "Add Inventory" ];
+  List<String> list_page_texts = ["Inventory Item Management", "Edit Item Amount", "New Amount",  "CANCEL", "CONFIRM",  "Not enough inventory to satisfy the requested change.", "OK", "Unable to change amount for this item.", "Successfully Removed Item", "Unable to remove inventory item", "Confirm Item Deletion", "Are you sure you want to delete", "Stock", "Remove from Inventory",  "Edit Amount", "Successfully Added Item",  "Unable to add item", "New Inventory Item Creation",  "Ingredient Name", "Amount in Stock", "Unit", "Date Ordered", "Expiration Date", "Conversion", "ADD ITEM", "available", "Return to Manager View", "Add Inventory","Add Inventory" ];
   String text_page_header = "Inventory Item Management";
   String text_item_amount = "Edit Item Amount";
   String text_hint_new_amount = "New Amount";
@@ -68,9 +68,21 @@ class _Win_View_Inventory_State extends State<Win_View_Inventory> {
   Map<String, num> inventoryItems = {};
   inventory_item_helper inv_helper = inventory_item_helper();
 
-  void getData() async {
+  Future<void> getData_no_reload() async {
     print("Building Page...");
     inventoryItems = await inv_helper.get_inventory_items();
+
+
+
+    print("Obtained Inventory...");
+  }
+
+  Future<void> getData() async {
+    print("Building Page...");
+    inventoryItems = await inv_helper.get_inventory_items();
+
+
+
     print("Obtained Inventory...");
     setState(() {
       _isLoading = false;
@@ -531,7 +543,21 @@ class _Win_View_Inventory_State extends State<Win_View_Inventory> {
       text_add_item = list_page_texts[25];
       text_available = list_page_texts[26];
       text_ret_man = list_page_texts[27];
-      // text_add_inventory = list_page_texts[28];
+      text_add_inventory = list_page_texts[28];
+
+      await  getData_no_reload();
+      List<String> keys_list = inventoryItems.keys.toList();
+      keys_list = (await _google_translate_api.translate_batch(keys_list,_translate_manager.chosen_language));
+
+      Map<String, num> new_inventoryItems = {};
+
+      int current_keys_index = 0;
+      inventoryItems.forEach((key, value) {
+        new_inventoryItems[keys_list[current_keys_index]] = value;
+        current_keys_index++;
+
+      });
+      inventoryItems = new_inventoryItems;
 
 
 
