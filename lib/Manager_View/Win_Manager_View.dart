@@ -23,6 +23,7 @@ class _Win_Manager_ViewState extends State<Win_Manager_View> {
 
   //Keeps track of whether to update name or not
   bool call_set_translation = true;
+  google_translate_API _google_translate_api = google_translate_API();
 
   //Strings for display
   List<String> list_page_texts_originals = ["Manager View", "Log out", "Order", "Manage Menu","Manage Inventory" ];
@@ -33,7 +34,7 @@ class _Win_Manager_ViewState extends State<Win_Manager_View> {
   String text_manage_menu = "Manage Menu";
   String text_manage_inventory = "Manage Inventory";
 
-  google_translate_API _google_translate_api = google_translate_API();
+
 
 
 
