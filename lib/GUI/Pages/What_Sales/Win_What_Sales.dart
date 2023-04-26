@@ -40,20 +40,20 @@ class _Win_What_SalesState extends State<Win_What_Sales> {
 
   Future<void> getData_no_reload(What_Sales_Manager _manager) async {
     print("Building Page...");
-    row_items = await rep_helper.what_sales_together(_manager.date1, _manager.date2);
-    // row_items = [what_sales_together_row(
-    //     0, "Gladiator Smoothie", 1, "Bulk Smoothie", 3
-    // )];
+    // row_items = await rep_helper.what_sales_together(_manager.date1, _manager.date2);
+    row_items = [what_sales_together_row(
+        0, "Gladiator Smoothie", 1, "Bulk Smoothie", 3
+    )];
 
     print("Obtained Inventory...");
   }
 
   Future<void> getData(What_Sales_Manager _manager) async {
     print("Building Page...");
-    row_items = await rep_helper.what_sales_together(_manager.date1, _manager.date2);
-     // row_items = [what_sales_together_row(
-    //     0, "Gladiator Smoothie", 1, "Bulk Smoothie", 3
-    // )];
+    // row_items = await rep_helper.what_sales_together(_manager.date1, _manager.date2);
+     row_items = [what_sales_together_row(
+        0, "Gladiator Smoothie", 1, "Bulk Smoothie", 3
+    )];
 
     print("Obtained Inventory...");
     _isLoading = false;
