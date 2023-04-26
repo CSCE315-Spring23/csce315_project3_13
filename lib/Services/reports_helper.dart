@@ -74,19 +74,26 @@ class reports_helper
       'date2': date2
     });
     List<dynamic> data = res.data;
+    print("got items");
+    print("data length = " + data.length.toString());
     for (int index = 0; index < data.length; ++index) {
+      print("Current index = " + index.toString());
       List<dynamic> l = data[index]['item_ids_in_order'];
       l.sort();
+      // print("l length = ");
+      // print(l.length);
       if (l.length > 1) {
         for (int i = 0; i < l.length; ++i) {
+          // print("looping 1");
           String type = await gen_helper.get_item_type(l[i]);
-          if(type == "smoothie") {
+          // if(type == "smoothie") {
             pair curr_pair = pair(l[i], null);
             for (int j = i + 1; j < l.length; ++j) {
+              // print("looping 2");
               curr_pair.right = l[j];
               pairs.update(curr_pair, (value) => value + 1, ifAbsent: () => 1);
             }
-          }
+          // }
         }
       }
     }

@@ -281,7 +281,7 @@ class _MyAppState extends State<MyApp> {
 
   //For what sales
   String date1 = "01/20/2022";
-  String date2 = "02/20/2022";
+  String date2 = "01/21/2022";
   void change_date({required String new_date1, required String new_date2}){
     date1 = new_date1;
     date2 = new_date2;
