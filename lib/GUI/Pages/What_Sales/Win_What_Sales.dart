@@ -1,5 +1,6 @@
 import 'package:csce315_project3_13/GUI/Components/Page_Header.dart';
 import 'package:csce315_project3_13/GUI/Pages/Manager_View/Win_Manager_View.dart';
+import 'package:csce315_project3_13/Inherited_Widgets/What_Sales_Manager.dart';
 import 'package:csce315_project3_13/Services/google_translate_API.dart';
 import 'package:csce315_project3_13/Services/reports_helper.dart';
 import 'package:flutter/material.dart';
@@ -23,10 +24,12 @@ class _Win_What_SalesState extends State<Win_What_Sales> {
   google_translate_API _google_translate_api = google_translate_API();
 
   //Strings for display
-  List<String> list_page_texts_originals = ["What Sells Together",];
-  List<String> list_page_texts = ["What Sells Together",];
+  List<String> list_page_texts_originals = ["What Sells Together", "Exit to Manager View","Item Ids","Amount Sold Together","Amount Sold Together"];
+  List<String> list_page_texts = ["What Sells Together", "Exit to Manager View","Item Ids","Amount Sold Together","Amount Sold Together"];
   String text_page_header = "What Sells Together";
   String text_exit_to_manager = "Exit to Manager View";
+  String text_item_ids =  "Item Ids";
+  String text_amount_sold_together = "Amount Sold Together";
 
   int visibility_ctrl = 0;
 
@@ -35,23 +38,22 @@ class _Win_What_SalesState extends State<Win_What_Sales> {
   bool _isLoading = true;
   Map<pair, int> pairs_items = {};
   reports_helper rep_helper = reports_helper();
-  String date1 = "01/20/2022";
-  String date2 = "02/20/2022";
 
-  Future<void> getData_no_reload() async {
+  Future<void> getData_no_reload(What_Sales_Manager _manager) async {
     print("Building Page...");
-    pairs_items = await rep_helper.what_sales_together(date1, date2);
+    pairs_items = await rep_helper.what_sales_together(_manager.date1, _manager.date2);
 
     print("Obtained Inventory...");
   }
 
-  Future<void> getData() async {
+  Future<void> getData(What_Sales_Manager _manager) async {
     print("Building Page...");
-    pairs_items = await rep_helper.what_sales_together(date1, date2);
+    pairs_items = await rep_helper.what_sales_together(_manager.date1, _manager.date2);
 
     print("Obtained Inventory...");
+    _isLoading = false;
     setState(() {
-      _isLoading = false;
+
     });
   }
 
@@ -69,19 +71,13 @@ class _Win_What_SalesState extends State<Win_What_Sales> {
               tileColor: tile_color.withAlpha(200),
               minVerticalPadding: 5,
               onTap: () {},
-              // leading: SizedBox(
-              //   width: 300,
-              //   child: Row(
-              //     crossAxisAlignment: CrossAxisAlignment.start,
-              //   ),
-              // ),
               title: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 10.0),
                     child: Text(
-                      "Item Ids: ",
+                       text_item_ids + ": ",
                       style: TextStyle(
                         color: _text_color.withAlpha(200),
                         fontWeight: FontWeight.bold,
@@ -120,23 +116,14 @@ class _Win_What_SalesState extends State<Win_What_Sales> {
                 ],
               ),
               subtitle: Text(
-                "Amount Sold Together: " + entry.value.toString(),
+                 text_amount_sold_together + ": " + entry.value.toString(),
                 style: TextStyle(
                   fontSize: 20,
                   color: _text_color.withAlpha(122),
                 ),
                 textAlign: TextAlign.center,
               ),
-              // trailing: SizedBox(
-              //   width: 300,
-              //   child: Row(
-              //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              //     children: [
-              //
-              //
-              //     ],
-              //   ),
-              // ),
+
             ),
           ),
         );
@@ -147,7 +134,6 @@ class _Win_What_SalesState extends State<Win_What_Sales> {
   @override
   void initState() {
     super.initState();
-    getData();
   }
 
 
@@ -155,7 +141,7 @@ class _Win_What_SalesState extends State<Win_What_Sales> {
   Widget build(BuildContext context) {
     final _color_manager = Color_Manager.of(context);
 
-
+    final _what_sales_manager = What_Sales_Manager.of(context);
 
 
     // ToDo Implement the below translation functionality
@@ -167,47 +153,68 @@ class _Win_What_SalesState extends State<Win_What_Sales> {
       //set the new Strings here
       list_page_texts = (await _google_translate_api.translate_batch(list_page_texts_originals,_translate_manager.chosen_language));
       text_page_header = list_page_texts[0];
+      text_exit_to_manager = list_page_texts[1];
+      text_item_ids =  list_page_texts[2];
+      text_amount_sold_together = list_page_texts[3];
 
-      await  getData_no_reload();
-      List<String> keys_left = [];
-      List<String> keys_right = [];
-
-      List<pair> keys_pair_list = pairs_items.keys.toList();
-      keys_pair_list.forEach((element) {
-        keys_left.add(element.left.toString());
-        keys_right.add(element.right.toString());
-      });
-
-
-      keys_left = (await _google_translate_api.translate_batch(keys_left,_translate_manager.chosen_language));
-      keys_right = (await _google_translate_api.translate_batch(keys_left,_translate_manager.chosen_language));
-
-      Map<pair, int> new_inventoryItems = {};
-
-
-
-
-      int current_keys_index = 0;
-      pairs_items.forEach((key, value) {
-        new_inventoryItems[pair(keys_left[current_keys_index], keys_right[current_keys_index])] = value;
-        current_keys_index++;
-      });
-      pairs_items = new_inventoryItems;
-
-
-
-
-      setState(() {
-      });
+      // await  getData_no_reload();
+      // List<String> keys_left = [];
+      // List<String> keys_right = [];
+      //
+      // List<pair> keys_pair_list = pairs_items.keys.toList();
+      // keys_pair_list.forEach((element) {
+      //   keys_left.add(element.left.toString());
+      //   keys_right.add(element.right.toString());
+      // });
+      //
+      //
+      // keys_left = (await _google_translate_api.translate_batch(keys_left,_translate_manager.chosen_language));
+      // keys_right = (await _google_translate_api.translate_batch(keys_left,_translate_manager.chosen_language));
+      //
+      // Map<pair, int> new_inventoryItems = {};
+      // int current_keys_index = 0;
+      // pairs_items.forEach((key, value) {
+      //   new_inventoryItems[pair(keys_left[current_keys_index], keys_right[current_keys_index])] = value;
+      //   current_keys_index++;
+      // });
+      // pairs_items = new_inventoryItems;
+      // setState(() {
+      // });
+      call_set_translation = false;
+      getData(_what_sales_manager);
     }
 
     // if(call_set_translation){
-    //   set_translation();
-    // }else{
-    //   call_set_translation = true;
+      if(_isLoading) {
+        set_translation();
+      }
+      // }else{
+      //   _isLoading = true;
+      // }
     // }
 
-    //Translation functionality end
+
+
+    // if(call_set_translation){
+    //   set_translation().then((value) => {
+    //   if(_isLoading){
+    //
+    //     getData(_what_sales_manager)
+    // }
+    //   });
+    //
+    // }else{
+    //   call_set_translation = true;
+    //   if(_isLoading){
+    //     setState(() {
+    //       _isLoading = false;
+    //     });
+    //     getData(_what_sales_manager);
+    //   }
+    // }
+
+    //Translation functiona
+
 
 
 
@@ -244,38 +251,6 @@ class _Win_What_SalesState extends State<Win_What_Sales> {
         ),
       ),
       backgroundColor: _color_manager.background_color,
-      // bottomSheet: Container
-      //   (
-      //   height: 75,
-      //   color: _color_manager.primary_color,
-      //   child: Row(
-      //     mainAxisAlignment: MainAxisAlignment.center,
-      //     crossAxisAlignment: CrossAxisAlignment.start,
-      //     children: [
-      //       Login_Button(
-      //         onTap: () {
-      //           newItemSubWin();
-      //         },
-      //         buttonWidth: 200,
-      //         buttonName: text_add_inventory,
-      //       ),
-      //       // Login_Button(
-      //       //   onTap: () {
-      //       //     newItemSubWin('Snack');
-      //       //   },
-      //       //   buttonWidth: 200,
-      //       //   buttonName: 'Add Snack',
-      //       // ),
-      //       // Login_Button(
-      //       //   onTap: () {
-      //       //     newItemSubWin('Addon');
-      //       //   },
-      //       //   buttonWidth: 200,
-      //       //   buttonName: 'Add Addon',
-      //       // ),
-      //     ],
-      //   ),
-      // ),
     );
 
 
