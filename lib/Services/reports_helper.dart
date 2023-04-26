@@ -62,33 +62,55 @@ class reports_helper
 
   }
 
-  Future<Map<pair, int>> what_sales_together(String date1, String date2) async
+  Future<List<what_sales_together_row>> what_sales_together(String date1,
+      String date2) async
   {
-    Map<pair, int> report = {};
-    HttpsCallable get_items = FirebaseFunctions.instance.httpsCallable('getItemsInOrder');
+    Map<pair, int> pairs = {};
+    HttpsCallable get_items = FirebaseFunctions.instance.httpsCallable(
+        'getItemsInOrder');
     final res = await get_items.call({
       'date1': date1,
       'date2': date2
     });
     List<dynamic> data = res.data;
-    for(int index = 0; index < data.length; ++index) {
+    for (int index = 0; index < data.length; ++index) {
       List<dynamic> l = data[index]['item_ids_in_order'];
       l.sort();
-      if(l.length > 1) {
-        for(int i = 0; i < l.length; ++i) {
-          pair curr_pair = pair(l[i], null);
-          for(int j = i + 1; j < l.length; ++j) {
-            curr_pair.right = l[j];
-            report.update(curr_pair, (value) => value + 1, ifAbsent: () => 1);
+      if (l.length > 1) {
+        for (int i = 0; i < l.length; ++i) {
+          String type = await gen_helper.get_item_type(l[i]);
+          if(type == "smoothie") {
+            pair curr_pair = pair(l[i], null);
+            for (int j = i + 1; j < l.length; ++j) {
+              curr_pair.right = l[j];
+              pairs.update(curr_pair, (value) => value + 1, ifAbsent: () => 1);
+            }
           }
         }
       }
     }
-    report = Map.fromEntries(report.entries.toList()..sort((e1,e2) => e2.value.compareTo(e1.value)));
-    for(MapEntry<pair, int> e in report.entries) {
+    pairs = Map.fromEntries(pairs.entries.toList()
+      ..sort((e1, e2) => e2.value.compareTo(e1.value)));
+    for (MapEntry<pair, int> e in pairs.entries) {
       print("${e.key.left}, ${e.key.right} \t ${e.value}");
+    }
+
+    List<what_sales_together_row> report = [];
+    for (MapEntry<pair, int> e in pairs.entries) {
+      int id1 = e.key.left;
+      int id2 = e.key.right;
+      String item1 = await gen_helper.get_item_name(id1);
+      String item2 = await gen_helper.get_item_name(id2);
+      int num = e.value;
+      what_sales_together_row row = what_sales_together_row(
+          id1, item1, id2, item2, num);
+      report.add(row);
     }
 
     return report;
   }
+
+
+
+
 }
