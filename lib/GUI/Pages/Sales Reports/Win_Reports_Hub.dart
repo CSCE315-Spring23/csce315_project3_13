@@ -1,3 +1,4 @@
+import 'package:csce315_project3_13/GUI/Pages/Sales%20Reports/Win_Z_Reports.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -49,7 +50,7 @@ class _Win_Reports_HubState extends State<Win_Reports_Hub> {
                     Navigator.pushReplacementNamed(context,Win_Manager_View.route);
                   }, buttonName: "X Reports", fontSize: 18, buttonWidth: 180,),
                   Login_Button(onTap: (){
-                    Navigator.pushReplacementNamed(context,Win_Manager_View.route);
+                    Navigator.pushReplacementNamed(context,Win_Z_Reports.route);
                   }, buttonName: "Z Reports", fontSize: 18, buttonWidth: 180,),
                   Login_Button(onTap: (){
                     Navigator.pushReplacementNamed(context,Win_Manager_View.route);

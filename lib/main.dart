@@ -20,6 +20,8 @@ import 'GUI/Pages/Login/Win_Login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
 
+import 'GUI/Pages/Sales Reports/Win_Z_Reports.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -295,6 +297,7 @@ class _MyAppState extends State<MyApp> {
               Win_Order.route: (BuildContext context) => Win_Order(),
               Win_View_Inventory.route :(BuildContext context) => Win_View_Inventory(),
               Win_Reports_Hub.route: (BuildContext context) => Win_Reports_Hub(),
+              Win_Z_Reports.route: (BuildContext context) => Win_Z_Reports(),
             },
             initialRoute:  Win_Login.route,
           ),
