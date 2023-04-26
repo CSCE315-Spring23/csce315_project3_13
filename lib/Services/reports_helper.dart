@@ -81,10 +81,13 @@ class reports_helper {
       l.sort();
       if (l.length > 1) {
         for (int i = 0; i < l.length; ++i) {
-          pair curr_pair = pair(l[i], null);
-          for (int j = i + 1; j < l.length; ++j) {
-            curr_pair.right = l[j];
-            pairs.update(curr_pair, (value) => value + 1, ifAbsent: () => 1);
+          String type = await gen_helper.get_item_type(l[i]);
+          if(type == "smoothie") {
+            pair curr_pair = pair(l[i], null);
+            for (int j = i + 1; j < l.length; ++j) {
+              curr_pair.right = l[j];
+              pairs.update(curr_pair, (value) => value + 1, ifAbsent: () => 1);
+            }
           }
         }
       }
