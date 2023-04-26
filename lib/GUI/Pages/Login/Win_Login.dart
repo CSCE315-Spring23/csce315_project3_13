@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:csce315_project3_13/Inherited_Widgets/Color_Manager.dart';
 import 'package:csce315_project3_13/GUI/Components/Contrast_Button.dart';
 import 'package:csce315_project3_13/GUI/Components/Login_Button.dart';
@@ -6,7 +8,9 @@ import 'package:csce315_project3_13/GUI/Components/Page_Header.dart';
 import 'package:csce315_project3_13/GUI/Components/Settings_Button.dart';
 import 'package:csce315_project3_13/GUI/Pages/Login/Win_Create_Account.dart';
 import 'package:csce315_project3_13/GUI/Pages/Login/Win_Reset_Password.dart';
+import 'package:csce315_project3_13/Inherited_Widgets/Translate_Manager.dart';
 import 'package:csce315_project3_13/Manager_View/Win_Manager_View.dart';
+import 'package:csce315_project3_13/Services/google_translate_API.dart';
 import 'package:csce315_project3_13/Services/login_helper.dart';
 import 'package:flutter/material.dart';
 
@@ -20,12 +24,34 @@ class Win_Login extends StatefulWidget {
 
 class _Win_LoginState extends State<Win_Login> {
 
+  //Keeps track of whether to update name or not
+  bool call_set_translation = true;
+
+  //Strings for display
+  List<String> list_page_texts_originals = ["Login","Reset password","Enter your email and password:","Email","Password","Show password","Login" ];
+  List<String> list_page_texts = ["Login","Reset password","Enter your email and password:","Email","Password","Show password","Login" ];
+  String text_page_header = "Login";
+  String text_reset_password = "Reset password";
+  String text_email_prompt = "Enter your email and password:";
+  String text_email_label = "Email";
+  String text_password_label = "Password";
+  String text_show_password = "Show password";
+  String text_login_button = "Login";
+
+  google_translate_API _google_translate_api = google_translate_API();
+
+
+
+
+
   bool _show_password = false;
 
   late TextEditingController _username_controller;
   late TextEditingController _password_controller;
 
   login_helper _login_helper_instance = login_helper();
+
+
 
   void _switch_show_password(){
     setState(() {
@@ -57,16 +83,47 @@ class _Win_LoginState extends State<Win_Login> {
   @override
   Widget build(BuildContext context) {
     final _color_manager = Color_Manager.of(context);
+
+
+    // ToDo Implement the below translation functionality
+    final _translate_manager = Translate_Manager.of(context);
+
+    Future<void> set_translation() async {
+      call_set_translation = false;
+
+      //set the new Strings here
+      list_page_texts = (await _google_translate_api.translate_batch(list_page_texts_originals,_translate_manager.chosen_language));
+      text_page_header =  list_page_texts[0];
+      text_reset_password = list_page_texts[1];
+      text_email_prompt = list_page_texts[2];
+      text_email_label = list_page_texts[3];
+      text_password_label = list_page_texts[4];
+      text_show_password = list_page_texts[5];
+      text_login_button = list_page_texts[6];
+
+      setState(() {
+      });
+    }
+
+    if(call_set_translation){
+      set_translation();
+    }else{
+      call_set_translation = true;
+    }
+
+    //Translation functionality end
+
+
     return Scaffold(
       backgroundColor: _color_manager.background_color,
       appBar: Page_Header(
           context: context,
-          pageName: "Login",
-          buttons: <Widget>[
+          pageName: text_page_header,
 
+        buttons: <Widget>[
             Login_Button(onTap: (){
               Navigator.pushReplacementNamed(context, Win_Reset_Password.route);
-            }, buttonName: "Reset password",
+            }, buttonName: text_reset_password,
               fontSize: 15,
             ),
 
@@ -82,7 +139,7 @@ class _Win_LoginState extends State<Win_Login> {
               Padding(
                 padding: EdgeInsets.all(15.0),
                 child: Text(
-                  'Enter your email and password:',
+                  text_email_prompt,
                   style: TextStyle(
                     fontSize: 30,
                     color: _color_manager.text_color,
@@ -92,13 +149,13 @@ class _Win_LoginState extends State<Win_Login> {
 
               Login_TextField(context: context,
                 textController: _username_controller,
-                labelText: 'Email',
+                labelText: text_email_label,
               ),
 
               Login_TextField(context: context,
                 textController: _password_controller,
                 obscureText: !_show_password,
-                labelText: 'Password',
+                labelText: text_password_label,
                 onSubmitted: (){
                 _login(context);
                 },
@@ -123,7 +180,7 @@ class _Win_LoginState extends State<Win_Login> {
                       onChanged: (changed_value){
                         _switch_show_password();
                       }),
-                  Text("Show password",
+                  Text(text_show_password,
                   style: TextStyle(
                     color: _color_manager.text_color,
                   ),
@@ -135,7 +192,7 @@ class _Win_LoginState extends State<Win_Login> {
                 padding: const EdgeInsets.all(8.0),
                 child: Login_Button(onTap: (){
                   _login(context);
-                }, buttonName: "Login",
+                }, buttonName: text_login_button,
                 ),
               ),
 
