@@ -65,6 +65,7 @@ class reports_helper
   Future<List<what_sales_together_row>> what_sales_together(String date1,
       String date2) async
   {
+    print("Called what sales function");
     Map<pair, int> pairs = {};
     HttpsCallable get_items = FirebaseFunctions.instance.httpsCallable(
         'getItemsInOrder');
@@ -89,11 +90,14 @@ class reports_helper
         }
       }
     }
+    print("reached here 1");
     pairs = Map.fromEntries(pairs.entries.toList()
       ..sort((e1, e2) => e2.value.compareTo(e1.value)));
     for (MapEntry<pair, int> e in pairs.entries) {
       print("${e.key.left}, ${e.key.right} \t ${e.value}");
     }
+
+    print("reached here 2");
 
     List<what_sales_together_row> report = [];
     for (MapEntry<pair, int> e in pairs.entries) {
@@ -106,6 +110,7 @@ class reports_helper
           id1, item1, id2, item2, num);
       report.add(row);
     }
+    print("reached here 3");
 
     return report;
   }

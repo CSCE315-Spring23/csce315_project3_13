@@ -36,7 +36,7 @@ class _Win_What_SalesState extends State<Win_What_Sales> {
 
 
   bool _isLoading = true;
-  Map<pair, int> pairs_items = {};
+  List<what_sales_together_row> pairs_items = [];
   reports_helper rep_helper = reports_helper();
 
   Future<void> getData_no_reload(What_Sales_Manager _manager) async {
@@ -59,12 +59,12 @@ class _Win_What_SalesState extends State<Win_What_Sales> {
 
 
 
-  Widget itemList(Map<pair, int> items, Color tile_color, Color _text_color, Color _icon_color) {
+  Widget itemList(List<what_sales_together_row> items, Color tile_color, Color _text_color, Color _icon_color) {
     return ListView.builder(
       shrinkWrap: true,
-      itemCount: items.entries.length,
+      itemCount: items.length,
       itemBuilder: (context, index) {
-        final entry = items.entries.elementAt(index);
+        final entry = items[index];
         return Center(
           child: Card(
             child: ListTile(
@@ -90,7 +90,7 @@ class _Win_What_SalesState extends State<Win_What_Sales> {
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 10.0),
                     child: Text(
-                      " " + entry.key.left.toString() + " ",
+                      " " + entry.item1 + " ",
                       style: TextStyle(
                         color: _text_color.withAlpha(200),
                         fontWeight: FontWeight.bold,
@@ -103,7 +103,7 @@ class _Win_What_SalesState extends State<Win_What_Sales> {
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 10.0),
                     child: Text(
-                      " " + entry.key.right.toString() + " ",
+                      " " + entry.item2 + " ",
                       style: TextStyle(
                         color: _text_color.withAlpha(200),
                         fontWeight: FontWeight.bold,
@@ -116,7 +116,7 @@ class _Win_What_SalesState extends State<Win_What_Sales> {
                 ],
               ),
               subtitle: Text(
-                 text_amount_sold_together + ": " + entry.value.toString(),
+                 text_amount_sold_together + ": " + entry.num.toString(),
                 style: TextStyle(
                   fontSize: 20,
                   color: _text_color.withAlpha(122),
@@ -186,7 +186,8 @@ class _Win_What_SalesState extends State<Win_What_Sales> {
 
     // if(call_set_translation){
       if(_isLoading) {
-        set_translation();
+        getData(_what_sales_manager);
+        // set_translation();
       }
       // }else{
       //   _isLoading = true;
