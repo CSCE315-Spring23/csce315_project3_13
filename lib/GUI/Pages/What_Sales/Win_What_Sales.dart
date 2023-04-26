@@ -1,5 +1,7 @@
+import 'package:csce315_project3_13/GUI/Components/Login_Button.dart';
 import 'package:csce315_project3_13/GUI/Components/Page_Header.dart';
 import 'package:csce315_project3_13/GUI/Pages/Manager_View/Win_Manager_View.dart';
+import 'package:csce315_project3_13/GUI/Pages/What_Sales/What_Sales_Dialogue.dart';
 import 'package:csce315_project3_13/Inherited_Widgets/What_Sales_Manager.dart';
 import 'package:csce315_project3_13/Services/google_translate_API.dart';
 import 'package:csce315_project3_13/Services/reports_helper.dart';
@@ -24,11 +26,12 @@ class _Win_What_SalesState extends State<Win_What_Sales> {
   google_translate_API _google_translate_api = google_translate_API();
 
   //Strings for display
-  List<String> list_page_texts_originals = ["What Sells Together", "Exit to Manager View","Amount Sold Together","Amount Sold Together"];
-  List<String> list_page_texts = ["What Sells Together", "Exit to Manager View","Amount Sold Together","Amount Sold Together"];
+  List<String> list_page_texts_originals = ["What Sells Together", "Exit to Manager View","Amount Sold Together","Amount Sold Together", "Reselect Dates"];
+  List<String> list_page_texts = ["What Sells Together", "Exit to Manager View","Amount Sold Together","Amount Sold Together", "Reselect Dates"];
   String text_page_header = "What Sells Together";
   String text_exit_to_manager = "Exit to Manager View";
   String text_amount_sold_together = "Amount Sold Together";
+  String text_reselect_dates = "Reselect Dates";
 
   int visibility_ctrl = 0;
 
@@ -148,6 +151,7 @@ class _Win_What_SalesState extends State<Win_What_Sales> {
       text_page_header = list_page_texts[0];
       text_exit_to_manager = list_page_texts[1];
       text_amount_sold_together = list_page_texts[2];
+      text_reselect_dates = list_page_texts[3];
 
       await  getData_no_reload(_what_sales_manager);
       List<String> names_left = [];
@@ -249,6 +253,7 @@ class _Win_What_SalesState extends State<Win_What_Sales> {
 
 
 
+
     return Scaffold(
       appBar: Page_Header(
         context: context,
@@ -280,6 +285,12 @@ class _Win_What_SalesState extends State<Win_What_Sales> {
         ),
       ),
       backgroundColor: _color_manager.background_color,
+      bottomNavigationBar: Login_Button(onTap: (){
+        showDialog(context: context, builder: (BuildContext context) {
+          return WhatSalesDialogue();
+        }
+        );
+      }, buttonName: text_reselect_dates),
     );
 
 
