@@ -26,8 +26,68 @@ class _Win_View_Inventory_State extends State<Win_View_Inventory> {
   google_translate_API _google_translate_api = google_translate_API();
 
   //Strings for display
-  List<String> list_page_texts_originals = ["Inventory Item Management", "Edit Item Amount", "New Amount",  "CANCEL", "CONFIRM",  "Not enough inventory to satisfy the requested change.", "OK", "Unable to change amount for this item.", "Successfully Removed Item", "Unable to remove inventory item", "Confirm Item Deletion", "Are you sure you want to delete", "Stock", "Remove from Inventory",  "Edit Amount", "Successfully Added Item",  "Unable to add item", "New Inventory Item Creation",  "Ingredient Name", "Amount in Stock", "Unit", "Date Ordered", "Expiration Date", "Conversion", "ADD ITEM", "available", "Return to Manager View", "Add Inventory", "Add Inventory" ];
-  List<String> list_page_texts = ["Inventory Item Management", "Edit Item Amount", "New Amount",  "CANCEL", "CONFIRM",  "Not enough inventory to satisfy the requested change.", "OK", "Unable to change amount for this item.", "Successfully Removed Item", "Unable to remove inventory item", "Confirm Item Deletion", "Are you sure you want to delete", "Stock", "Remove from Inventory",  "Edit Amount", "Successfully Added Item",  "Unable to add item", "New Inventory Item Creation",  "Ingredient Name", "Amount in Stock", "Unit", "Date Ordered", "Expiration Date", "Conversion", "ADD ITEM", "available", "Return to Manager View", "Add Inventory","Add Inventory" ];
+  List<String> list_page_texts_originals = [
+    "Inventory Item Management",
+    "Edit Item Amount",
+    "New Amount",
+    "CANCEL",
+    "CONFIRM",
+    "Not enough inventory to satisfy the requested change.",
+    "OK",
+    "Unable to change amount for this item.",
+    "Successfully Removed Item",
+    "Unable to remove inventory item",
+    "Confirm Item Deletion",
+    "Are you sure you want to delete",
+    "Stock",
+    "Remove from Inventory",
+    "Edit Amount",
+    "Successfully Added Item",
+    "Unable to add item",
+    "New Inventory Item Creation",
+    "Ingredient Name",
+    "Amount in Stock",
+    "Amount Ordered",
+    "Unit",
+    "Date Ordered",
+    "Expiration Date",
+    "Conversion",
+    "ADD ITEM",
+    "available",
+    "Return to Manager View",
+    "Add Inventory"
+  ];
+  List<String> list_page_texts = [
+    "Inventory Item Management",
+    "Edit Item Amount",
+    "New Amount",
+    "CANCEL",
+    "CONFIRM",
+    "Not enough inventory to satisfy the requested change.",
+    "OK",
+    "Unable to change amount for this item.",
+    "Successfully Removed Item",
+    "Unable to remove inventory item",
+    "Confirm Item Deletion",
+    "Are you sure you want to delete",
+    "Stock",
+    "Remove from Inventory",
+    "Edit Amount",
+    "Successfully Added Item",
+    "Unable to add item",
+    "New Inventory Item Creation",
+    "Ingredient Name",
+    "Amount in Stock",
+    "Amount Ordered",
+    "Unit",
+    "Date Ordered",
+    "Expiration Date",
+    "Conversion",
+    "ADD ITEM",
+    "available",
+    "Return to Manager View",
+    "Add Inventory"
+  ];
   String text_page_header = "Inventory Item Management";
   String text_item_amount = "Edit Item Amount";
   String text_hint_new_amount = "New Amount";
