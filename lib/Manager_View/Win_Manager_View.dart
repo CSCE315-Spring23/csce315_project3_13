@@ -8,6 +8,7 @@ import 'package:csce315_project3_13/Services/login_helper.dart';
 import 'package:flutter/material.dart';
 
 import '../GUI/Pages/Order/Win_Order.dart';
+import '../GUI/Pages/Sales Reports/Win_Reports_Hub.dart';
 
 class Win_Manager_View extends StatefulWidget {
   static const String route = '/manager-view';
@@ -52,6 +53,9 @@ class _Win_Manager_ViewState extends State<Win_Manager_View> {
             Login_Button(onTap: (){
               Navigator.pushReplacementNamed(context,Win_View_Inventory.route);
             }, buttonName: "Manage Inventory", fontSize: 18, buttonWidth: 180,),
+            Login_Button(onTap: (){
+              Navigator.pushReplacementNamed(context,Win_Reports_Hub.route);
+            }, buttonName: "Sales Reports", fontSize: 18, buttonWidth: 180,),
           ],
         ),
       ),

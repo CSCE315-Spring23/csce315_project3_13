@@ -1,3 +1,4 @@
+import 'package:csce315_project3_13/GUI/Pages/Sales%20Reports/Win_Reports_Hub.dart';
 import 'package:csce315_project3_13/Inherited_Widgets/Color_Manager.dart';
 import 'package:csce315_project3_13/GUI/Pages/Inventory/Win_View_Inventory.dart';
 import 'package:csce315_project3_13/GUI/Pages/Loading/Loading_Page.dart';
@@ -293,6 +294,7 @@ class _MyAppState extends State<MyApp> {
               Win_Add_Smoothie.route: (BuildContext context) => Win_Add_Smoothie(),
               Win_Order.route: (BuildContext context) => Win_Order(),
               Win_View_Inventory.route :(BuildContext context) => Win_View_Inventory(),
+              Win_Reports_Hub.route: (BuildContext context) => Win_Reports_Hub(),
             },
             initialRoute:  Win_Login.route,
           ),
