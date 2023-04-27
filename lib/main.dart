@@ -165,8 +165,8 @@ class _MyAppState extends State<MyApp> {
   String current_condition = "Can't fetch";
   String current_tempurature = "weather";
 
-  List<String> conditions_list_original = ["Clear", "Drizzle", "Rain", "Clouds"];
-  List<String> conditions_list = ["Clear", "Drizzle", "Rain", "Clouds"];
+  List<String> conditions_list_original = ["Clear", "Drizzle", "Rain", "Clouds", "Mist"];
+  List<String> conditions_list = ["Clear", "Drizzle", "Rain", "Clouds", "Mist"];
 
   void startTimer() async {
     print("timer started");
