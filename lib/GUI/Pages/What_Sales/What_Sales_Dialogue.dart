@@ -24,12 +24,16 @@ class _WhatSalesDialogueState extends State<WhatSalesDialogue> {
   DateTime? pickedDate1;
   DateTime? pickedDate2;
 
-  List<String> list_page_texts_originals = ["Choose dates", "Enter First Date", "Enter Second Date", "Continue"];
-  List<String> list_page_texts = ["Choose dates", "Enter First Date", "Enter Second Date", "Continue"];
+  List<String> list_page_texts_originals = ["Choose dates", "Enter First Date", "Enter Second Date", "Continue", "Cancel", "Error choosing dates", "Please re-enter dates", "Ok"];
+  List<String> list_page_texts = ["Choose dates", "Enter First Date", "Enter Second Date", "Continue", "Cancel", "Error choosing dates", "Please re-enter dates", "Ok"];
   String text_page_title = "Choose dates";
   String text_first_date = "Enter First Date";
   String text_second_date = "Enter Second Date";
   String text_continue_button = "Continue";
+  String text_cancel_button = "Cancel";
+  String text_err_choose = "Error choosing dates";
+  String text_reenter = "Please re-enter dates";
+  String text_ok = "Ok";
 
 
   google_translate_API _google_translate_api = google_translate_API();
@@ -71,6 +75,10 @@ class _WhatSalesDialogueState extends State<WhatSalesDialogue> {
       text_first_date = list_page_texts[1];
       text_second_date = list_page_texts[2];
       text_continue_button = list_page_texts[3];
+      text_cancel_button = list_page_texts[4];
+      text_err_choose = list_page_texts[5];
+      text_reenter = list_page_texts[6];
+      text_ok = list_page_texts[7];
 
       setState(() {
       });
@@ -93,16 +101,34 @@ class _WhatSalesDialogueState extends State<WhatSalesDialogue> {
       backgroundColor: _color_manager.background_color,
       content: Center(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             TextField(
                 cursorColor: _color_manager.text_color,
                 controller: _date1Controller, //editing controller of this TextField
+                style: TextStyle(
+                  decorationColor: Color_Manager.of(context).active_color,
+                  color: Color_Manager.of(context).text_color,
+                ),
                 decoration: InputDecoration(
-
+                  labelStyle: TextStyle(
+                    color: Color_Manager.of(context).text_color,
+                  ),
                     icon: Icon(Icons.calendar_today,
                     color: _color_manager.text_color,
                     ), //icon of text field
                     labelText: text_first_date, //label text of field
+
+                  focusColor: Color_Manager.of(context).text_color,
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color_Manager.of(context).text_color),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color_Manager.of(context).text_color),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+
                 ),
                 readOnly: false,  // when true user cannot edit text
                 onTap: () async {
@@ -128,9 +154,30 @@ class _WhatSalesDialogueState extends State<WhatSalesDialogue> {
 
             TextField(
                 controller: _date2Controller, //editing controller of this TextField
+                cursorColor: _color_manager.text_color,
+                style: TextStyle(
+                  decorationColor: Color_Manager.of(context).active_color,
+                  color: Color_Manager.of(context).text_color,
+                ),
                 decoration: InputDecoration(
-                    icon: Icon(Icons.calendar_today), //icon of text field
-                    labelText: text_second_date //label text of field
+                  labelStyle: TextStyle(
+                    color: Color_Manager.of(context).text_color,
+                  ),
+                  icon: Icon(Icons.calendar_today,
+                    color: _color_manager.text_color,
+                  ), //icon of text field
+                  labelText: text_second_date, //label text of field
+
+                  focusColor: Color_Manager.of(context).text_color,
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color_Manager.of(context).text_color),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color_Manager.of(context).text_color),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+
                 ),
                 readOnly: false,  // when true user cannot edit text
                 onTap: () async {
@@ -162,15 +209,32 @@ class _WhatSalesDialogueState extends State<WhatSalesDialogue> {
         ),
       ),
       actions: <Widget>[
+        Login_Button(onTap: (){
+          Navigator.pop(context);
+        },
+          buttonName: text_cancel_button,
+        ),
         Login_Button(
           onTap: (){
-            if(pickedDate1 !=null){
+            if(pickedDate1 != null){
               if(pickedDate2?.isAfter(pickedDate1 as DateTime)??false){
                 _what_sales_man.change_dates(_date1Controller.text, _date2Controller.text);
+              }else{
+                showDialog(context: context, builder: (BuildContext context){
+                  return AlertDialog(
+                    title: Text(text_err_choose),
+                    content: Center(
+                      child: Text(text_reenter),
+                    ),
+                    actions: [
+                      TextButton(onPressed: (){
+                        Navigator.pop(context);
+                      }, child: Text(text_ok)),
+                    ],
+                  );
+                });
               }
             }
-
-
 
 
             Navigator.of(context).pop();
