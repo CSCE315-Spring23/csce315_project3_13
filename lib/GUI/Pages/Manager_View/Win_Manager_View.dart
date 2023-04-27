@@ -101,9 +101,6 @@ class _Win_Manager_ViewState extends State<Win_Manager_View> {
             Login_Button(onTap: (){
               Navigator.pushReplacementNamed(context,Win_View_Inventory.route);
             }, buttonName: text_manage_inventory, fontSize: 18, buttonWidth: 180,),
-            Login_Button(onTap: (){
-              Navigator.pushReplacementNamed(context,Win_What_Sales.route);
-            }, buttonName: text_view_what_sales, fontSize: 18, buttonWidth: 180,),
           ],
         ),
       ),
