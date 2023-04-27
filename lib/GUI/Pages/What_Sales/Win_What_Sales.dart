@@ -26,16 +26,14 @@ class _Win_What_SalesState extends State<Win_What_Sales> {
   google_translate_API _google_translate_api = google_translate_API();
 
   //Strings for display
-  List<String> list_page_texts_originals = ["What Sells Together", "Exit to Manager View","Amount Sold Together","Amount Sold Together", "Reselect Dates"];
-  List<String> list_page_texts = ["What Sells Together", "Exit to Manager View","Amount Sold Together","Amount Sold Together", "Reselect Dates"];
+  List<String> list_page_texts_originals = ["What Sells Together", "Exit to Manager View","Amount Sold Together", "Reselect Dates"];
+  List<String> list_page_texts = ["What Sells Together", "Exit to Manager View","Amount Sold Together","Reselect Dates"];
   String text_page_header = "What Sells Together";
   String text_exit_to_manager = "Exit to Manager View";
   String text_amount_sold_together = "Amount Sold Together";
   String text_reselect_dates = "Reselect Dates";
 
   int visibility_ctrl = 0;
-
-
 
   bool _isLoading = true;
   List<what_sales_together_row> row_items = [];
@@ -82,7 +80,6 @@ class _Win_What_SalesState extends State<Win_What_Sales> {
               title: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 10.0),
                     child: Text(
@@ -132,21 +129,17 @@ class _Win_What_SalesState extends State<Win_What_Sales> {
     super.initState();
   }
 
-
   @override
   Widget build(BuildContext context) {
     final _color_manager = Color_Manager.of(context);
 
     final _what_sales_manager = What_Sales_Manager.of(context);
 
-
-    // ToDo Implement the below translation functionality
     final _translate_manager = Translate_Manager.of(context);
 
     Future<void> set_translation() async {
       call_set_translation = false;
 
-      //set the new Strings here
       list_page_texts = (await _google_translate_api.translate_batch(list_page_texts_originals,_translate_manager.chosen_language));
       text_page_header = list_page_texts[0];
       text_exit_to_manager = list_page_texts[1];
@@ -156,18 +149,12 @@ class _Win_What_SalesState extends State<Win_What_Sales> {
       await  getData_no_reload(_what_sales_manager);
       List<String> names_left = [];
       List<String> names_right = [];
-
-      // List<what_sales_together_row>
       row_items.forEach((element) {
       names_left.add(element.item1);
       names_right.add(element.item2);
       });
-      //
-      //
-      print(names_left);
       names_left = (await _google_translate_api.translate_batch(names_left,_translate_manager.chosen_language));
       names_right = (await _google_translate_api.translate_batch(names_right,_translate_manager.chosen_language));
-      print(names_left);
       List<what_sales_together_row> item_row_new = [];
       int current_index = 0;
       row_items.forEach((element) {
@@ -177,82 +164,22 @@ class _Win_What_SalesState extends State<Win_What_Sales> {
         current_index++;
       });
       row_items = item_row_new;
-      //
-      // Map<pair, int> new_inventoryItems = {};
-      // int current_keys_index = 0;
-      // pairs_items.forEach((key, value) {
-      //   new_inventoryItems[pair(keys_left[current_keys_index], keys_right[current_keys_index])] = value;
-      //   current_keys_index++;
-      // });
-      // pairs_items = new_inventoryItems;
-
-
       _isLoading = false;
       call_set_translation = false;
       setState(() {
       });
-
-
-      // getData(_what_sales_manager);
     }
-
-    print( "isLoading =  " + _isLoading.toString());
-    print("call_set_translation " + call_set_translation.toString());
 
     if((!_isLoading) && call_set_translation){
-      print("called");
-
       set_translation();
-
-      // _isLoading = true;
-      // setState(() {
-      //
-      // });
     }
 
-    // if(call_set_translation){
-      if((_isLoading && call_set_translation)) {
-        set_translation();
-      }else if(call_set_translation == false){
-        call_set_translation = true;
-      }
-
-
-
-
-
-
-
-
-
-
-
-
-    // if(call_set_translation){
-    //   set_translation().then((value) => {
-    //   if(_isLoading){
-    //
-    //     getData(_what_sales_manager)
-    // }
-    //   });
-    //
-    // }else{
-    //   call_set_translation = true;
-    //   if(_isLoading){
-    //     setState(() {
-    //       _isLoading = false;
-    //     });
-    //     getData(_what_sales_manager);
-    //   }
-    // }
-
-    //Translation functiona
-
-
-
-
-
-
+    if((_isLoading && call_set_translation)) {
+      set_translation();
+    }else if(call_set_translation == false){
+      call_set_translation = true;
+    }
+    //Translation functions
 
     return Scaffold(
       appBar: Page_Header(
@@ -265,7 +192,6 @@ class _Win_What_SalesState extends State<Win_What_Sales> {
             onPressed: ()
             {
               Navigator.pushReplacementNamed(context,Win_Manager_View.route);
-
             },
             icon: const Icon(Icons.close_rounded),
             iconSize: 40,
