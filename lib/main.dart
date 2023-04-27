@@ -282,9 +282,11 @@ class _MyAppState extends State<MyApp> {
   //For what sales
   String date1 = "01/20/2022";
   String date2 = "01/21/2022";
+  bool set_dates = false;
   void change_date(String new_date1, String new_date2){
     date1 = new_date1;
     date2 = new_date2;
+    set_dates = true;
     setState(() {
 
     });
@@ -312,6 +314,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return What_Sales_Manager(
+      set_dates: set_dates,
       date1: date1,
       date2: date2,
       change_dates: change_date,

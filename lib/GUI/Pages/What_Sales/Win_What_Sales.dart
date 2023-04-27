@@ -26,12 +26,12 @@ class _Win_What_SalesState extends State<Win_What_Sales> {
   google_translate_API _google_translate_api = google_translate_API();
 
   //Strings for display
-  List<String> list_page_texts_originals = ["What Sells Together", "Exit to Manager View","Amount Sold Together", "Reselect Dates"];
-  List<String> list_page_texts = ["What Sells Together", "Exit to Manager View","Amount Sold Together","Reselect Dates"];
+  List<String> list_page_texts_originals = ["What Sells Together", "Exit","Amount Sold Together", "Select Dates"];
+  List<String> list_page_texts = ["What Sells Together", "Exit","Amount Sold Together","Select Dates"];
   String text_page_header = "What Sells Together";
-  String text_exit_to_manager = "Exit to Manager View";
+  String text_exit_to = "Exit";
   String text_amount_sold_together = "Amount Sold Together";
-  String text_reselect_dates = "Reselect Dates";
+  String text_reselect_dates = "Select Dates";
 
   int visibility_ctrl = 0;
 
@@ -41,7 +41,10 @@ class _Win_What_SalesState extends State<Win_What_Sales> {
 
   Future<void> getData_no_reload(What_Sales_Manager _manager) async {
     print("Building Page...");
+    //ToDo uncomment below line when what_sales_together complete
     // row_items = await rep_helper.what_sales_together(_manager.date1, _manager.date2);
+
+    //ToDo comment out below line when what_sales_together complete
     row_items = [what_sales_together_row(
         0, "Gladiator Smoothie", 1, "Bulk Smoothie", 3
     )];
@@ -51,7 +54,10 @@ class _Win_What_SalesState extends State<Win_What_Sales> {
 
   Future<void> getData(What_Sales_Manager _manager) async {
     print("Building Page...");
+    //ToDo uncomment below line when what_sales_together complete
     // row_items = await rep_helper.what_sales_together(_manager.date1, _manager.date2);
+
+    //ToDo comment out below line when what_sales_together complete
      row_items = [what_sales_together_row(
         0, "Gladiator Smoothie", 1, "Bulk Smoothie", 3
     )];
@@ -142,7 +148,7 @@ class _Win_What_SalesState extends State<Win_What_Sales> {
 
       list_page_texts = (await _google_translate_api.translate_batch(list_page_texts_originals,_translate_manager.chosen_language));
       text_page_header = list_page_texts[0];
-      text_exit_to_manager = list_page_texts[1];
+      text_exit_to = list_page_texts[1];
       text_amount_sold_together = list_page_texts[2];
       text_reselect_dates = list_page_texts[3];
 
@@ -170,14 +176,16 @@ class _Win_What_SalesState extends State<Win_What_Sales> {
       });
     }
 
-    if((!_isLoading) && call_set_translation){
-      set_translation();
-    }
+    if(_what_sales_manager.set_dates) {
+      if ((!_isLoading) && call_set_translation) {
+        set_translation();
+      }
 
-    if((_isLoading && call_set_translation)) {
-      set_translation();
-    }else if(call_set_translation == false){
-      call_set_translation = true;
+      if ((_isLoading && call_set_translation)) {
+        set_translation();
+      } else if (call_set_translation == false) {
+        call_set_translation = true;
+      }
     }
     //Translation functions
 
@@ -187,10 +195,11 @@ class _Win_What_SalesState extends State<Win_What_Sales> {
         pageName: text_page_header,
         buttons: [
           IconButton(
-            tooltip: text_exit_to_manager,
+            tooltip: text_exit_to,
             padding: const EdgeInsets.only(left: 25, right: 10),
             onPressed: ()
             {
+              //ToDo change to correct page to exit to
               Navigator.pushReplacementNamed(context,Win_Manager_View.route);
             },
             icon: const Icon(Icons.close_rounded),
