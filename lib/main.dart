@@ -1,3 +1,6 @@
+import 'package:csce315_project3_13/GUI/Pages/Manager_View/Win_Manager_View.dart';
+import 'package:csce315_project3_13/GUI/Pages/Server_View/Win_Server_View.dart';
+import 'package:csce315_project3_13/GUI/Pages/What_Sales/Win_What_Sales.dart';
 import 'package:csce315_project3_13/Inherited_Widgets/Color_Manager.dart';
 import 'package:csce315_project3_13/GUI/Pages/Inventory/Win_View_Inventory.dart';
 import 'package:csce315_project3_13/GUI/Pages/Loading/Loading_Page.dart';
@@ -9,9 +12,8 @@ import 'package:csce315_project3_13/GUI/Pages/Management/Win_View_Menu.dart';
 import 'package:csce315_project3_13/GUI/Pages/Order/Win_Order.dart';
 import 'package:csce315_project3_13/GUI/Pages/Test%20Pages/Win_Functions_Test_Page.dart';
 import 'package:csce315_project3_13/Inherited_Widgets/Translate_Manager.dart';
-import 'package:csce315_project3_13/Manager_View/Win_Manager_View.dart';
-import 'package:csce315_project3_13/Server_View/Win_Server_View.dart';
 import 'package:csce315_project3_13/Inherited_Widgets/Weather_Manager.dart';
+import 'package:csce315_project3_13/Inherited_Widgets/What_Sales_Manager.dart';
 import 'package:csce315_project3_13/Services/google_translate_API.dart';
 import 'package:csce315_project3_13/Services/weather_API.dart';
 import 'package:flutter/material.dart';
@@ -277,6 +279,19 @@ class _MyAppState extends State<MyApp> {
     change_language(got_language_choice as String);
   }
 
+  //For what sales
+  String date1 = "01/20/2022";
+  String date2 = "01/21/2022";
+  bool set_dates = false;
+  void change_date(String new_date1, String new_date2){
+    date1 = new_date1;
+    date2 = new_date2;
+    set_dates = true;
+    setState(() {
+
+    });
+  }
+
 
 
 
@@ -298,51 +313,59 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return Translate_Manager(
-      chosen_language: chosen_language,
-      change_language: change_language,
-      child: Weather_Manager(
-        conditions_list: conditions_list,
-        current_tempurature: current_tempurature,
-        current_condition: current_condition,
-        child: Color_Manager(
-          // This class stores the color values for the web app
-          selected_option_index: selected_option_index,
-          reset_colors: reset_colors,
-          option_deuteranopia: option_deuteranopia,
-          option_protanopia: option_protanopia,
-          option_tritanopia: option_tritanopia,
-          primary_color: primary_color,
-          secondary_color: secondary_color,
-          background_color: background_color,
-          text_color: text_color,
-          active_color: active_color,
-          hover_color: hover_color,
-          inactive_color: inactive_color,
-          active_size_color: active_size_color,
-          active_confirm_color: active_confirm_color,
-          active_deny_color: active_deny_color,
+    return What_Sales_Manager(
+      set_dates: set_dates,
+      date1: date1,
+      date2: date2,
+      change_dates: change_date,
 
-          child: MaterialApp(
-            title: 'Smoothie King App',
-            theme: ThemeData(
-              primarySwatch: Colors.red,
+      child: Translate_Manager(
+        chosen_language: chosen_language,
+        change_language: change_language,
+        child: Weather_Manager(
+          conditions_list: conditions_list,
+          current_tempurature: current_tempurature,
+          current_condition: current_condition,
+          child: Color_Manager(
+            // This class stores the color values for the web app
+            selected_option_index: selected_option_index,
+            reset_colors: reset_colors,
+            option_deuteranopia: option_deuteranopia,
+            option_protanopia: option_protanopia,
+            option_tritanopia: option_tritanopia,
+            primary_color: primary_color,
+            secondary_color: secondary_color,
+            background_color: background_color,
+            text_color: text_color,
+            active_color: active_color,
+            hover_color: hover_color,
+            inactive_color: inactive_color,
+            active_size_color: active_size_color,
+            active_confirm_color: active_confirm_color,
+            active_deny_color: active_deny_color,
+
+            child: MaterialApp(
+              title: 'Smoothie King App',
+              theme: ThemeData(
+                primarySwatch: Colors.red,
+              ),
+              routes:  <String, WidgetBuilder>{
+                Win_Login.route: (BuildContext context) => Win_Login(),
+                Win_Reset_Password.route: (BuildContext context) => Win_Reset_Password(),
+                Win_Create_Account.route: (BuildContext context) => Win_Create_Account(),
+                Win_Manager_View.route: (BuildContext context) => Win_Manager_View(),
+                Win_Server_View.route: (BuildContext context) => Win_Server_View(),
+                Win_Functions_Test_Page.route: (BuildContext context) => Win_Functions_Test_Page(),
+                Win_Loading_Page.route: (BuildContext context) => Win_Loading_Page(),
+                Win_View_Menu.route :(BuildContext context) => Win_View_Menu(),
+                Win_Edit_Smoothie.route: (BuildContext context) => Win_Edit_Smoothie(),
+                Win_Add_Smoothie.route: (BuildContext context) => Win_Add_Smoothie(),
+                Win_Order.route: (BuildContext context) => Win_Order(),
+                Win_View_Inventory.route :(BuildContext context) => Win_View_Inventory(),
+                Win_What_Sales.route :(BuildContext context) =>  Win_What_Sales(),
+              },
+              initialRoute:  Win_Login.route,
             ),
-            routes:  <String, WidgetBuilder>{
-              Win_Login.route: (BuildContext context) => Win_Login(),
-              Win_Reset_Password.route: (BuildContext context) => Win_Reset_Password(),
-              Win_Create_Account.route: (BuildContext context) => Win_Create_Account(),
-              Win_Manager_View.route: (BuildContext context) => Win_Manager_View(),
-              Win_Server_View.route: (BuildContext context) => Win_Server_View(),
-              Win_Functions_Test_Page.route: (BuildContext context) => Win_Functions_Test_Page(),
-              Win_Loading_Page.route: (BuildContext context) => Win_Loading_Page(),
-              Win_View_Menu.route :(BuildContext context) => Win_View_Menu(),
-              Win_Edit_Smoothie.route: (BuildContext context) => Win_Edit_Smoothie(),
-              Win_Add_Smoothie.route: (BuildContext context) => Win_Add_Smoothie(),
-              Win_Order.route: (BuildContext context) => Win_Order(),
-              Win_View_Inventory.route :(BuildContext context) => Win_View_Inventory(),
-            },
-            initialRoute:  Win_Login.route,
           ),
         ),
       ),

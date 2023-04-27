@@ -32,9 +32,12 @@ class google_translate_API
   }
 
   Future<List<String>> translate_batch(List<String> items, String target_language) async {
+    // print("Translating");
+    // print(target_language);
     if(target_language == "en"){
       return items;
     }else{
+
       try{
         String api_url = 'https://translation.googleapis.com/language/translate/v2?key=$api_key';
         String source_text = items.join(' ||| ');

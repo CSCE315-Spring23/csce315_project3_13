@@ -1,3 +1,5 @@
+import 'package:csce315_project3_13/GUI/Pages/Order/Win_Order.dart';
+import 'package:csce315_project3_13/GUI/Pages/What_Sales/Win_What_Sales.dart';
 import 'package:csce315_project3_13/Inherited_Widgets/Color_Manager.dart';
 import 'package:csce315_project3_13/GUI/Components/Login_Button.dart';
 import 'package:csce315_project3_13/GUI/Components/Page_Header.dart';
@@ -8,8 +10,6 @@ import 'package:csce315_project3_13/Inherited_Widgets/Translate_Manager.dart';
 import 'package:csce315_project3_13/Services/google_translate_API.dart';
 import 'package:csce315_project3_13/Services/login_helper.dart';
 import 'package:flutter/material.dart';
-
-import '../GUI/Pages/Order/Win_Order.dart';
 
 class Win_Manager_View extends StatefulWidget {
   static const String route = '/manager-view';
@@ -26,13 +26,14 @@ class _Win_Manager_ViewState extends State<Win_Manager_View> {
   google_translate_API _google_translate_api = google_translate_API();
 
   //Strings for display
-  List<String> list_page_texts_originals = ["Manager View", "Log out", "Order", "Manage Menu","Manage Inventory" ];
-  List<String> list_page_texts = ["Manager View", "Log out", "Order", "Manage Menu", "Manage Inventory"  ];
+  List<String> list_page_texts_originals = ["Manager View", "Log out", "Order", "Manage Menu","Manage Inventory", "What Sells Together" ];
+  List<String> list_page_texts = ["Manager View", "Log out", "Order", "Manage Menu", "Manage Inventory", "What Sells Together"  ];
   String text_page_header = "Manager View";
   String text_log_out_button = "Log out";
   String text_order_button = "Order";
   String text_manage_menu = "Manage Menu";
   String text_manage_inventory = "Manage Inventory";
+  String text_view_what_sales = "What Sells Together";
 
 
 
@@ -57,6 +58,7 @@ class _Win_Manager_ViewState extends State<Win_Manager_View> {
       text_order_button = list_page_texts[2];
       text_manage_menu = list_page_texts[3];
       text_manage_inventory = list_page_texts[4];
+      text_view_what_sales = list_page_texts[5];
 
       setState(() {
       });

@@ -1,7 +1,6 @@
 import 'package:csce315_project3_13/GUI/Components/Login_Button.dart';
 import 'package:csce315_project3_13/GUI/Pages/Management/Win_Add_Smoothie.dart';
-import 'package:csce315_project3_13/Manager_View/Win_Manager_View.dart';
-import 'package:csce315_project3_13/Services/general_helper.dart';
+import 'package:csce315_project3_13/GUI/Pages/Manager_View/Win_Manager_View.dart';
 import 'package:csce315_project3_13/Services/menu_item_helper.dart';
 import 'package:csce315_project3_13/Services/view_helper.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
