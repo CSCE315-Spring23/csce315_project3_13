@@ -2,6 +2,7 @@ import 'dart:collection';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:csce315_project3_13/Services/general_helper.dart';
 import '../Models/models_library.dart';
+import 'dart:math';
 
 class reports_helper
 {
@@ -76,7 +77,7 @@ class reports_helper
     });
     List<dynamic> order_data = res.data;
 
-    Map<int, List<String>> item_info = await gen_helper.get_all_menu_item_info();
+    Map<int, List<dynamic>> item_info = await gen_helper.get_all_menu_item_info();
 
     print("got all item info");
     for (int index = 0; index < order_data.length; ++index) {
@@ -118,10 +119,45 @@ class reports_helper
 
     return report;
 
-
   }
 
+  Future<List<sales_report_row>> generate_sales_report(String date1, String date2) async {
+    Map<int, int> sales = {};
+    Map<int, List<dynamic>> item_info = await gen_helper.get_all_menu_item_info();
 
+    HttpsCallable get_items = FirebaseFunctions.instance.httpsCallable('getItemsInOrder');
+    final res = await get_items.call({
+      'date1': date1,
+      'date2': date2
+    });
+    List<dynamic> order_data = res.data;
+
+    for (int index = 0; index < order_data.length; ++index) {
+      List<dynamic> l = order_data[index]['item_ids_in_order'];
+      for(dynamic id in l) {
+        if(id < 1000) {
+          sales.update(id as int, (value) => value + 1, ifAbsent: () => 1);
+        }
+      }
+    }
+
+    List<sales_report_row> report = [];
+
+    for(MapEntry<int, int> e in sales.entries) {
+      int id = e.key;
+      String type = item_info[id]![1];
+      String item_name = item_info[id]![0];
+      int amount_sold = e.value;
+      double total_revenue = item_info[id]![2] * amount_sold;
+      total_revenue = double.parse(total_revenue.toStringAsFixed(2));
+      sales_report_row row = sales_report_row(type, id, item_name, amount_sold, total_revenue);
+      report.add(row);
+      print("$item_name \t \$$total_revenue");
+    }
+
+
+    return report;
+  }
 
 
 }
