@@ -64,7 +64,7 @@ class reports_helper
 
   }
 
-  Future<void> what_sales_together(String date1, String date2) async
+  Future<List<what_sales_together_row>> what_sales_together(String date1, String date2) async
   {
     print("Called what sales function");
     Map<String, int> pairs = {};
@@ -106,6 +106,20 @@ class reports_helper
       pair p = pair.fromString(e.key);
       print("${p.left}, ${p.right} \t ${e.value}");
     }
+
+    List<what_sales_together_row> report = [];
+    for (MapEntry<String, int> e in pairs.entries) {
+      pair p = pair.fromString(e.key);
+      int id1 = p.left;
+      String item1 = item_info[id1]![0];
+      int id2 = p.right;
+      String item2 = item_info[id2]![0];
+      int num = e.value;
+      what_sales_together_row row = what_sales_together_row(id1, item1, id2, item2, num);
+      report.add(row);
+    }
+
+    return report;
 
 
   }
