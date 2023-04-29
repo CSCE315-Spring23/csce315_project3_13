@@ -70,7 +70,7 @@ class general_helper
   Future<String> get_current_date() async
   {
     var now = new DateTime.now();
-    var formatter = new DateFormat('dd/MM/yyyy');
+    var formatter = new DateFormat('MM/dd/yyyy');
     String formattedDate = formatter.format(now);
     return formattedDate;
   }

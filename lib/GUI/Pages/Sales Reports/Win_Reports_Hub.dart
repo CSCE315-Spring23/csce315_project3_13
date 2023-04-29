@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 
 import '../../../Inherited_Widgets/Color_Manager.dart';
 import '../../../Manager_View/Win_Manager_View.dart';
+import '../../../Services/general_helper.dart';
+import '../../../Services/reports_helper.dart';
 import '../../Components/Login_Button.dart';
 import '../../Components/Page_Header.dart';
 
@@ -16,6 +18,9 @@ class Win_Reports_Hub extends StatefulWidget {
 }
 
 class _Win_Reports_HubState extends State<Win_Reports_Hub> {
+  general_helper gen_helper = general_helper();
+  reports_helper rep_helper = reports_helper();
+
   @override
   Widget build(BuildContext context) {
     final _color_manager = Color_Manager.of(context);
@@ -46,8 +51,26 @@ class _Win_Reports_HubState extends State<Win_Reports_Hub> {
               Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Login_Button(onTap: (){
-                    Navigator.pushReplacementNamed(context,Win_Manager_View.route);
+                  Login_Button(onTap: () async {
+                    String current_date = await gen_helper.get_current_date();
+                    double x_rep = await rep_helper.get_z_report(current_date);
+                    showDialog(
+                      barrierDismissible: false,
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          content: Text("Today's X Report: $x_rep"),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text('OK'),
+                            )
+                          ],
+                        );
+                      },
+                    );
                   }, buttonName: "X Reports", fontSize: 18, buttonWidth: 180,),
                   Login_Button(onTap: (){
                     Navigator.pushReplacementNamed(context,Win_Z_Reports.route);
