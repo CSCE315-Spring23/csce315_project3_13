@@ -102,14 +102,11 @@ class reports_helper
     print("reached here 1");
     pairs = Map.fromEntries(pairs.entries.toList()
       ..sort((e1, e2) => e2.value.compareTo(e1.value)));
-    for (MapEntry<String, int> e in pairs.entries) {
-      pair p = pair.fromString(e.key);
-      print("${p.left}, ${p.right} \t ${e.value}");
-    }
 
     List<what_sales_together_row> report = [];
     for (MapEntry<String, int> e in pairs.entries) {
       pair p = pair.fromString(e.key);
+      print("${p.left}, ${p.right} \t ${e.value}");
       int id1 = p.left;
       String item1 = item_info[id1]![0];
       int id2 = p.right;
