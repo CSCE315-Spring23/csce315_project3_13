@@ -1,6 +1,7 @@
 import 'package:csce315_project3_13/GUI/Components/Login_Button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 
 import '../../../Inherited_Widgets/Color_Manager.dart';
@@ -23,29 +24,60 @@ class _Win_Z_ReportsState extends State<Win_Z_Reports> {
   DateTime date = DateTime.now();
   List<String> dates = [];
   List<double> sales = [];
+  bool dataLoaded = false;
 
   void getData() async
   {
+    print("Getting data...");
     Map<String, double> all_reports = await rep_help.get_all_z_reports();
-    for(MapEntry<String, double> e in all_reports.entries) {
+    for (MapEntry<String, double> e in all_reports.entries) {
       dates.add(e.key);
       sales.add(e.value);
     }
+
+    for (int i = 0; i < dates.length; i++) {
+      print('Date ${dates[i]} Sales ${sales[i]}');
+    }
+
+    setState(()
+    {
+      dataLoaded = true;
+    });
   }
 
-  Widget salesList(List<String> dates, List<double> sales)
+  Widget salesList(List<String> dates, List<double> sales, Color _text_color, Color _box_color)
   {
     print("Constructing sales list...");
     return ListView.builder(
         padding: const EdgeInsets.all(8),
         itemCount: dates.length,
-        itemBuilder: (BuildContext context, int index) {
-          return Container(
-            height: 50,
-            child: Center(child: Text('Date ${dates[index]} Sales ${sales[index]}')),
-          );
-        }
+        itemBuilder: (BuildContext context, int index) =>
+          Card(
+            color: _box_color,
+            shape: RoundedRectangleBorder(
+              side: BorderSide(
+                color: Theme.of(context).colorScheme.outline,
+              ),
+              borderRadius: const BorderRadius.all(Radius.circular(12)),
+            ),
+            child: Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Text('${dates[index]}: \$${sales[index]}',
+                  style: TextStyle(
+                    fontSize: 50,
+                    fontWeight: FontWeight.bold,
+                    color: _text_color,
+                  ),
+                ),
+            )
+          ),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getData();
   }
 
   @override
@@ -69,59 +101,59 @@ class _Win_Z_ReportsState extends State<Win_Z_Reports> {
             iconSize: 40,
           ),],
       ),
-      body: Center(
-        child: Container(
-          width: MediaQuery.of(context).size.width/2,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 16),
-                  Login_Button(
-                    onTap: () async {
-                      DateTime ? newDate = await showDatePicker(
-                          context: context,
-                          initialDate: date,
-                          firstDate: DateTime(2020),
-                          lastDate: DateTime(2025),
-                      );
+      body: !dataLoaded ?  Center(
+        child: SpinKitRing(color: _color_manager.primary_color) ,
+      ) : Center(
+        child: SizedBox(
+          child: salesList(dates, sales, _color_manager.text_color, _color_manager.active_color),
+        ),
+      ),
+      bottomSheet: Container
+        (
+        height: 75,
+        color: _color_manager.primary_color,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Login_Button(
+              onTap: () async {
+                DateTime ? newDate = await showDatePicker(
+                  context: context,
+                  initialDate: date,
+                  firstDate: DateTime(2020),
+                  lastDate: DateTime(2025),
+                );
 
-                      if (newDate == null) return;
+                if (newDate == null) return;
 
-                      setState(() => date = newDate);
+                setState(() => date = newDate);
 
-                      var formatter = DateFormat('MM/dd/yyyy');
-                      String formattedDate = formatter.format(date);
+                var formatter = DateFormat('MM/dd/yyyy');
+                String formattedDate = formatter.format(date);
 
-                      double z_rep = await rep_help.get_z_report(formattedDate);
+                double z_rep = await rep_help.get_z_report(formattedDate);
 
-                      showDialog(
-                        barrierDismissible: false,
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            content: Text("Z report for the chosen date: $z_rep"),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: const Text('OK'),
-                              )
-                            ],
-                          );
-                        },
-                      );
-                    },
-                    buttonName: "Get Z Report", fontSize: 18, buttonWidth: 180,)
-                  // Calendar picker and z_reports database table
-                ],
-              ),
-              salesList(dates, sales),
-            ],
-          ),
+                showDialog(
+                  barrierDismissible: false,
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      content: Text("Z report for the chosen date: $z_rep"),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text('OK'),
+                        )
+                      ],
+                    );
+                  },
+                );
+              },
+              buttonName: "Get Z Report", fontSize: 18, buttonWidth: 180,),
+          ],
         ),
       ),
       // This trailing comma makes auto-formatting nicer for build methods.
