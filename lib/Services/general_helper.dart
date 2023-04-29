@@ -70,9 +70,25 @@ class general_helper
   Future<String> get_current_date() async
   {
     var now = new DateTime.now();
-    var formatter = new DateFormat('dd/MM/yyyy');
+    var formatter = new DateFormat('MM/dd/yyyy');
     String formattedDate = formatter.format(now);
     return formattedDate;
+  }
+
+  Future<Map<int, List<String>>> get_all_menu_item_info() async{
+    Map<int, List<String>> item_info = {};
+    HttpsCallable get_item_info = FirebaseFunctions.instance.httpsCallable('getMenuItemsInfo');
+    final info_res = await get_item_info();
+    List<dynamic> item_data = info_res.data;
+    for(dynamic d in item_data) {
+      int id = d['menu_item_id'];
+      String name = d['menu_item'];
+      String type = d['type'];
+      if(id < 1000) {
+        item_info[id] = [name, type];
+      }
+    }
+    return item_info;
   }
 
 }

@@ -23,6 +23,8 @@ class reports_helper
     }
   }
 
+
+
   Future<Map<String, double>> get_all_z_reports() async
   {
     HttpsCallable getter = FirebaseFunctions.instance.httpsCallable('getAllZReports');
@@ -62,64 +64,50 @@ class reports_helper
 
   }
 
-  Future<List<what_sales_together_row>> what_sales_together(String date1,
-      String date2) async
+  Future<void> what_sales_together(String date1, String date2) async
   {
     print("Called what sales function");
-    Map<pair, int> pairs = {};
-    HttpsCallable get_items = FirebaseFunctions.instance.httpsCallable(
-        'getItemsInOrder');
+    Map<String, int> pairs = {};
+
+    HttpsCallable get_items = FirebaseFunctions.instance.httpsCallable('getItemsInOrder');
     final res = await get_items.call({
       'date1': date1,
       'date2': date2
     });
-    List<dynamic> data = res.data;
-    print("got items");
-    print("data length = " + data.length.toString());
-    for (int index = 0; index < data.length; ++index) {
-      print("Current index = " + index.toString());
-      List<dynamic> l = data[index]['item_ids_in_order'];
+    List<dynamic> order_data = res.data;
+
+    Map<int, List<String>> item_info = await gen_helper.get_all_menu_item_info();
+
+    print("got all item info");
+    for (int index = 0; index < order_data.length; ++index) {
+      List<dynamic> l = order_data[index]['item_ids_in_order'];
       l.sort();
-      // print("l length = ");
-      // print(l.length);
       if (l.length > 1) {
         for (int i = 0; i < l.length; ++i) {
-          // print("looping 1");
-          String type = await gen_helper.get_item_type(l[i]);
-          // if(type == "smoothie") {
-            pair curr_pair = pair(l[i], null);
-            for (int j = i + 1; j < l.length; ++j) {
-              // print("looping 2");
-              curr_pair.right = l[j];
-              pairs.update(curr_pair, (value) => value + 1, ifAbsent: () => 1);
+          if(l[i] < 1000) {
+            if(item_info[l[i]]![1] == "smoothie") {
+              for(int j = i + 1; j < l.length; ++j) {
+                if(l[j] < 1000) {
+                  if(item_info[l[j]]![1] == "smoothie") {
+                    pair curr_pair = pair(l[i], l[j]);
+                    pairs.update(curr_pair.toString(), (value) => value + 1, ifAbsent: () => 1);
+                  }
+                }
+              }
             }
-          // }
+          }
         }
       }
     }
     print("reached here 1");
     pairs = Map.fromEntries(pairs.entries.toList()
       ..sort((e1, e2) => e2.value.compareTo(e1.value)));
-    for (MapEntry<pair, int> e in pairs.entries) {
-      print("${e.key.left}, ${e.key.right} \t ${e.value}");
+    for (MapEntry<String, int> e in pairs.entries) {
+      pair p = pair.fromString(e.key);
+      print("${p.left}, ${p.right} \t ${e.value}");
     }
 
-    print("reached here 2");
 
-    List<what_sales_together_row> report = [];
-    for (MapEntry<pair, int> e in pairs.entries) {
-      int id1 = e.key.left;
-      int id2 = e.key.right;
-      String item1 = await gen_helper.get_item_name(id1);
-      String item2 = await gen_helper.get_item_name(id2);
-      int num = e.value;
-      what_sales_together_row row = what_sales_together_row(
-          id1, item1, id2, item2, num);
-      report.add(row);
-    }
-    print("reached here 3");
-
-    return report;
   }
 
 
