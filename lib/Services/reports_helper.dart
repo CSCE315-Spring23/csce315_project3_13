@@ -122,7 +122,77 @@ class reports_helper
     return report;
   }
 
+  Future<List<dynamic>> generate_restock_report() async {
+    general_helper general = general_helper();
 
+    Map<String, int> ingredientMap = HashMap();
+
+// Get the list of all smoothie menu item IDs
+    HttpsCallable getSmoothies = FirebaseFunctions.instance.httpsCallable('getSmoothie');
+    final res = await getSmoothies.call();
+    List<dynamic> smoothie_list = res.data;
+    Set<dynamic> smoothies = new Set();
+    for(var i in res.data){
+      smoothies.add(i["menu_item_id"]);
+    }
+    //print(smoothies.toString());
+
+// Get the list of item IDs for orders placed within the last week
+    HttpsCallable getWeekOrders = FirebaseFunctions.instance.httpsCallable('generateWeekOrders');
+    final curr = await getWeekOrders.call();
+    List<dynamic> orders = curr.data;
+
+    List<List<int>> weekOrders = [];
+    for(int i = 0; i < orders.length; i++){
+      weekOrders.add(List<int>.from(orders[i]['item_ids_in_order']));
+    }
+
+    for(int i = 0; i < weekOrders.length; i++){
+      for(int j = 0; j < weekOrders[i].length; j++){
+        if(smoothies.contains(weekOrders[i][j])){
+          print(weekOrders[i][j]);
+        }
+      }
+      //print(weekOrders[i]);
+    }
+
+// // For each order, parse the item IDs and add the appropriate ingredients to the map
+    for (int i = 0; i < weekOrders.length; i++) {
+      Set itemIDs = weekOrders[i].toSet();
+      for (var itemID in itemIDs) {
+        // If the item is a smoothie, add its ingredients to the map
+        if (smoothies.contains(itemID)) {
+          Map<String, int> smoothieIngredients = await general.get_smoothie_ingredients(itemID);
+          smoothieIngredients.forEach((key, value) {
+            if (ingredientMap.containsKey(key)) {
+              ingredientMap[key] = (ingredientMap[key] ?? 0) + value;
+            } else {
+              ingredientMap[key] = value;
+            }
+          });
+        }
+        // If the item is not a smoothie, assume it's an ingredient and add it to the map
+        else {
+          String ingredientName = await general.get_item_name(itemID);
+          if (ingredientMap.containsKey(ingredientName)) {
+            ingredientMap[ingredientName] = (ingredientMap[ingredientName] ?? 0) + 1;
+          } else {
+            ingredientMap[ingredientName] = 1;
+          }
+        }
+      }
+    }
+
+    for (var entry in ingredientMap.entries) {
+      print('${entry.key}: ${entry.value}');
+    }
+
+    HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('generateRestockReport');
+    final result = await callable.call();
+    List<dynamic> report = result.data;
+    //print(report);
+    return result.data;
+  }
 
 
 }

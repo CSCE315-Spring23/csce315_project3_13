@@ -865,6 +865,98 @@ exports.editInventoryEntry = functions.https.onCall(async (data, context) => {
   }
 });
 
+exports.getSmoothie = functions.https.onCall(async (data, context) =>
+{
+      const client = new Client({
+        host: 'csce-315-db.engr.tamu.edu',
+        user: 'csce315331_team_13_master',
+        password: 'Lucky_13',
+        database: 'csce315331_team_13',
+        port: 5432,
+      });
 
+      await client.connect();
+
+      const res = await client.query("SELECT * FROM inventory WHERE expiration_date > CURRENT_TIMESTAMP ORDER BY inv_order_id ASC");
+
+      client.end();
+
+      return res.rows;
+});
+
+
+exports.generateWeekOrders = functions.https.onCall(async (data, context) => {
+  const client = new Client({
+    host: 'csce-315-db.engr.tamu.edu',
+    user: 'csce315331_team_13_master',
+    password: 'Lucky_13',
+    database: 'csce315331_team_13',
+    port: 5432,
+  });
+
+  await client.connect();
+
+  const res = await client.query("SELECT item_ids_in_order FROM order_history WHERE date_of_order >= date_trunc('week', current_date - interval '1 week') AND date_of_order < date_trunc('week', current_date)");
+
+  client.end();
+  return res.rows;
+});
+
+
+
+
+exports.generateRestockReport = functions.https.onCall(async (data, context) => {
+  const client = new Client({
+    host: 'csce-315-db.engr.tamu.edu',
+    user: 'csce315331_team_13_master',
+    password: 'Lucky_13',
+    database: 'csce315331_team_13',
+    port: 5432,
+  });
+
+  await client.connect();
+
+  try {
+    const minAmount = new Map();
+
+    let query = {
+      text: 'SELECT ingredient, minimum FROM inventory_minimums',
+    };
+
+    let result = await client.query(query);
+
+    for (let row of result.rows) {
+      const rowIngredient = row.ingredient;
+      const minimum = row.minimum;
+      minAmount.set(rowIngredient, minimum);
+    }
+
+    query = {
+      text: 'SELECT ingredient, amount_inv_stock FROM inventory',
+    };
+
+    result = await client.query(query);
+
+    const vectorToReturn = [];
+
+    for (let row of result.rows) {
+      const ingredient = row.ingredient;
+      const amountInvStock = row.amount_inv_stock;
+
+      if (minAmount.has(ingredient) && amountInvStock < minAmount.get(ingredient)) {
+        const currRestockReportItem = {
+          [ingredient]: Math.round(minAmount.get(ingredient) * 1.1)
+        };
+        vectorToReturn.push(currRestockReportItem);
+      }
+    }
+
+    return vectorToReturn;
+  } catch (error) {
+    throw new functions.https.HttpsError('internal', error);
+  } finally {
+    client.end();
+  }
+});
 
 
