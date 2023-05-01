@@ -17,7 +17,7 @@ class _Settings_DialogState extends State<Settings_Dialog> {
 
   int dropdown_value_index = 0;
 
-  List<bool> _isSelected = [false, false, false, false];
+  List<bool> _isSelected = [false, false, false];
 
   google_translate_API _google_translate_api = google_translate_API();
 
@@ -34,8 +34,8 @@ class _Settings_DialogState extends State<Settings_Dialog> {
   String text_save = "Accept";
   List<String> language_choices_originals = ["English", "Spanish", "French", "Russian", "Korean"];
   List<String> language_choices = ["English", "Spanish", "French", "Russian", "Korean"];
-  List<String> color_choices_originals = ["Standard", "Protanopia", "Deuteranopia","Tritanopia"];
-  List<String> color_choices = ["Standard", "Protanopia", "Deuteranopia","Tritanopia"];
+  List<String> color_choices_originals = ["Standard", "Protanopia/Deuteranopia","Tritanopia"];
+  List<String> color_choices = ["Standard", "Protanopia/Deuteranopia","Tritanopia"];
 
 
 
@@ -123,10 +123,11 @@ class _Settings_DialogState extends State<Settings_Dialog> {
         }else if(color_choice_index == 1){
           _color_manager.option_protanopia();
         }else if(color_choice_index == 2){
-          _color_manager.option_deuteranopia();
-        }else if(color_choice_index == 3){
           _color_manager.option_tritanopia();
         }
+        // else if(color_choice_index == 3){
+        //
+        // }
       });
 
       }
@@ -162,7 +163,7 @@ class _Settings_DialogState extends State<Settings_Dialog> {
                     Text(color_choices[0]),
                     Text(color_choices[1]),
                     Text(color_choices[2]),
-                    Text(color_choices[3]),
+                    // Text(color_choices[3]),
                   ],
                 ),
               ],

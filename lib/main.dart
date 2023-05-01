@@ -87,7 +87,7 @@ class _MyAppState extends State<MyApp> {
       active_size_color = Color(0xFF3088D1);
       active_confirm_color = Color(0xFF6BCF54);
       active_deny_color = Color(0xFFC30F0E);
-      selected_option_index = 2;
+      selected_option_index = 1;
     });
     set_color_option_pref('deuteranopia');
   }
@@ -125,7 +125,7 @@ class _MyAppState extends State<MyApp> {
       active_size_color = Color(0xFF3088D1);
       active_confirm_color = Color(0xFF6BCF54);
       active_deny_color = Color(0xFFC30F0E);
-      selected_option_index = 3;
+      selected_option_index = 2;
     });
     set_color_option_pref('tritanopia');
   }
