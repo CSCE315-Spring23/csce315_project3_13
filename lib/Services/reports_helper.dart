@@ -127,6 +127,7 @@ class reports_helper
 // Get the ingredients amount for each ingredient in every smoothie
     Map<int, Map<String, int>> smoothie_ingredient_dict = {};
     HttpsCallable dict_filler = FirebaseFunctions.instance.httpsCallable('getAllSmoothieIngredients');
+    Map<int, List<String>> item_info = await gen_helper.get_all_menu_item_info();
     final filler_res = await dict_filler();
     List<dynamic> ingr_info = filler_res.data;
     for(dynamic d in ingr_info) {
@@ -166,6 +167,12 @@ class reports_helper
             int amount = smoothie_ings[key] as int;
             ingredientMap.update(key, (value) => value + amount, ifAbsent: () => amount);
           }
+        } else {
+          if(item_id < 1000) {
+            String name = item_info[item_id]![0];
+            ingredientMap.update(name, (value) => value + 1, ifAbsent: () => 1);
+          }
+
         }
       }
     }
@@ -191,7 +198,7 @@ print("after");
     final result = await callable.call({'invMin': invMin});
     Map<String, dynamic> reportMap = result.data;
 
-    print("done");
+    print(invMin);
     return invMin;
   }
 
