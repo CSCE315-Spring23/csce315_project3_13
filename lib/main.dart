@@ -1,3 +1,4 @@
+import 'package:csce315_project3_13/GUI/Pages/Inventory/Win_Order_Inventory.dart';
 import 'package:csce315_project3_13/GUI/Pages/Manager_View/Win_Manager_View.dart';
 import 'package:csce315_project3_13/GUI/Pages/Server_View/Win_Server_View.dart';
 import 'package:csce315_project3_13/GUI/Pages/What_Sales/Win_What_Sales.dart';
@@ -363,8 +364,9 @@ class _MyAppState extends State<MyApp> {
                 Win_Order.route: (BuildContext context) => Win_Order(),
                 Win_View_Inventory.route :(BuildContext context) => Win_View_Inventory(),
                 Win_What_Sales.route :(BuildContext context) =>  Win_What_Sales(),
+                Win_Order_Inventory.route :(BuildContext context) => Win_Order_Inventory(),
               },
-              initialRoute:  Win_Login.route,
+              initialRoute:  Win_Functions_Test_Page.route,
             ),
           ),
         ),

@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:math';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:csce315_project3_13/Services/general_helper.dart';
 import '../Models/models_library.dart';
@@ -122,76 +123,81 @@ class reports_helper
     return report;
   }
 
-  Future<List<dynamic>> generate_restock_report() async {
+  Future<Map<dynamic, int>> generate_restock_report() async {
     general_helper general = general_helper();
 
-    Map<String, int> ingredientMap = HashMap();
-
-// Get the list of all smoothie menu item IDs
+    // Get the list of all smoothie menu item IDs
     HttpsCallable getSmoothies = FirebaseFunctions.instance.httpsCallable('getSmoothie');
     final res = await getSmoothies.call();
-    List<dynamic> smoothie_list = res.data;
+
     Set<dynamic> smoothies = new Set();
     for(var i in res.data){
       smoothies.add(i["menu_item_id"]);
     }
-    //print(smoothies.toString());
-
+  print("before");
+    // Get all smoothie ingredients
+    Map<int, List<String>> smoothieIngredientsMap = {};
+    for(var itemID in smoothies){
+      Map<String, int> smoothieIngredients = await general.get_smoothie_ingredients(itemID);
+      smoothieIngredientsMap[itemID] = smoothieIngredients.keys.toList();
+    }
+  print("after");
 // Get the list of item IDs for orders placed within the last week
     HttpsCallable getWeekOrders = FirebaseFunctions.instance.httpsCallable('generateWeekOrders');
     final curr = await getWeekOrders.call();
     List<dynamic> orders = curr.data;
 
-    List<List<int>> weekOrders = [];
+// Create a set of all item IDs in the orders
+    Set<int> allItemIDs = Set();
     for(int i = 0; i < orders.length; i++){
-      weekOrders.add(List<int>.from(orders[i]['item_ids_in_order']));
+      List<int> itemIDs = List<int>.from(orders[i]['item_ids_in_order']);
+      allItemIDs.addAll(itemIDs);
     }
 
-    for(int i = 0; i < weekOrders.length; i++){
-      for(int j = 0; j < weekOrders[i].length; j++){
-        if(smoothies.contains(weekOrders[i][j])){
-          print(weekOrders[i][j]);
-        }
-      }
-      //print(weekOrders[i]);
-    }
-
-// // For each order, parse the item IDs and add the appropriate ingredients to the map
-    for (int i = 0; i < weekOrders.length; i++) {
-      Set itemIDs = weekOrders[i].toSet();
-      for (var itemID in itemIDs) {
-        // If the item is a smoothie, add its ingredients to the map
-        if (smoothies.contains(itemID)) {
-          Map<String, int> smoothieIngredients = await general.get_smoothie_ingredients(itemID);
-          smoothieIngredients.forEach((key, value) {
-            if (ingredientMap.containsKey(key)) {
-              ingredientMap[key] = (ingredientMap[key] ?? 0) + value;
-            } else {
-              ingredientMap[key] = value;
-            }
-          });
-        }
-        // If the item is not a smoothie, assume it's an ingredient and add it to the map
-        else {
-          String ingredientName = await general.get_item_name(itemID);
-          if (ingredientMap.containsKey(ingredientName)) {
-            ingredientMap[ingredientName] = (ingredientMap[ingredientName] ?? 0) + 1;
-          } else {
-            ingredientMap[ingredientName] = 1;
-          }
-        }
+// Create a map to store the quantities of each item
+    Map<int, int> itemQuantities = Map();
+    for(int i = 0; i < orders.length; i++){
+      List<int> itemIDs = List<int>.from(orders[i]['item_ids_in_order']);
+      for(int j = 0; j < itemIDs.length; j++){
+        int itemID = itemIDs[j];
+        itemQuantities[itemID] = (itemQuantities[itemID] ?? 0) + 1;
       }
     }
-
-    for (var entry in ingredientMap.entries) {
-      print('${entry.key}: ${entry.value}');
+print("before");
+// Create a map to store the quantities of each ingredient
+    Map<String, int> ingredientMap = Map();
+    for(var itemID in allItemIDs){
+      if(smoothies.contains(itemID)){
+        List<String> ingredientNames = smoothieIngredientsMap[itemID]!;
+        for (var ingredientName in ingredientNames) {
+          ingredientMap[ingredientName] = (ingredientMap[ingredientName] ?? 0) + 1;
+        }
+      } else {
+        String ingredientName = await general.get_item_name(itemID);
+        int itemQty = itemQuantities[itemID] ?? 0;
+        ingredientMap[ingredientName] = (ingredientMap[ingredientName] ?? 0) + itemQty;
+      }
+    }
+print("after");
+// Update the minimum inventory levels
+    HttpsCallable getMin = FirebaseFunctions.instance.httpsCallable('getInventoryMin');
+    final resInv = await getMin.call();
+    Map<String, int> invMin = {};
+    for(var i in resInv.data){
+      invMin[i["ingredient"]] = i["minimum"];
+    }
+    for (var key in ingredientMap.keys) {
+      if (invMin.containsKey(key)) {
+        invMin[key] = ingredientMap[key]!;
+      }
     }
 
+// Call the generateRestockReport function and return the updated inventory levels
     HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('generateRestockReport');
-    final result = await callable.call();
-    List<dynamic> report = result.data;
-    //print(report);
-    return result.data;
+    final result = await callable.call({'invMin': invMin});
+    Map<String, dynamic> reportMap = result.data;
+
+    return invMin;
   }
 
 

@@ -1,5 +1,4 @@
 import 'package:csce315_project3_13/GUI/Components/Login_Button.dart';
-import 'package:csce315_project3_13/GUI/Pages/Inventory/Win_Order_Inventory.dart';
 import 'package:csce315_project3_13/GUI/Pages/Manager_View/Win_Manager_View.dart';
 import 'package:csce315_project3_13/Inherited_Widgets/Translate_Manager.dart';
 import 'package:csce315_project3_13/Services/google_translate_API.dart';
@@ -8,18 +7,19 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import '../../../Inherited_Widgets/Color_Manager.dart';
 import '../../../Models/models_library.dart';
 import 'package:flutter/material.dart';
+import '../../../Services/reports_helper.dart';
 import '../../Components/Page_Header.dart';
 
-class Win_View_Inventory extends StatefulWidget {
-  static const String route = '/view-inventory-manager';
-  const Win_View_Inventory({Key? key}) : super(key: key);
+class Win_Order_Inventory extends StatefulWidget {
+  static const String route = '/view-order-manager';
+  const Win_Order_Inventory({Key? key}) : super(key: key);
 
   @override
-  State<Win_View_Inventory> createState() => _Win_View_Inventory_State();
+  State<Win_Order_Inventory> createState() => _Win_Order_Inventory_State();
 }
 
 
-class _Win_View_Inventory_State extends State<Win_View_Inventory> {
+class _Win_Order_Inventory_State extends State<Win_Order_Inventory> {
 
   //Keeps track of whether to update name or not
   bool call_set_translation = true;
@@ -127,26 +127,28 @@ class _Win_View_Inventory_State extends State<Win_View_Inventory> {
   int visibility_ctrl = 0;
   bool _isLoading = true;
   Map<String, num> inventoryItems = {};
+  Map<dynamic, num> reportItems = {};
   inventory_item_helper inv_helper = inventory_item_helper();
+  reports_helper report = reports_helper();
 
   Future<void> getData_no_reload() async {
     print("Building Page...");
     inventoryItems = await inv_helper.get_inventory_items();
-
+    reportItems = await report.generate_restock_report();
     print("Obtained Inventory...");
   }
 
   Future<void> getData() async {
     print("Building Page...");
     inventoryItems = await inv_helper.get_inventory_items();
-
+    reportItems = await report.generate_restock_report();
     print("Obtained Inventory...");
     setState(() {
       _isLoading = false;
     });
   }
 
-  void editInventoryItem(Map<String, num> items, String itemName, num currentAmount) {
+  void editInventoryItem(Map<dynamic, num> items, String itemName, num currentAmount) {
     final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
     showDialog(
       context: context,
@@ -300,76 +302,130 @@ class _Win_View_Inventory_State extends State<Win_View_Inventory> {
     );
   }
 
-  Widget itemList(Map<String, num> items, Color tile_color, Color _text_color, Color _icon_color) {
-    return ListView.builder(
-      shrinkWrap: true,
-      itemCount: items.entries.length,
-      itemBuilder: (context, index) {
-        final entry = items.entries.elementAt(index);
-        return Card(
-          child: ListTile(
-            tileColor: tile_color.withAlpha(200),
-            minVerticalPadding: 5,
-            onTap: () {},
-            leading: SizedBox(
-              width: 300,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-              ),
-            ),
-            title: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10.0),
-              child: Text(
-                entry.key,
-                style: TextStyle(
-                  color: _text_color.withAlpha(200),
-                  fontWeight: FontWeight.bold,
-                  fontStyle: FontStyle.italic,
-                  fontSize: 35,
+  Widget itemList(Map<String, num> items1, Map<dynamic, num> items2, Color tile_color, Color _text_color, Color _icon_color) {
+    return Row(
+      children: [
+        Expanded(
+          child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: items1.entries.length,
+            itemBuilder: (context, index) {
+              final entry = items1.entries.elementAt(index);
+              return Card(
+                child: ListTile(
+                  tileColor: tile_color.withAlpha(200),
+                  minVerticalPadding: 5,
+                  onTap: () {},
+                  leading: SizedBox(
+                    width: 100,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                    ),
+                  ),
+                  title: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10.0),
+                    child: Text(
+                      entry.key,
+                      style: TextStyle(
+                        color: _text_color.withAlpha(200),
+                        fontWeight: FontWeight.bold,
+                        fontStyle: FontStyle.italic,
+                        fontSize: 30,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  subtitle: Text(
+                    text_stock + ": ${entry.value}",
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: _text_color.withAlpha(122),
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  trailing: SizedBox(
+                    width: 150,
+                    child: IconButton(
+                      tooltip: text_edit_amount,
+                      icon: const Icon(Icons.add),
+                      color: _text_color.withAlpha(122),
+                      onPressed: () {
+                        //_menu_info.removeAt(index);
+                        editInventoryItem(items1, entry.key, entry.value);
+                      },
+                      iconSize: 35,
+                    ),
+                  ),
                 ),
-                textAlign: TextAlign.center,
-              ),
-            ),
-            subtitle: Text(
-              text_stock + ": ${entry.value}",
-              style: TextStyle(
-                fontSize: 20,
-                color: _text_color.withAlpha(122),
-              ),
-              textAlign: TextAlign.center,
-            ),
-            trailing: SizedBox(
-              width: 300,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  IconButton(
-                    tooltip: text_remove_from_inventory,
-                    icon: const Icon(Icons.delete),
-                    color: _text_color.withAlpha(122),
-                    onPressed: () {
-                      confirmInventoryItemRemoval(entry.key);
-                    },
-                    iconSize: 35,
-                  ),
-                  IconButton(
-                    tooltip: text_edit_amount,
-                    icon: const Icon(Icons.add),
-                    color: _text_color.withAlpha(122),
-                    onPressed: () {
-                      //_menu_info.removeAt(index);
-                      editInventoryItem(items, entry.key, entry.value);
-                    },
-                    iconSize: 35,
-                  ),
-                ],
-              ),
-            ),
+              );
+            },
           ),
-        );
-      },
+        ),
+        Container(
+          width: 1,
+          height: double.infinity,
+          color: Colors.grey.shade400,
+        ),
+        Expanded(
+          child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: items2.entries.length,
+            itemBuilder: (context, index) {
+              final entry = items2.entries.elementAt(index);
+              return Card(
+                child: ListTile(
+                  tileColor: tile_color.withAlpha(200),
+                  minVerticalPadding: 5,
+                  onTap: () {},
+                  leading: SizedBox(
+                    width: 100,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                    ),
+                  ),
+                  title: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10.0),
+                    child: Text(
+                      entry.key,
+                      style: TextStyle(
+                        color: _text_color.withAlpha(200),
+                        fontWeight: FontWeight.bold,
+                        fontStyle: FontStyle.italic,
+                        fontSize: 30,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  subtitle: Text(
+                    text_stock + ": ${entry.value}",
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: _text_color.withAlpha(122),
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  trailing: SizedBox(
+                    width: 150,
+                    child: IconButton(
+                      tooltip: text_edit_amount,
+                      icon: const Icon(Icons.add),
+                      color: _text_color.withAlpha(122),
+                      onPressed: () {
+                        //_menu_info.removeAt(index);
+                        editInventoryItem(items2, entry.key, entry.value);
+                      },
+                      iconSize: 35,
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
+
 
   void newItemSubWin()
   {
@@ -419,7 +475,7 @@ class _Win_View_Inventory_State extends State<Win_View_Inventory> {
                 //     )
                 // ),
                 TextFormField(
-                  controller: _amount_ordered,
+                    controller: _amount_ordered,
                     decoration:  InputDecoration(
                       hintText: text_amount_ordered + "...",
                       filled: true,
@@ -430,7 +486,7 @@ class _Win_View_Inventory_State extends State<Win_View_Inventory> {
                     )
                 ),
                 TextFormField(
-                  controller: _unit,
+                    controller: _unit,
                     decoration:  InputDecoration(
                       hintText: text_unit + "...",
                       filled: true,
@@ -441,7 +497,7 @@ class _Win_View_Inventory_State extends State<Win_View_Inventory> {
                     )
                 ),
                 TextFormField(
-                  controller: _date_ordered,
+                    controller: _date_ordered,
                     decoration:  InputDecoration(
                       hintText: text_date_ordered + "...",
                       filled: true,
@@ -452,7 +508,7 @@ class _Win_View_Inventory_State extends State<Win_View_Inventory> {
                     )
                 ),
                 TextFormField(
-                  controller: _expiration_date,
+                    controller: _expiration_date,
                     decoration:  InputDecoration(
                       hintText:  text_expiration_date + "...",
                       filled: true,
@@ -463,7 +519,7 @@ class _Win_View_Inventory_State extends State<Win_View_Inventory> {
                     )
                 ),
                 TextFormField(
-                  controller: _conversion,
+                    controller: _conversion,
                     decoration:  InputDecoration(
                       hintText: text_conversion + "...",
                       filled: true,
@@ -666,7 +722,7 @@ class _Win_View_Inventory_State extends State<Win_View_Inventory> {
           children: [
             Visibility(
               visible: visibility_ctrl == 0,
-              child: itemList(inventoryItems, _color_manager.secondary_color, _color_manager.text_color, _color_manager.active_color),
+              child: itemList(inventoryItems,reportItems, _color_manager.secondary_color, _color_manager.text_color, _color_manager.active_color),
             ),
           ],
         ),
@@ -689,7 +745,7 @@ class _Win_View_Inventory_State extends State<Win_View_Inventory> {
             ),
             Login_Button(
               onTap: () {
-                Navigator.pushReplacementNamed(context, Win_Order_Inventory.route);
+                newItemSubWin();
               },
               buttonWidth: 200,
               buttonName: 'Order',
