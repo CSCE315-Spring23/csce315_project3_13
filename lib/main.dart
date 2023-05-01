@@ -166,8 +166,8 @@ class _MyAppState extends State<MyApp> {
   String current_condition = "Can't fetch";
   String current_tempurature = "weather";
 
-  List<String> conditions_list_original = ["Clear", "Drizzle", "Rain", "Clouds", "Mist"];
-  List<String> conditions_list = ["Clear", "Drizzle", "Rain", "Clouds", "Mist"];
+  List<String> conditions_list_original = ["Clear", "Drizzle", "Rain", "Clouds", "Mist", "Thunderstorm"];
+  List<String> conditions_list = ["Clear", "Drizzle", "Rain", "Clouds", "Mist", "Thunderstorm"];
 
   void startTimer() async {
     print("timer started");
@@ -366,7 +366,7 @@ class _MyAppState extends State<MyApp> {
                 Win_What_Sales.route :(BuildContext context) =>  Win_What_Sales(),
                 Win_Order_Inventory.route :(BuildContext context) => Win_Order_Inventory(),
               },
-              initialRoute:  Win_Functions_Test_Page.route,
+              initialRoute: Win_Login.route,
             ),
           ),
         ),
