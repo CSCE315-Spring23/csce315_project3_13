@@ -23,6 +23,35 @@ class Win_Order extends StatefulWidget {
 
 class Win_Order_State extends State<Win_Order>
 {
+  // GOOGLE TRANSLATE STRINGS START
+
+
+  //Strings for build
+  String text_page_title =  "Smoothie King - Texas A&M MSC";
+  String text_ret_prev_view = "Return to Manager View";
+  String text_datacolumn_index = 'Index';
+  String text_datacolumn_name = 'Name';
+  String text_datacolumn_size = 'Size';
+  String text_datacolumn_price = 'Price';
+  String text_datacolumn_edit = 'Edit';
+  String text_datacolumn_delete = 'Delete';
+  String text_total = "Total";
+  String text_smoothies_tab = "Smoothies";
+  String text_snacks_tab = "Snacks";
+  String text_category_tab = "Category";
+  String text_snack_tab = "Snack";
+  String text_large_label = "Large";
+  String text_medium_label = "Medium";
+  String text_small_label = "Small";
+  String text_addon_tab = "Addon";
+  String text_smoothie_tab = "Smoothie";
+
+
+
+  // GOOGLE TRANSLATE STRINGS END
+
+
+
 
   List<String> _smoothie_names = [];
   List<String> _snack_names = [];
@@ -276,11 +305,11 @@ class Win_Order_State extends State<Win_Order>
       ),
       onPressed: _activeMenu != tab_ctrl ?  (){
         setState(() {
-          if (tab_text == 'Smoothies')
+          if (tab_text == text_smoothies_tab)
           {
             _activeMenu = 0;
           }
-          else if (tab_text == 'Snacks')
+          else if (tab_text == text_snack_tab)
           {
             _activeMenu = 1;
           }
@@ -299,8 +328,8 @@ class Win_Order_State extends State<Win_Order>
   Widget buttonGrid(List<String> button_names, String type, Color _button_color){
     return GridView.count(
       shrinkWrap: true,
-      crossAxisCount: type != "Category" ?  type != "Addon" ? 4 : 5 : 2,
-      childAspectRatio:type != "Category"? 1 : 2,
+      crossAxisCount: type != text_category_tab ?  type != text_addon_tab ? 4 : 5 : 2,
+      childAspectRatio:type != text_snack_tab? 1 : 2,
       padding: const EdgeInsets.all(10),
       mainAxisSpacing: 20,
       crossAxisSpacing: 20,
@@ -310,7 +339,7 @@ class Win_Order_State extends State<Win_Order>
           minimumSize: MaterialStateProperty.all(const Size(125, 50)),
         ),
         onPressed: () {
-          if (type == "Smoothie" ) {
+          if (type == text_smoothie_tab ) {
             setState(() {
               _curr_smoothie = smoothie_order(smoothie: name,
                 curr_size: 'medium', curr_price: 0,
@@ -321,12 +350,12 @@ class Win_Order_State extends State<Win_Order>
               _curr_category = "";
             });
           }
-          else if (type == 'Snack') {
+          else if (type == text_snack_tab) {
             setState(() {
               _addToOrder(name, '-', 'Snack');
             });
           }
-          else if (type == 'Addon'){
+          else if (type == text_addon_tab){
             setState(() {
               _addAddon(name);
             });
@@ -347,16 +376,16 @@ class Win_Order_State extends State<Win_Order>
               child: Center(
                 child: Text(
                   name,
-                  style: TextStyle(fontSize:type != "Category" ? 15 : 25,),
+                  style: TextStyle(fontSize:type != text_category_tab ? 15 : 25,),
                   textAlign: TextAlign.center,
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
             ),
-            type != "Category" ? Padding(
+            type != text_category_tab ? Padding(
               padding: const EdgeInsets.only(bottom: 2),
-              child: type != "Smoothie" ? Text(
+              child: type != text_smoothie_tab ? Text(
                 _all_menu_items.firstWhere((menu_item_obj) => menu_item_obj.menu_item == (name)).item_price.toStringAsFixed(2),
                 style: const TextStyle(color: Colors.white24),
               ): Row(
@@ -635,10 +664,10 @@ class Win_Order_State extends State<Win_Order>
       // TODO: Add smoothie king icon to page header
         appBar: Page_Header(
           context: context,
-          pageName: "Smoothie King - Texas A&M MSC",
+          pageName: text_page_title,
           buttons: [
             IconButton(
-              tooltip: "Return to Manager View",
+              tooltip: text_ret_prev_view,
               padding: const EdgeInsets.only(left: 25, right: 10),
               onPressed: ()
               {
@@ -680,13 +709,13 @@ class Win_Order_State extends State<Win_Order>
                                   fontSize: 16,
                                 ),
                                 columnSpacing: 0,
-                                columns: const [
-                                  DataColumn(label: Text('Index'),),
-                                  DataColumn(label: Text('Name'),),
-                                  DataColumn(label: Text('Size')),
-                                  DataColumn(label: Text('Price')),
-                                  DataColumn(label: Text('Edit')),
-                                  DataColumn(label: Text('Delete')),
+                                columns:  [
+                                  DataColumn(label: Text(text_datacolumn_index),),
+                                  DataColumn(label: Text(text_datacolumn_name),),
+                                  DataColumn(label: Text(text_datacolumn_size)),
+                                  DataColumn(label: Text(text_datacolumn_price)),
+                                  DataColumn(label: Text(text_datacolumn_edit)),
+                                  DataColumn(label: Text(text_datacolumn_delete)),
                                 ],
                                 rows: _orderTable.map((rowData) {
                                   final rowIndex = _orderTable.indexOf(rowData);
@@ -766,11 +795,12 @@ class Win_Order_State extends State<Win_Order>
                                     fontSize: 16,
                                   ),
                                   columnSpacing: 0,
-                                  columns: const [
-                                    DataColumn(label: Text('Index'),),
-                                    DataColumn(label: Text('Name'),),
-                                    DataColumn(label: Text('Price')),
-                                    DataColumn(label: Text('Delete')),
+                                  columns: [
+
+                                    DataColumn(label: Text(text_datacolumn_index),),
+                                    DataColumn(label: Text(text_datacolumn_name),),
+                                    DataColumn(label: Text(text_datacolumn_price)),
+                                    DataColumn(label: Text(text_datacolumn_price)),
                                   ],
                                   rows: _addonTable.map((rowData) {
                                     final rowIndex = _addonTable.indexOf(rowData);
@@ -840,7 +870,7 @@ class Win_Order_State extends State<Win_Order>
                           color: _color_manager.background_color.withAlpha(50),
                           child: Center(
                             child: Text(
-                              'Total: ${_current_order.price.abs().toStringAsFixed(2)}',
+                              ''+ text_total + ': ${_current_order.price.abs().toStringAsFixed(2)}',
                             ),
                           ),
                         )
@@ -946,11 +976,11 @@ class Win_Order_State extends State<Win_Order>
                             children: <Widget>[
                               SizedBox(
                                 width:screenWidth / 4 ,
-                                child: tab("Smoothies", _color_manager.background_color, 0),
+                                child: tab(text_smoothies_tab, _color_manager.background_color, 0),
                               ),
                               SizedBox(
                                 width:screenWidth / 4 ,
-                                child: tab("Snacks", _color_manager.background_color, 1),
+                                child: tab(text_snacks_tab, _color_manager.background_color, 1),
                               ),
                             ],
                           ),
@@ -960,7 +990,7 @@ class Win_Order_State extends State<Win_Order>
                           child: Stack(
                             children: <Widget>
                             [
-                              // moothie button grid
+                              // Smoothie button grid
                               Visibility(
                                 visible: _activeMenu == 0,
                                 child: Scrollbar(
@@ -971,7 +1001,7 @@ class Win_Order_State extends State<Win_Order>
                                     primary: true,
                                     child: Container(
                                       color: _color_manager.background_color,
-                                      child: buttonGrid(category_names, "Category", _color_manager.active_color),
+                                      child: buttonGrid(category_names, text_category_tab, _color_manager.active_color),
                                       // child: buttonGrid(context, _smoothie_names, "Smoothie", _color_manager.active_color),
                                     ),
                                   ),
@@ -989,7 +1019,7 @@ class Win_Order_State extends State<Win_Order>
                                     primary: true,
                                     child: Container(
                                       color: _color_manager.background_color,
-                                      child: buttonGrid(_snack_names, "Snack", _color_manager.active_color.withRed(25).withGreen(180)),
+                                      child: buttonGrid(_snack_names, text_snack_tab, _color_manager.active_color.withRed(25).withGreen(180)),
                                     ),
                                   ),
                                 ),
@@ -1093,8 +1123,8 @@ class Win_Order_State extends State<Win_Order>
                                       //   has lower case size labels
                                         (
                                         "${_curr_smoothie.getName()} ${_curr_smoothie.getSize() == "large"
-                                            ? "Large" : _curr_smoothie.getSize() == "medium"
-                                            ? "Medium" : "Small"}",
+                                            ? text_large_label : _curr_smoothie.getSize() == "medium"
+                                            ? text_medium_label : text_small_label}",
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 20,
@@ -1176,7 +1206,7 @@ class Win_Order_State extends State<Win_Order>
                           width: screenWidth / 2,
                           height: screenHeight - 186,
                           color: _color_manager.background_color,
-                          child: buttonGrid(_addon_names, 'Addon', _color_manager.active_color.withBlue(255)),
+                          child: buttonGrid(_addon_names, text_addon_tab, _color_manager.active_color.withBlue(255)),
                         ),
                       ],
                     ),
@@ -1215,7 +1245,7 @@ class Win_Order_State extends State<Win_Order>
                               Expanded(
                                 child: Center(
                                   child: Text(
-                                    '$_curr_category Smoothies',
+                                    '$_curr_category ' + text_smoothies_tab,
                                     style: TextStyle(
                                       fontSize: 30,
                                       fontWeight: FontWeight.bold,
