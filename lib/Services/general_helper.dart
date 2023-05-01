@@ -14,7 +14,7 @@ class general_helper
 
     return menu_item;
   }
-  
+
   Future<String> get_item_type(int menu_item_id) async
   {
     HttpsCallable getter = FirebaseFunctions.instance.httpsCallable('getMenuItemType');
@@ -73,6 +73,24 @@ class general_helper
     var formatter = new DateFormat('MM/dd/yyyy');
     String formattedDate = formatter.format(now);
     return formattedDate;
+  }
+
+  Future<Map<int, List<dynamic>>> get_all_menu_item_info() async{
+    Map<int, List<dynamic>> item_info = {};
+    HttpsCallable get_item_info = FirebaseFunctions.instance.httpsCallable('getMenuItemsInfo');
+    final info_res = await get_item_info();
+    List<dynamic> item_data = info_res.data;
+    for(dynamic d in item_data) {
+      int id = d['menu_item_id'];
+      String name = d['menu_item'];
+      String type = d['type'];
+      String money = d['item_price'];
+      double price = double.parse(money.substring(1, money.length));
+      if(id < 1000) {
+        item_info[id] = [name, type, price];
+      }
+    }
+    return item_info;
   }
 
 }
