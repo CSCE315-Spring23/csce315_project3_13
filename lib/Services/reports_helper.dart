@@ -1,6 +1,8 @@
 import 'dart:collection';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:csce315_project3_13/Services/general_helper.dart';
+import '../Models/models_library.dart';
+import 'dart:math';
 
 class reports_helper
 {
@@ -22,6 +24,8 @@ class reports_helper
     }
   }
 
+
+
   Future<Map<String, double>> get_all_z_reports() async
   {
     HttpsCallable getter = FirebaseFunctions.instance.httpsCallable('getAllZReports');
@@ -35,7 +39,7 @@ class reports_helper
       print(data[i]['date_field_string'] + "    " + data[i]['sales']);
     }
 
-  return z_reports;
+    return z_reports;
   }
 
   Future<void> update_x_report(double amount) async
@@ -60,4 +64,100 @@ class reports_helper
     }
 
   }
+
+  Future<List<what_sales_together_row>> what_sales_together(String date1, String date2) async
+  {
+    print("Called what sales function");
+    Map<String, int> pairs = {};
+
+    HttpsCallable get_items = FirebaseFunctions.instance.httpsCallable('getItemsInOrder');
+    final res = await get_items.call({
+      'date1': date1,
+      'date2': date2
+    });
+    List<dynamic> order_data = res.data;
+
+    Map<int, List<dynamic>> item_info = await gen_helper.get_all_menu_item_info();
+
+    print("got all item info");
+    for (int index = 0; index < order_data.length; ++index) {
+      List<dynamic> l = order_data[index]['item_ids_in_order'];
+      l.sort();
+      if (l.length > 1) {
+        for (int i = 0; i < l.length; ++i) {
+          if(l[i] < 1000) {
+            if(item_info[l[i]]![1] == "smoothie") {
+              for(int j = i + 1; j < l.length; ++j) {
+                if(l[j] < 1000) {
+                  if(item_info[l[j]]![1] == "smoothie") {
+                    pair curr_pair = pair(l[i], l[j]);
+                    pairs.update(curr_pair.toString(), (value) => value + 1, ifAbsent: () => 1);
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    print("reached here 1");
+    pairs = Map.fromEntries(pairs.entries.toList()
+      ..sort((e1, e2) => e2.value.compareTo(e1.value)));
+
+    List<what_sales_together_row> report = [];
+    for (MapEntry<String, int> e in pairs.entries) {
+      pair p = pair.fromString(e.key);
+      print("${p.left}, ${p.right} \t ${e.value}");
+      int id1 = p.left;
+      String item1 = item_info[id1]![0];
+      int id2 = p.right;
+      String item2 = item_info[id2]![0];
+      int num = e.value;
+      what_sales_together_row row = what_sales_together_row(id1, item1, id2, item2, num);
+      report.add(row);
+    }
+
+    return report;
+
+  }
+
+  Future<List<sales_report_row>> generate_sales_report(String date1, String date2) async {
+    Map<int, int> sales = {};
+    Map<int, List<dynamic>> item_info = await gen_helper.get_all_menu_item_info();
+
+    HttpsCallable get_items = FirebaseFunctions.instance.httpsCallable('getItemsInOrder');
+    final res = await get_items.call({
+      'date1': date1,
+      'date2': date2
+    });
+    List<dynamic> order_data = res.data;
+
+    for (int index = 0; index < order_data.length; ++index) {
+      List<dynamic> l = order_data[index]['item_ids_in_order'];
+      for(dynamic id in l) {
+        if(id < 1000) {
+          sales.update(id as int, (value) => value + 1, ifAbsent: () => 1);
+        }
+      }
+    }
+
+    List<sales_report_row> report = [];
+
+    for(MapEntry<int, int> e in sales.entries) {
+      int id = e.key;
+      String type = item_info[id]![1];
+      String item_name = item_info[id]![0];
+      int amount_sold = e.value;
+      double total_revenue = item_info[id]![2] * amount_sold;
+      total_revenue = double.parse(total_revenue.toStringAsFixed(2));
+      sales_report_row row = sales_report_row(type, id, item_name, amount_sold, total_revenue);
+      report.add(row);
+      print("$item_name \t \$$total_revenue");
+    }
+
+
+    return report;
+  }
+
+
 }
