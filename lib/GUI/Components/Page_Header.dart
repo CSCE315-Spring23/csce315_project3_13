@@ -31,6 +31,7 @@ PreferredSizeWidget Page_Header({required BuildContext context, required String 
 
           Weather_Manager.of(context).current_condition == Weather_Manager.of(context).conditions_list[4]? const Icon(Icons.cloud_queue_sharp, size: 15, color: Colors.white,) : SizedBox(),
 
+          Weather_Manager.of(context).current_condition == Weather_Manager.of(context).conditions_list[5]? const Icon(Icons.thunderstorm, size: 15, color: Colors.white,) : SizedBox(),
 
 
           Padding(
