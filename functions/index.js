@@ -915,7 +915,7 @@ exports.generateWeekOrders = functions.https.onCall(async (data, context) => {
 
   await client.connect();
 
-  const res = await client.query("SELECT item_ids_in_order FROM order_history WHERE date_of_order >= '2022-04-30'::date - interval '2 days' AND date_of_order < '2022-04-30'::date");
+  const res = await client.query("SELECT item_ids_in_order FROM order_history WHERE date_of_order >= '2022-12-1'::date - interval '7 days' AND date_of_order < '2022-12-1'::date");
 
   client.end();
   return res.rows;
@@ -973,6 +973,24 @@ exports.generateRestockReport = functions.https.onCall(async (data, context) => 
   }
 });
 
+exports.getAllSmoothieIngredients = functions.https.onCall(async (data, context) =>
+ {
+       const client = new Client({
+         host: 'csce-315-db.engr.tamu.edu',
+         user: 'csce315331_team_13_master',
+         password: 'Lucky_13',
+         database: 'csce315331_team_13',
+         port: 5432,
+       });
+
+       await client.connect();
+
+       const res = await client.query("select menu_item_id, ingredient_name, ingredient_amount from ingredients_table join menu_items on menu_item=menu_item_name where type='smoothie'");
+
+       client.end();
+
+       return res.rows;
+ });
 
 
 

@@ -124,60 +124,54 @@ class reports_helper
   }
 
   Future<Map<dynamic, int>> generate_restock_report() async {
-    general_helper general = general_helper();
+// Get the ingredients amount for each ingredient in every smoothie
+    Map<int, Map<String, int>> smoothie_ingredient_dict = {};
+    HttpsCallable dict_filler = FirebaseFunctions.instance.httpsCallable('getAllSmoothieIngredients');
+    final filler_res = await dict_filler();
+    List<dynamic> ingr_info = filler_res.data;
+    for(dynamic d in ingr_info) {
+      int id = d['menu_item_id'];
+      String ing = d['ingredient_name'];
+      int amount = d['ingredient_amount'];
 
-    // Get the list of all smoothie menu item IDs
-    HttpsCallable getSmoothies = FirebaseFunctions.instance.httpsCallable('getSmoothie');
-    final res = await getSmoothies.call();
+      Map<String, int> entry = {};
+      if(smoothie_ingredient_dict[id] == null) {
+        entry[ing] = amount;
+      } else {
+        entry = smoothie_ingredient_dict[id] as Map<String, int>;
+        entry[ing] = amount;
+      }
+      smoothie_ingredient_dict[id] = entry;
+    }
 
-    Set<dynamic> smoothies = new Set();
-    for(var i in res.data){
-      smoothies.add(i["menu_item_id"]);
+// Print out all of the ingredient info for every smoothie
+    for(MapEntry<int, Map<String, int>> e in smoothie_ingredient_dict.entries) {
+      print("${e.key} \t ${e.value}");
     }
-  print("before");
-    // Get all smoothie ingredients
-    Map<int, List<String>> smoothieIngredientsMap = {};
-    for(var itemID in smoothies){
-      Map<String, int> smoothieIngredients = await general.get_smoothie_ingredients(itemID);
-      smoothieIngredientsMap[itemID] = smoothieIngredients.keys.toList();
-    }
-  print("after");
+
 // Get the list of item IDs for orders placed within the last week
     HttpsCallable getWeekOrders = FirebaseFunctions.instance.httpsCallable('generateWeekOrders');
     final curr = await getWeekOrders.call();
     List<dynamic> orders = curr.data;
 
-// Create a set of all item IDs in the orders
-    Set<int> allItemIDs = Set();
+// Get the ingredient totals based on the week's orders
+    Map<String, int> ingredientMap = Map();
     for(int i = 0; i < orders.length; i++){
       List<int> itemIDs = List<int>.from(orders[i]['item_ids_in_order']);
-      allItemIDs.addAll(itemIDs);
+      print(itemIDs);
+      for(int item_id in itemIDs) {
+        if(smoothie_ingredient_dict[item_id] != null) { // Meaning the item from the order is a smoothie
+          Map<String, int> smoothie_ings = smoothie_ingredient_dict[item_id] as Map<String, int>;
+          for(var key in smoothie_ings.keys) {
+            int amount = smoothie_ings[key] as int;
+            ingredientMap.update(key, (value) => value + amount, ifAbsent: () => amount);
+          }
+        }
+      }
     }
 
-// Create a map to store the quantities of each item
-    Map<int, int> itemQuantities = Map();
-    for(int i = 0; i < orders.length; i++){
-      List<int> itemIDs = List<int>.from(orders[i]['item_ids_in_order']);
-      for(int j = 0; j < itemIDs.length; j++){
-        int itemID = itemIDs[j];
-        itemQuantities[itemID] = (itemQuantities[itemID] ?? 0) + 1;
-      }
-    }
-print("before");
-// Create a map to store the quantities of each ingredient
-    Map<String, int> ingredientMap = Map();
-    for(var itemID in allItemIDs){
-      if(smoothies.contains(itemID)){
-        List<String> ingredientNames = smoothieIngredientsMap[itemID]!;
-        for (var ingredientName in ingredientNames) {
-          ingredientMap[ingredientName] = (ingredientMap[ingredientName] ?? 0) + 1;
-        }
-      } else {
-        String ingredientName = await general.get_item_name(itemID);
-        int itemQty = itemQuantities[itemID] ?? 0;
-        ingredientMap[ingredientName] = (ingredientMap[ingredientName] ?? 0) + itemQty;
-      }
-    }
+    print(ingredientMap);
+
 print("after");
 // Update the minimum inventory levels
     HttpsCallable getMin = FirebaseFunctions.instance.httpsCallable('getInventoryMin');
@@ -197,6 +191,7 @@ print("after");
     final result = await callable.call({'invMin': invMin});
     Map<String, dynamic> reportMap = result.data;
 
+    print("done");
     return invMin;
   }
 
