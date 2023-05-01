@@ -25,6 +25,48 @@ class Win_Order_State extends State<Win_Order>
 {
   // GOOGLE TRANSLATE STRINGS START
 
+  List<String> build_texts_originals = [
+    "Smoothie King - Texas A&M MSC",
+    "Return to Manager View",
+    "Index",
+    "Name",
+    "Size",
+    "Price",
+    "Edit",
+    "Delete",
+    "Total",
+    "Smoothies",
+    "Snacks",
+    "Category",
+    "Snack",
+    "Large",
+    "Medium",
+    "Small",
+    "Addon",
+    "Smoothie"
+  ];
+
+  List<String> build_texts = [
+    "Smoothie King - Texas A&M MSC",
+    "Return to Manager View",
+    "Index",
+    "Name",
+    "Size",
+    "Price",
+    "Edit",
+    "Delete",
+    "Total",
+    "Smoothies",
+    "Snacks",
+    "Category",
+    "Snack",
+    "Large",
+    "Medium",
+    "Small",
+    "Addon",
+    "Smoothie"
+  ];
+
 
   //Strings for build
   String text_page_title =  "Smoothie King - Texas A&M MSC";
