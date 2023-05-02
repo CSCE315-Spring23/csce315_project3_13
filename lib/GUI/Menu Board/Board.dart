@@ -88,18 +88,21 @@ class _BoardState extends State<Board> {
                 ),
               ),
               for (int i = _startIndex;
-              i < _startIndex + (widget.height / 15).floor() && i < widget.items.length;
+              i < _startIndex + (widget.height / 17).floor() && i < widget.items.length;
               i = i + (widget.width/250).floor())
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                 for (int j = i; j < i + (widget.width/250).floor() && j < widget.items.length;j++)
                   Container(
-                    padding: EdgeInsets.symmetric(vertical: widget.height / 100),
-                    child: Text(
-                        widget.items[j],
-                      style: const TextStyle(
-                        fontSize: 20,
+                    padding: EdgeInsets.symmetric(vertical: widget.height / 75),
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                          widget.items[j],
+                        style: const TextStyle(
+                          fontSize: 22,
+                        ),
                       ),
                     ),
                   ),

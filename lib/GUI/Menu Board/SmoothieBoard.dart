@@ -136,12 +136,13 @@ class _SmoothieBoardState extends State<SmoothieBoard> {
               i < _startIndex + (widget.height / 40).floor() && i < widget.items.length;
               i++)
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Container(
                       width: (widget.width / 2),
                       height: 22,
                       alignment: Alignment.centerLeft,
-                      padding: const EdgeInsets.only(left: 5),
+                      padding: const EdgeInsets.only(left: 10),
                       margin: EdgeInsets.only(bottom: widget.height / 50),
                       child: FittedBox(
                         fit: BoxFit.scaleDown,

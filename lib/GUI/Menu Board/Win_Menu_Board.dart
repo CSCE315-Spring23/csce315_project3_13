@@ -236,66 +236,66 @@ class _Win_Menu_BoardState extends State<Win_Menu_Board> {
               Visibility(
                 visible: _view_smoothies,
                 child: Container(
-                margin: const EdgeInsets.all(10),
-                    child: Column(
-                children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        SmoothieBoard(items: energy_info,
-                          category: "Feel Energized",
-                          width: screenWidth * (2/7),
-                          height: screenHeight * (3/7),
-                          color: Colors.green,
-                        ),
-                        SmoothieBoard(items: fitness_info,
-                          category: "Get Fit",
-                          width: screenWidth * (2/7),
-                          height: screenHeight * (3/7),
-                          color: Colors.redAccent,
-                        ),
-                        SmoothieBoard(items: weight_info,
-                          category: "Manage Weight",
-                          width: screenWidth * (2/7),
-                          height: screenHeight * (3/7),
-                          color: Colors.lightBlueAccent,
-                        ),
-                      ],
-                    ),
-                  SizedBox(height: screenHeight / 40,),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  margin: const EdgeInsets.all(10),
+                  child: Column(
                     children: [
-                    SmoothieBoard(items: energy_info,
-                      category: "Be Well",
-                      width: screenWidth * (2/7),
-                      height: screenHeight * (3/7),
-                      color: Colors.pink,
-                    ),
-                    SmoothieBoard(items: fitness_info,
-                      category: "Enjoy A Teat",
-                      width: screenWidth * (2/7),
-                      height: screenHeight * (3/7),
-                      color: Colors.yellow.shade800,
-                    ),
-                    SmoothieBoard(items: weight_info,
-                      category: "Seasonal",
-                      width: screenWidth * (2/7),
-                      height: screenHeight * (3/7),
-                      color: Colors.deepOrange,
-                    ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          SmoothieBoard(items: energy_info,
+                            category: "Feel Energized",
+                            width: screenWidth * (2/7),
+                            height: screenHeight * (3/7),
+                            color: Colors.green,
+                          ),
+                          SmoothieBoard(items: fitness_info,
+                            category: "Get Fit",
+                            width: screenWidth * (2/7),
+                            height: screenHeight * (3/7),
+                            color: Colors.redAccent,
+                          ),
+                          SmoothieBoard(items: weight_info,
+                            category: "Manage Weight",
+                            width: screenWidth * (2/7),
+                            height: screenHeight * (3/7),
+                            color: Colors.lightBlueAccent,
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: screenHeight / 40,),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          SmoothieBoard(items: energy_info,
+                            category: "Be Well",
+                            width: screenWidth * (2/7),
+                            height: screenHeight * (3/7),
+                            color: Colors.pink,
+                          ),
+                          SmoothieBoard(items: fitness_info,
+                            category: "Enjoy A Teat",
+                            width: screenWidth * (2/7),
+                            height: screenHeight * (3/7),
+                            color: Colors.yellow.shade800,
+                          ),
+                          SmoothieBoard(items: weight_info,
+                            category: "Seasonal",
+                            width: screenWidth * (2/7),
+                            height: screenHeight * (3/7),
+                            color: Colors.deepOrange,
+                          ),
+                        ],
+                      ),
+                      Expanded(child: TextButton(
+                        onPressed: (){
+                          _view_smoothies = false;
+                          setState(() {
+                          });
+                        }, child: Container(),
+                      ))
                     ],
                   ),
-                  Expanded(child: TextButton(
-                    onPressed: (){
-                      _view_smoothies = false;
-                      setState(() {
-                      });
-                    }, child: Container(),
-                  ))
-                ],
                 ),
-              ),
               ),
               Visibility(
                   visible: !_view_smoothies,
@@ -306,9 +306,9 @@ class _Win_Menu_BoardState extends State<Win_Menu_Board> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           Board(items: addon_info,
-                              width: screenWidth * (5 / 8),
-                              height: screenHeight * (6/7),
-                              color: Colors.blueAccent,
+                            width: screenWidth * (5 / 8),
+                            height: screenHeight * (6/7),
+                            color: Colors.blueAccent,
                           ),
                           SmoothieBoard(items: snack_info,
                             category: "Snacks",
@@ -327,7 +327,8 @@ class _Win_Menu_BoardState extends State<Win_Menu_Board> {
                       ))
                     ],
                   )
-              )
+              ),
+
             ],
       ),
     );
