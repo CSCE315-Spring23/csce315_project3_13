@@ -4,6 +4,7 @@ import 'package:csce315_project3_13/Services/login_helper.dart';
 import 'package:csce315_project3_13/Services/order_processing_helper.dart';
 import 'package:csce315_project3_13/Services/weather_API.dart';
 import 'package:flutter/material.dart';
+import '../../../Services/excess_helper.dart';
 import '../../../Services/testing_cloud_functions.dart';
 
 class Win_Functions_Test_Page extends StatefulWidget {
@@ -21,6 +22,7 @@ class _Win_Functions_Test_Page_StartState extends State<Win_Functions_Test_Page>
   order_processing_helper order_helper = order_processing_helper();
   login_helper login_helper_instance = login_helper();
   weather_API weather = weather_API();
+  excess_helper excess_help = excess_helper();
 
   bool is_high_contrast = false;
 
@@ -46,7 +48,7 @@ class _Win_Functions_Test_Page_StartState extends State<Win_Functions_Test_Page>
 
             ElevatedButton(
                 onPressed: (){
-              cloud_functions_tester.getEmployees();
+              excess_help.excess_report("02/01/2023");
             }, child: const Text("Test Firebase Function")),
             const SizedBox(
               height: 20,
