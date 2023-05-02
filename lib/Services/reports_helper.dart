@@ -109,9 +109,9 @@ class reports_helper
     for (MapEntry<String, int> e in pairs.entries) {
       pair p = pair.fromString(e.key);
       print("${p.left}, ${p.right} \t ${e.value}");
-      int id1 = p.left;
+      int id1 = int.parse(p.left);
       String item1 = item_info[id1]![0];
-      int id2 = p.right;
+      int id2 = int.parse(p.right);
       String item2 = item_info[id2]![0];
       int num = e.value;
       what_sales_together_row row = what_sales_together_row(id1, item1, id2, item2, num);
