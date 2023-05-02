@@ -14,7 +14,7 @@ class general_helper
 
     return menu_item;
   }
-  
+
   Future<String> get_item_type(int menu_item_id) async
   {
     HttpsCallable getter = FirebaseFunctions.instance.httpsCallable('getMenuItemType');

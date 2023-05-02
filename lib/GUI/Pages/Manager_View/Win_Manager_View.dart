@@ -1,6 +1,5 @@
 import 'package:csce315_project3_13/GUI/Menu%20Board/Win_Menu_Board.dart';
 import 'package:csce315_project3_13/GUI/Pages/Order/Win_Order.dart';
-import 'package:csce315_project3_13/GUI/Pages/What_Sales/Win_What_Sales.dart';
 import 'package:csce315_project3_13/Inherited_Widgets/Color_Manager.dart';
 import 'package:csce315_project3_13/GUI/Components/Login_Button.dart';
 import 'package:csce315_project3_13/GUI/Components/Page_Header.dart';
@@ -11,6 +10,8 @@ import 'package:csce315_project3_13/Inherited_Widgets/Translate_Manager.dart';
 import 'package:csce315_project3_13/Services/google_translate_API.dart';
 import 'package:csce315_project3_13/Services/login_helper.dart';
 import 'package:flutter/material.dart';
+
+import '../Sales Reports/Win_Reports_Hub.dart';
 
 class Win_Manager_View extends StatefulWidget {
   static const String route = '/manager-view';
@@ -27,8 +28,8 @@ class _Win_Manager_ViewState extends State<Win_Manager_View> {
   google_translate_API _google_translate_api = google_translate_API();
 
   //Strings for display
-  List<String> list_page_texts_originals = ["Manager View", "Log out", "Order", "Manage Menu","Manage Inventory", "What Sells Together", "Menu Board" ];
-  List<String> list_page_texts = ["Manager View", "Log out", "Order", "Manage Menu", "Manage Inventory", "What Sells Together", "Menu Board"  ];
+  List<String> list_page_texts_originals = ["Manager View", "Log out", "Order", "Manage Menu","Manage Inventory", "Reports Hub" ];
+  List<String> list_page_texts = ["Manager View", "Log out", "Order", "Manage Menu", "Manage Inventory", "Reports Hub"  ];
   String text_page_header = "Manager View";
   String text_log_out_button = "Log out";
   String text_order_button = "Order";
@@ -36,6 +37,10 @@ class _Win_Manager_ViewState extends State<Win_Manager_View> {
   String text_manage_inventory = "Manage Inventory";
   String text_view_what_sales = "What Sells Together";
   String text_menu_board = "Menu Board";
+  String text_reports_hub = "Reports Hub";
+
+
+
 
 
   login_helper login_helper_instance = login_helper();
@@ -57,6 +62,7 @@ class _Win_Manager_ViewState extends State<Win_Manager_View> {
       text_order_button = list_page_texts[2];
       text_manage_menu = list_page_texts[3];
       text_manage_inventory = list_page_texts[4];
+      text_reports_hub = list_page_texts[5];
       text_view_what_sales = list_page_texts[5];
       text_menu_board = list_page_texts[6];
 
@@ -101,6 +107,9 @@ class _Win_Manager_ViewState extends State<Win_Manager_View> {
             Login_Button(onTap: (){
               Navigator.pushReplacementNamed(context,Win_View_Inventory.route);
             }, buttonName: text_manage_inventory, fontSize: 18, buttonWidth: 180,),
+            Login_Button(onTap: (){
+              Navigator.pushReplacementNamed(context,Win_Reports_Hub.route);
+            }, buttonName: text_reports_hub, fontSize: 18, buttonWidth: 180,),
             Login_Button(onTap: (){
               Navigator.pushReplacementNamed(context,Win_Menu_Board.route);
             }, buttonName: text_menu_board, fontSize: 18, buttonWidth: 180,),
