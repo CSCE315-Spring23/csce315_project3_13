@@ -69,7 +69,7 @@ class _Win_Itemized_ReportsState extends State<Win_Itemized_Reports> {
             ),
             child: Padding(
               padding: EdgeInsets.all(16.0),
-              child: Text('${rows[index].item_name} sold \$${rows[index].amount_sold} units and made \$${rows[index].total_revenue} in revenue.',
+              child: Text('${rows[index].item_name} sold ${rows[index].amount_sold} units and made \$${rows[index].total_revenue} in revenue.',
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,

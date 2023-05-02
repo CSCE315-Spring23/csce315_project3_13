@@ -683,7 +683,7 @@ class Win_Order_State extends State<Win_Order>
           item_ids_in_order,
           double.parse(
               _current_order.price.toStringAsFixed(2)),
-          _curr_customer,
+          _curr_customer != build_texts[19]? _curr_customer : "None",
           formattedDate,
           'completed');
       print(order_to_process.get_values());
