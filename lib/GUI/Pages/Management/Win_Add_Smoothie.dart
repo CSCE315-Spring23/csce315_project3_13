@@ -1,4 +1,5 @@
 import 'package:csce315_project3_13/GUI/Pages/Management/Win_View_Menu.dart';
+import 'package:csce315_project3_13/Services/google_translate_API.dart';
 import 'package:csce315_project3_13/Services/ingredients_table_helper.dart';
 import 'package:csce315_project3_13/Services/menu_item_helper.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -17,6 +18,40 @@ class Win_Add_Smoothie extends StatefulWidget {
 
 class _Win_Add_Smoothie_State extends State<Win_Add_Smoothie>
 {
+
+  // GOOGLE TRANSLATE VARIABLES BEGIN
+  google_translate_API _google_translate_api = google_translate_API();
+  String _current_lang = "";
+
+  List<String> build_texts_original = [];
+
+
+  String text_data_col_index = 'Index';
+  String text_data_col_name = 'Name';
+  String text_data_col_delete = 'Delete';
+  String text_add_new_ingredient = "Add New Ingredient";
+  String text_page_name = "Create New Smoothie";
+  String text_ret_menu_management = "Return to Menu Management";
+  String text_successfully_added = 'Successfully Added Item';
+  String text_unable_add = 'Unable to add item';
+  String text_accept_button = "Accept";
+  String text_add_new_item = 'Add New Item';
+  String text_ingredient =  "Ingredients";
+  String text_new_ingredient = 'New Ingredient';
+  String text_cancel_button = 'CANCEL';
+  String text_add_button = "ADD";
+  String text_new_smoothie_name = "New Smoothie Name";
+  String text_price_of_medium = "Price of Medium";
+  String text_amount_in_stock = "Amount in Stock";
+
+
+  bool first_load = false;
+
+
+  // GOOGLE TRANSLATE VARIABLES END
+
+
+
   // data displayed on table
   List<Map<String, String>> _ing_table = [];
 
@@ -106,10 +141,10 @@ class _Win_Add_Smoothie_State extends State<Win_Add_Smoothie>
               color: text_color.withAlpha(200),
             ),
             columnSpacing: 10,
-            columns: const [
-              DataColumn(label: Text('Index'),),
-              DataColumn(label: Text('Name'),),
-              DataColumn(label: Text('Delete')),
+            columns: [
+              DataColumn(label: Text(text_data_col_index),),
+              DataColumn(label: Text(text_data_col_name),),
+              DataColumn(label: Text(text_data_col_delete)),
             ],
             rows: _ing_table.map((rowData) {
               final rowIndex = _ing_table.indexOf(rowData);
@@ -145,8 +180,8 @@ class _Win_Add_Smoothie_State extends State<Win_Add_Smoothie>
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           SizedBox(
-            height: text_deco == 'Add New Ingredient...' ? 75 : 45,
-            width: text_deco == 'Add New Ingredient...' ? screenWidth / 5 : screenWidth / 7,
+            height: text_deco == text_add_new_ingredient + '...' ? 75 : 45,
+            width: text_deco == text_add_new_ingredient + '...' ? screenWidth / 5 : screenWidth / 7,
             child: TextField(
               controller: ctrl,
               decoration: InputDecoration(
@@ -159,19 +194,19 @@ class _Win_Add_Smoothie_State extends State<Win_Add_Smoothie>
               ),
               onChanged: (text) {
                 setState(() {
-                  if (text_deco == 'Add New Ingredient...')
+                  if (text_deco ==  text_add_new_ingredient + '...')
                   {
                     _new_ingredient_name = ctrl.text;
                   }
-                  else if (text_deco == 'New Smoothie Name... ')
+                  else if (text_deco == text_new_smoothie_name + '... ')
                   {
                     _new_item_name = ctrl.text;
                   }
-                    else if (text_deco == 'Price of Medium...')
+                    else if (text_deco == text_price_of_medium + '...')
                     {
                     _new_item_price = double.parse(ctrl.text);
                     }
-                    else if (text_deco == 'Amount in Stock...')
+                    else if (text_deco == text_amount_in_stock+ '...')
                     {
                     _new_item_amount = int.parse(ctrl.text);
                     }
@@ -194,10 +229,10 @@ class _Win_Add_Smoothie_State extends State<Win_Add_Smoothie>
     return Scaffold(
       appBar: Page_Header(
         context: context,
-        pageName: "Create New Smoothie",
+        pageName: text_page_name,
         buttons: [
           IconButton(
-            tooltip: "Return to Menu Management",
+            tooltip: text_ret_menu_management,
             padding: const EdgeInsets.only(left: 25, right: 10),
             onPressed: ()
             {
@@ -242,11 +277,11 @@ class _Win_Add_Smoothie_State extends State<Win_Add_Smoothie>
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: <Widget>[
-                                  custTextfield(context, _new_name_ctrl, 'New Smoothie Name... ', ''),
+                                  custTextfield(context, _new_name_ctrl, text_new_smoothie_name + '... ', ''),
                                   const SizedBox(width: 10,),
-                                  custTextfield(context, _new_price_ctrl, 'Price of Medium...', ''),
+                                  custTextfield(context, _new_price_ctrl, text_price_of_medium + '...', ''),
                                   const SizedBox(width: 10,),
-                                  custTextfield(context, _new_amount_ctrl, 'Amount in Stock...', ''),
+                                  custTextfield(context, _new_amount_ctrl, text_amount_in_stock+ '...', ''),
                                 ],
                               ),
                               const SizedBox(height: 20,),
@@ -262,7 +297,7 @@ class _Win_Add_Smoothie_State extends State<Win_Add_Smoothie>
                                     onPressed: () async
                                     {
                                       Icon message_icon = const Icon(Icons.check);
-                                      String message_text = 'Successfully Added Item';
+                                      String message_text = text_successfully_added;
                                       List<String> new_item_ings = [];
                                       for (int i = 0; i < _ing_table.length; ++i)
                                         {
@@ -286,7 +321,7 @@ class _Win_Add_Smoothie_State extends State<Win_Add_Smoothie>
                                       {
                                         print(exception);
                                         message_icon = const Icon(Icons.error_outline_outlined);
-                                        message_text = 'Unable to add item';
+                                        message_text = text_unable_add;
                                       }
                                       finally{
                                         showDialog(
@@ -301,15 +336,15 @@ class _Win_Add_Smoothie_State extends State<Win_Add_Smoothie>
                                                       onPressed: (){
                                                         Navigator.of(context).pop();
                                                       },
-                                                      child: const Text('OK'))
+                                                      child: Text(text_accept_button))
                                                 ],
                                               );
                                             });
                                       }
                                       }
                                 },
-                                    child: const Text(
-                                      'Add New Item',
+                                    child: Text(
+                                      text_add_new_item,
                                       style: TextStyle(fontWeight: FontWeight.bold),
                                     )
                                 ),
@@ -335,7 +370,7 @@ class _Win_Add_Smoothie_State extends State<Win_Add_Smoothie>
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Text(
-                                "Ingredients",
+                               text_ingredient,
                                 style: TextStyle(
                                   fontSize: 40,
                                   fontWeight: FontWeight.bold,
@@ -343,7 +378,7 @@ class _Win_Add_Smoothie_State extends State<Win_Add_Smoothie>
                                 ),
                               ),
                               IconButton(
-                                  tooltip: "Add new ingredient",
+                                  tooltip: text_add_new_ingredient,
                                   padding: const EdgeInsets.symmetric(horizontal: 30),
                                   onPressed: ()
                                   {
@@ -355,7 +390,7 @@ class _Win_Add_Smoothie_State extends State<Win_Add_Smoothie>
                                       context: context,
                                       builder: (BuildContext context) {
                                         return AlertDialog(
-                                          title: const Text('New Ingredient'),
+                                          title: Text(text_new_ingredient),
                                           content: SizedBox(
                                             width: (screenWidth / 5) + 10,
                                             height: 45,
@@ -363,7 +398,7 @@ class _Win_Add_Smoothie_State extends State<Win_Add_Smoothie>
                                           ),
                                           actions: <Widget>[
                                             TextButton(
-                                              child: const Text('CANCEL'),
+                                              child: Text(text_cancel_button),
                                               onPressed: () {
                                                 Navigator.of(context).pop();
                                               },
@@ -374,7 +409,7 @@ class _Win_Add_Smoothie_State extends State<Win_Add_Smoothie>
                                                   _ing_table.add({'index': (_ing_table.length + 1).toString(), 'name': _new_ingredient_name});
                                                   Navigator.of(context).pop();
                                                 },
-                                                child: Text("ADD"))
+                                                child: Text(text_add_button))
                                           ],
                                         );
                                       },
