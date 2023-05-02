@@ -1,5 +1,5 @@
 import 'dart:collection';
-import 'dart:math';
+import 'dart:core';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:csce315_project3_13/Services/general_helper.dart';
 import '../Models/models_library.dart';
@@ -164,7 +164,7 @@ class reports_helper
 // Get the ingredients amount for each ingredient in every smoothie
     Map<int, Map<String, int>> smoothie_ingredient_dict = {};
     HttpsCallable dict_filler = FirebaseFunctions.instance.httpsCallable('getAllSmoothieIngredients');
-    Map<int, List<String>> item_info = await gen_helper.get_all_menu_item_info();
+    Map<int, List<dynamic>> item_info = await gen_helper.get_all_menu_item_info();
     final filler_res = await dict_filler();
     List<dynamic> ingr_info = filler_res.data;
     for(dynamic d in ingr_info) {
@@ -197,7 +197,6 @@ class reports_helper
     Map<String, int> ingredientMap = Map();
     for(int i = 0; i < orders.length; i++){
       List<int> itemIDs = List<int>.from(orders[i]['item_ids_in_order']);
-      print(itemIDs);
       for(int item_id in itemIDs) {
         if(smoothie_ingredient_dict[item_id] != null) { // Meaning the item from the order is a smoothie
           Map<String, int> smoothie_ings = smoothie_ingredient_dict[item_id] as Map<String, int>;
