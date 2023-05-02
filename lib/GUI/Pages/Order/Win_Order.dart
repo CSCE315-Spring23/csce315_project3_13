@@ -561,7 +561,11 @@ class Win_Order_State extends State<Win_Order>
           formattedDate,
           'completed');
       print(order_to_process.get_values());
-      await order_helper.process_order(order_to_process);
+      List<String> invalid = await order_helper.process_order(order_to_process);
+      for(int i = 0; i < invalid.length; i++) {
+        String bad = invalid[i];
+        print("$bad is invalid...");
+      }
       setState(() {
         _current_order.clear();
         _orderTable.clear();

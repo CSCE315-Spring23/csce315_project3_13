@@ -29,9 +29,14 @@ class _Win_Itemized_ReportsState extends State<Win_Itemized_Reports> {
 
   void getData(String date1, String date2) async
   {
-    print("Getting data...");
+    print("Getting data... with $date1 and $date2");
 
     rows = await rep_help.generate_sales_report(date1, date2);
+
+    for(int i = 0; i < rows.length; i++) {
+      String name = rows[i].item_name;
+      print("Made row for $name.");
+    }
     setState(()
     {
       dataLoaded = true;
@@ -124,9 +129,6 @@ class _Win_Itemized_ReportsState extends State<Win_Itemized_Reports> {
 
                 if (newDate_1 == null) return;
 
-                var formatter = DateFormat('MM/dd/yyyy');
-                String formattedDate_1 = formatter.format(date_1);
-
                 DateTime ? newDate_2 = await showDatePicker(
                   context: context,
                   initialDate: date_2,
@@ -139,6 +141,8 @@ class _Win_Itemized_ReportsState extends State<Win_Itemized_Reports> {
                 setState(() => date_1 = newDate_1);
                 setState(() => date_2 = newDate_2);
 
+                var formatter = DateFormat('MM/dd/yyyy');
+                String formattedDate_1 = formatter.format(date_1);
                 String formattedDate_2 = formatter.format(date_2);
 
                 dataLoaded = false;

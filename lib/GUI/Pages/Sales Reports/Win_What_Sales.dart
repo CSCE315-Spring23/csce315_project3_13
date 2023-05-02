@@ -1,7 +1,7 @@
 import 'package:csce315_project3_13/GUI/Components/Login_Button.dart';
 import 'package:csce315_project3_13/GUI/Components/Page_Header.dart';
-import 'package:csce315_project3_13/GUI/Pages/Manager_View/Win_Manager_View.dart';
 import 'package:csce315_project3_13/GUI/Pages/Sales%20Reports/What_Sales_Dialogue.dart';
+import 'package:csce315_project3_13/GUI/Pages/Sales%20Reports/Win_Reports_Hub.dart';
 import 'package:csce315_project3_13/Inherited_Widgets/What_Sales_Manager.dart';
 import 'package:csce315_project3_13/Services/google_translate_API.dart';
 import 'package:csce315_project3_13/Services/reports_helper.dart';
@@ -26,10 +26,10 @@ class _Win_What_SalesState extends State<Win_What_Sales> {
   google_translate_API _google_translate_api = google_translate_API();
 
   //Strings for display
-  List<String> list_page_texts_originals = ["What Sells Together", "Exit","Amount Sold Together", "Select Dates"];
-  List<String> list_page_texts = ["What Sells Together", "Exit","Amount Sold Together","Select Dates"];
+  List<String> list_page_texts_originals = ["What Sells Together", "Return to Reports Hub","Amount Sold Together", "Select Dates"];
+  List<String> list_page_texts = ["What Sells Together", "Return to Reports Hub","Amount Sold Together","Select Dates"];
   String text_page_header = "What Sells Together";
-  String text_exit_to = "Exit";
+  String text_exit_to = "Return to Reports Hub";
   String text_amount_sold_together = "Amount Sold Together";
   String text_reselect_dates = "Select Dates";
 
@@ -199,8 +199,7 @@ class _Win_What_SalesState extends State<Win_What_Sales> {
             padding: const EdgeInsets.only(left: 25, right: 10),
             onPressed: ()
             {
-              //ToDo change to correct page to exit to
-              Navigator.pushReplacementNamed(context,Win_Manager_View.route);
+              Navigator.pushReplacementNamed(context,Win_Reports_Hub.route);
             },
             icon: const Icon(Icons.close_rounded),
             iconSize: 40,
