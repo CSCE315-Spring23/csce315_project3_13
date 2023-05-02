@@ -41,13 +41,7 @@ class _Win_What_SalesState extends State<Win_What_Sales> {
 
   Future<void> getData_no_reload(What_Sales_Manager _manager) async {
     print("Building Page...");
-    //ToDo uncomment below line when what_sales_together complete
-    // row_items = await rep_helper.what_sales_together(_manager.date1, _manager.date2);
-
-    //ToDo comment out below line when what_sales_together complete
-    row_items = [what_sales_together_row(
-        0, "Gladiator Smoothie", 1, "Bulk Smoothie", 3
-    )];
+    row_items = await rep_helper.what_sales_together(_manager.date1, _manager.date2);
 
     print("Obtained Inventory...");
   }
