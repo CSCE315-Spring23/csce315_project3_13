@@ -56,7 +56,11 @@ class _Win_View_Inventory_State extends State<Win_View_Inventory> {
     "ADD ITEM",
     "available",
     "Return to Manager View",
-    "Add Inventory"
+    "Add Inventory",
+    "Order",
+    "Restock Report",
+    "Please enter a number",
+    "Invalid Amount",
   ];
   List<String> list_page_texts = [
     "Inventory Item Management",
@@ -87,7 +91,11 @@ class _Win_View_Inventory_State extends State<Win_View_Inventory> {
     "ADD ITEM",
     "available",
     "Return to Manager View",
-    "Add Inventory"
+    "Add Inventory",
+    "Order",
+    "Restock Report",
+    "Please enter a number",
+    "Invalid Amount",
   ];
   String text_page_header = "Inventory Item Management";
   String text_item_amount = "Edit Item Amount";
@@ -118,6 +126,11 @@ class _Win_View_Inventory_State extends State<Win_View_Inventory> {
   String text_available = "available";
   String text_ret_man = "Return to Manager View";
   String text_add_inventory = "Add Inventory";
+
+  String text_order_button = "Order";
+  String text_restock_report = "Restock Report";
+  String text_please_enter = "Please enter a number";
+  String text_invalid_amount = "Invalid Amount";
 
 
 
@@ -162,11 +175,11 @@ class _Win_View_Inventory_State extends State<Win_View_Inventory> {
               keyboardType: TextInputType.number,
               validator: (value) {
                 if (value?.isEmpty ?? true) {
-                  return "Please enter a number";
+                  return text_please_enter;
                 }
                 num newValue = num.tryParse(value!) ?? 0;
                 if (newValue < 0) {
-                  return "Invalid Amount";
+                  return text_invalid_amount;
                 }
                 return null;
               },
@@ -607,6 +620,10 @@ class _Win_View_Inventory_State extends State<Win_View_Inventory> {
       text_available = list_page_texts[26];
       text_ret_man = list_page_texts[27];
       text_add_inventory = list_page_texts[28];
+      text_order_button =  list_page_texts[29];
+      text_restock_report = list_page_texts[30];
+      text_please_enter = list_page_texts[31];
+      text_invalid_amount = list_page_texts[32];
 
       await  getData_no_reload();
       List<String> keys_list = inventoryItems.keys.toList();
@@ -692,14 +709,14 @@ class _Win_View_Inventory_State extends State<Win_View_Inventory> {
                 Navigator.pushReplacementNamed(context, Win_Order_Inventory.route);
               },
               buttonWidth: 200,
-              buttonName: 'Order',
+              buttonName: text_order_button,
             ),
             Login_Button(
               onTap: () {
                 newItemSubWin();
               },
               buttonWidth: 200,
-              buttonName: 'Restock Report',
+              buttonName: text_restock_report,
             ),
           ],
         ),
