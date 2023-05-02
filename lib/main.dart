@@ -3,7 +3,6 @@ import 'package:csce315_project3_13/GUI/Pages/Sales%20Reports/Win_Reports_Hub.da
 import 'package:csce315_project3_13/GUI/Pages/Inventory/Win_Order_Inventory.dart';
 import 'package:csce315_project3_13/GUI/Pages/Manager_View/Win_Manager_View.dart';
 import 'package:csce315_project3_13/GUI/Pages/Server_View/Win_Server_View.dart';
-import 'package:csce315_project3_13/GUI/Pages/What_Sales/Win_What_Sales.dart';
 import 'package:csce315_project3_13/Inherited_Widgets/Color_Manager.dart';
 import 'package:csce315_project3_13/GUI/Pages/Inventory/Win_View_Inventory.dart';
 import 'package:csce315_project3_13/GUI/Pages/Loading/Loading_Page.dart';
@@ -24,6 +23,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'GUI/Pages/Login/Win_Login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
+import 'GUI/Pages/Sales Reports/Win_What_Sales.dart';
 import 'GUI/Pages/Sales Reports/Win_Z_Reports.dart';
 
 Future<void> main() async {

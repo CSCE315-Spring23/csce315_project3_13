@@ -1,7 +1,7 @@
 import 'package:csce315_project3_13/GUI/Components/Login_Button.dart';
 import 'package:csce315_project3_13/GUI/Components/Page_Header.dart';
 import 'package:csce315_project3_13/GUI/Pages/Manager_View/Win_Manager_View.dart';
-import 'package:csce315_project3_13/GUI/Pages/What_Sales/What_Sales_Dialogue.dart';
+import 'package:csce315_project3_13/GUI/Pages/Sales%20Reports/What_Sales_Dialogue.dart';
 import 'package:csce315_project3_13/Inherited_Widgets/What_Sales_Manager.dart';
 import 'package:csce315_project3_13/Services/google_translate_API.dart';
 import 'package:csce315_project3_13/Services/reports_helper.dart';
