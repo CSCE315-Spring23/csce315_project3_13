@@ -613,9 +613,34 @@ exports.getIngredientNames = functions.https.onCall(async (data, context) => {
         port: 5432,
     });
 
+
     await client.connect()
 
     const res = await client.query("SELECT DISTINCT ingredient_name FROM ingredients_table ORDER BY ingredient_name");
+
+    client.end()
+
+    return res.rows
+});
+
+exports.getItemsInOrder = functions.https.onCall(async (data, context) => {
+    const client = new Client({
+        host: 'csce-315-db.engr.tamu.edu',
+        user: 'csce315331_team_13_master',
+        password: 'Lucky_13',
+        database: 'csce315331_team_13',
+        port: 5432,
+    });
+
+    await client.connect()
+
+    const {date1} = data
+    const {date2} = data
+
+    var cast1 = "CAST('" + date1 + "' as date)";
+    var cast2 = "CAST('" + date2 + "' as date)";
+
+    const res = await client.query("SELECT item_ids_in_order FROM order_history WHERE date_of_order>=" + cast1 + " AND date_of_order<=" + cast2);
 
     client.end()
 
@@ -840,5 +865,152 @@ exports.editInventoryEntry = functions.https.onCall(async (data, context) => {
     client.end();
   }
 });
+
+exports.getSmoothie = functions.https.onCall(async (data, context) =>
+{
+      const client = new Client({
+        host: 'csce-315-db.engr.tamu.edu',
+        user: 'csce315331_team_13_master',
+        password: 'Lucky_13',
+        database: 'csce315331_team_13',
+        port: 5432,
+      });
+
+      await client.connect();
+
+      const res = await client.query("SELECT menu_item_id FROM menu_items WHERE type IN ('smoothie')");
+
+      client.end();
+
+      return res.rows;
+});
+
+exports.getInventoryMin = functions.https.onCall(async (data, context) =>
+{
+      const client = new Client({
+        host: 'csce-315-db.engr.tamu.edu',
+        user: 'csce315331_team_13_master',
+        password: 'Lucky_13',
+        database: 'csce315331_team_13',
+        port: 5432,
+      });
+
+      await client.connect();
+
+      const res = await client.query("SELECT ingredient, minimum FROM inventory_minimums");
+
+      client.end();
+
+      return res.rows;
+});
+
+
+exports.generateWeekOrders = functions.https.onCall(async (data, context) => {
+  const client = new Client({
+    host: 'csce-315-db.engr.tamu.edu',
+    user: 'csce315331_team_13_master',
+    password: 'Lucky_13',
+    database: 'csce315331_team_13',
+    port: 5432,
+  });
+
+  await client.connect();
+
+  const res = await client.query("SELECT item_ids_in_order FROM order_history WHERE date_of_order >= '2022-12-1'::date - interval '7 days' AND date_of_order < '2022-12-1'::date");
+
+  client.end();
+  return res.rows;
+});
+
+
+exports.generateRestockReport = functions.https.onCall(async (data, context) => {
+  const client = new Client({
+    host: 'csce-315-db.engr.tamu.edu',
+    user: 'csce315331_team_13_master',
+    password: 'Lucky_13',
+    database: 'csce315331_team_13',
+    port: 5432,
+  });
+
+  await client.connect();
+
+  try {
+    const minAmount = new Map();
+    const invMin = data.invMin;
+
+    for (var entry in invMin.entries) {
+      var ingredient = entry.key;
+      var minimum = entry.value;
+      minAmount[ingredient] = minimum;
+    }
+
+
+    const query = {
+      text: 'SELECT ingredient, amount_inv_stock FROM inventory',
+    };
+
+    const result = await client.query(query);
+    const result2 = await client.query("UPDATE inventory SET amount_inv_stock = 0 WHERE status = 'unavailable'");
+
+    const mapToReturn = new Map();
+
+    for (let row of result.rows) {
+      const ingredient = row.ingredient;
+      const amountInvStock = row.amount_inv_stock;
+
+      if (minAmount.has(ingredient) && amountInvStock < minAmount.get(ingredient)) {
+        const newAmount = Math.round(minAmount.get(ingredient) * 1.1);
+        mapToReturn.set(ingredient, newAmount);
+      }
+    }
+
+    const objToReturn = Object.fromEntries(mapToReturn);
+
+    return objToReturn;
+  } catch (error) {
+    throw new functions.https.HttpsError('internal', error);
+  } finally {
+    client.end();
+  }
+});
+
+exports.getAllSmoothieIngredients = functions.https.onCall(async (data, context) =>
+ {
+       const client = new Client({
+         host: 'csce-315-db.engr.tamu.edu',
+         user: 'csce315331_team_13_master',
+         password: 'Lucky_13',
+         database: 'csce315331_team_13',
+         port: 5432,
+       });
+
+       await client.connect();
+
+       const res = await client.query("select menu_item_id, ingredient_name, ingredient_amount from ingredients_table join menu_items on menu_item=menu_item_name where type='smoothie'");
+
+       client.end();
+
+       return res.rows;
+ });
+
+exports.getMenuItemsInfo = functions.https.onCall(async (data, context) => {
+    const client = new Client({
+      host: 'csce-315-db.engr.tamu.edu',
+      user: 'csce315331_team_13_master',
+      password: 'Lucky_13',
+      database: 'csce315331_team_13',
+      port: 5432,
+    });
+
+    await client.connect()
+
+    const res = await client.query("SELECT * FROM menu_items");
+
+    client.end();
+
+    return res.rows
+
+});
+
 
 

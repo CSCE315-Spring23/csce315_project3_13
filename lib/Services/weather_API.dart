@@ -28,6 +28,7 @@ class weather_API
 
     Map<String, dynamic> json = jsonDecode(response.body);
     String condition = json['weather'][0]['main'];
+    print("Got condition :" + condition);
     return condition;
   }
 }

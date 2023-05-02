@@ -1,3 +1,7 @@
+import 'package:csce315_project3_13/GUI/Pages/Inventory/Win_Order_Inventory.dart';
+import 'package:csce315_project3_13/GUI/Pages/Manager_View/Win_Manager_View.dart';
+import 'package:csce315_project3_13/GUI/Pages/Server_View/Win_Server_View.dart';
+import 'package:csce315_project3_13/GUI/Pages/What_Sales/Win_What_Sales.dart';
 import 'package:csce315_project3_13/Inherited_Widgets/Color_Manager.dart';
 import 'package:csce315_project3_13/GUI/Pages/Inventory/Win_View_Inventory.dart';
 import 'package:csce315_project3_13/GUI/Pages/Loading/Loading_Page.dart';
@@ -9,9 +13,9 @@ import 'package:csce315_project3_13/GUI/Pages/Management/Win_View_Menu.dart';
 import 'package:csce315_project3_13/GUI/Pages/Order/Win_Order.dart';
 import 'package:csce315_project3_13/GUI/Pages/Test%20Pages/Win_Functions_Test_Page.dart';
 import 'package:csce315_project3_13/Inherited_Widgets/Translate_Manager.dart';
-import 'package:csce315_project3_13/Manager_View/Win_Manager_View.dart';
-import 'package:csce315_project3_13/Server_View/Win_Server_View.dart';
 import 'package:csce315_project3_13/Inherited_Widgets/Weather_Manager.dart';
+import 'package:csce315_project3_13/Inherited_Widgets/What_Sales_Manager.dart';
+import 'package:csce315_project3_13/Services/google_translate_API.dart';
 import 'package:csce315_project3_13/Services/weather_API.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -47,6 +51,8 @@ class _MyAppState extends State<MyApp> {
   Color active_confirm_color = Color(0xFF6BCF54);
   Color active_deny_color = Color(0xFFC30F0E);
 
+  int selected_option_index = 0;
+
 
   // changes back to original colors
   void reset_colors(){
@@ -61,6 +67,7 @@ class _MyAppState extends State<MyApp> {
       active_size_color = Color(0xFF3088D1);
       active_confirm_color = Color(0xFF6BCF54);
       active_deny_color = Color(0xFFC30F0E);
+      selected_option_index = 0;
     });
     set_color_option_pref('standard');
   }
@@ -80,6 +87,7 @@ class _MyAppState extends State<MyApp> {
       active_size_color = Color(0xFF3088D1);
       active_confirm_color = Color(0xFF6BCF54);
       active_deny_color = Color(0xFFC30F0E);
+      selected_option_index = 1;
     });
     set_color_option_pref('deuteranopia');
   }
@@ -98,6 +106,7 @@ class _MyAppState extends State<MyApp> {
       active_size_color = Color(0xFF3088D1);
       active_confirm_color = Color(0xFF6BCF54);
       active_deny_color = Color(0xFFC30F0E);
+      selected_option_index = 1;
     });
     set_color_option_pref('protanopia');
   }
@@ -116,6 +125,7 @@ class _MyAppState extends State<MyApp> {
       active_size_color = Color(0xFF3088D1);
       active_confirm_color = Color(0xFF6BCF54);
       active_deny_color = Color(0xFFC30F0E);
+      selected_option_index = 2;
     });
     set_color_option_pref('tritanopia');
   }
@@ -156,7 +166,11 @@ class _MyAppState extends State<MyApp> {
   String current_condition = "Can't fetch";
   String current_tempurature = "weather";
 
+  List<String> conditions_list_original = ["Clear", "Drizzle", "Rain", "Clouds", "Mist", "Thunderstorm"];
+  List<String> conditions_list = ["Clear", "Drizzle", "Rain", "Clouds", "Mist", "Thunderstorm"];
+
   void startTimer() async {
+    print("timer started");
 
     String current_weather_cond = "Can't fetch";
     String current_weather_temp = "weather";
@@ -168,44 +182,79 @@ class _MyAppState extends State<MyApp> {
     }
 
 
-    setState(() {
+
 
       // update the weather values
       print("Get weather data");
 
       current_condition = current_weather_cond;
       current_tempurature = current_weather_temp;
-
-    });
+      try{
+        current_condition = (await google_translate_API().translate_batch(<String>[current_condition], chosen_language))[0];
+      }catch(e){
+      print("could not update weather condition");
+      print(e);
+      }
+    setState(() {});
 
     _timer = Timer.periodic(Duration(seconds: 60), (timer) async {
       try{
         current_weather_cond = await _weather_api.get_condition();
+        // current_weather_cond = await
         current_weather_temp = await _weather_api.get_temperature();
       }catch(e){
         print("could not fetch weather");
       }
       print(current_weather_cond);
       print(current_weather_temp);
+
+      // update the weather values
+      print("A minute has passed, update weather data");
+
+      current_condition = current_weather_cond;
+      current_tempurature = current_weather_temp;
+
+      try{
+        current_condition = (await google_translate_API().translate_batch(<String>[current_condition], chosen_language))[0];
+      }catch(e){
+        print("could not update weather condition");
+        print(e);
+      }
+
       setState(() {
 
-          // update the weather values
-          print("A minute has passed, update weather data");
 
-          current_condition = current_weather_cond;
-          current_tempurature = current_weather_temp;
 
       });
     });
   }
 
+  Future<void> change_condition_language() async {
+    try{
+      conditions_list = await google_translate_API().translate_batch(conditions_list_original, chosen_language);
+    }catch(e){
+      print("Could not change condition list language");
+      print(e);
+    }
+
+
+
+  }
+
   //Google translate
   String chosen_language = "en";
 
-  void change_language(String newLanguage){
-    setState(() {
+  void change_language(String newLanguage) async {
+
       chosen_language = newLanguage;
+      await change_condition_language();
+      startTimer();
+
+    setState(() {
     });
+
+    // startTimer();
+
     set_language_option_pref(newLanguage);
   }
 
@@ -231,6 +280,19 @@ class _MyAppState extends State<MyApp> {
     change_language(got_language_choice as String);
   }
 
+  //For what sales
+  String date1 = "01/20/2022";
+  String date2 = "01/21/2022";
+  bool set_dates = false;
+  void change_date(String new_date1, String new_date2){
+    date1 = new_date1;
+    date2 = new_date2;
+    set_dates = true;
+    setState(() {
+
+    });
+  }
+
 
 
 
@@ -252,49 +314,60 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return Translate_Manager(
-      chosen_language: chosen_language,
-      change_language: change_language,
-      child: Weather_Manager(
-        current_tempurature: current_tempurature,
-        current_condition: current_condition,
-        child: Color_Manager(
-          // This class stores the color values for the web app
-          reset_colors: reset_colors,
-          option_deuteranopia: option_deuteranopia,
-          option_protanopia: option_protanopia,
-          option_tritanopia: option_tritanopia,
-          primary_color: primary_color,
-          secondary_color: secondary_color,
-          background_color: background_color,
-          text_color: text_color,
-          active_color: active_color,
-          hover_color: hover_color,
-          inactive_color: inactive_color,
-          active_size_color: active_size_color,
-          active_confirm_color: active_confirm_color,
-          active_deny_color: active_deny_color,
+    return What_Sales_Manager(
+      set_dates: set_dates,
+      date1: date1,
+      date2: date2,
+      change_dates: change_date,
 
-          child: MaterialApp(
-            title: 'Smoothie King App',
-            theme: ThemeData(
-              primarySwatch: Colors.red,
+      child: Translate_Manager(
+        chosen_language: chosen_language,
+        change_language: change_language,
+        child: Weather_Manager(
+          conditions_list: conditions_list,
+          current_tempurature: current_tempurature,
+          current_condition: current_condition,
+          child: Color_Manager(
+            // This class stores the color values for the web app
+            selected_option_index: selected_option_index,
+            reset_colors: reset_colors,
+            option_deuteranopia: option_deuteranopia,
+            option_protanopia: option_protanopia,
+            option_tritanopia: option_tritanopia,
+            primary_color: primary_color,
+            secondary_color: secondary_color,
+            background_color: background_color,
+            text_color: text_color,
+            active_color: active_color,
+            hover_color: hover_color,
+            inactive_color: inactive_color,
+            active_size_color: active_size_color,
+            active_confirm_color: active_confirm_color,
+            active_deny_color: active_deny_color,
+
+            child: MaterialApp(
+              title: 'Smoothie King App',
+              theme: ThemeData(
+                primarySwatch: Colors.red,
+              ),
+              routes:  <String, WidgetBuilder>{
+                Win_Login.route: (BuildContext context) => Win_Login(),
+                Win_Reset_Password.route: (BuildContext context) => Win_Reset_Password(),
+                Win_Create_Account.route: (BuildContext context) => Win_Create_Account(),
+                Win_Manager_View.route: (BuildContext context) => Win_Manager_View(),
+                Win_Server_View.route: (BuildContext context) => Win_Server_View(),
+                Win_Functions_Test_Page.route: (BuildContext context) => Win_Functions_Test_Page(),
+                Win_Loading_Page.route: (BuildContext context) => Win_Loading_Page(),
+                Win_View_Menu.route :(BuildContext context) => Win_View_Menu(),
+                Win_Edit_Smoothie.route: (BuildContext context) => Win_Edit_Smoothie(),
+                Win_Add_Smoothie.route: (BuildContext context) => Win_Add_Smoothie(),
+                Win_Order.route: (BuildContext context) => Win_Order(),
+                Win_View_Inventory.route :(BuildContext context) => Win_View_Inventory(),
+                Win_What_Sales.route :(BuildContext context) =>  Win_What_Sales(),
+                Win_Order_Inventory.route :(BuildContext context) => Win_Order_Inventory(),
+              },
+              initialRoute: Win_Login.route,
             ),
-            routes:  <String, WidgetBuilder>{
-              Win_Login.route: (BuildContext context) => Win_Login(),
-              Win_Reset_Password.route: (BuildContext context) => Win_Reset_Password(),
-              Win_Create_Account.route: (BuildContext context) => Win_Create_Account(),
-              Win_Manager_View.route: (BuildContext context) => Win_Manager_View(),
-              Win_Server_View.route: (BuildContext context) => Win_Server_View(),
-              Win_Functions_Test_Page.route: (BuildContext context) => Win_Functions_Test_Page(),
-              Win_Loading_Page.route: (BuildContext context) => Win_Loading_Page(),
-              Win_View_Menu.route :(BuildContext context) => Win_View_Menu(),
-              Win_Edit_Smoothie.route: (BuildContext context) => Win_Edit_Smoothie(),
-              Win_Add_Smoothie.route: (BuildContext context) => Win_Add_Smoothie(),
-              Win_Order.route: (BuildContext context) => Win_Order(),
-              Win_View_Inventory.route :(BuildContext context) => Win_View_Inventory(),
-            },
-            initialRoute:  Win_Login.route,
           ),
         ),
       ),

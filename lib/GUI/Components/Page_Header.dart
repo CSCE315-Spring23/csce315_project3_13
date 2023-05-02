@@ -21,14 +21,17 @@ PreferredSizeWidget Page_Header({required BuildContext context, required String 
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
 
-          Weather_Manager.of(context).current_condition == "Clear"? const Icon(Icons.sunny, size: 15, color: Colors.white,) : SizedBox(),
+          Weather_Manager.of(context).current_condition == Weather_Manager.of(context).conditions_list[0]? const Icon(Icons.sunny, size: 15, color: Colors.white,) : SizedBox(),
 
-          Weather_Manager.of(context).current_condition == "Drizzle"? const Icon(Icons.water_drop_rounded, size: 15, color: Colors.white,) : SizedBox(),
+          Weather_Manager.of(context).current_condition == Weather_Manager.of(context).conditions_list[1]? const Icon(Icons.water_drop_rounded, size: 15, color: Colors.white,) : SizedBox(),
 
-          Weather_Manager.of(context).current_condition == "Rain"? const Icon(Icons.water_drop_rounded, size: 15, color: Colors.white,) : SizedBox(),
+          Weather_Manager.of(context).current_condition == Weather_Manager.of(context).conditions_list[2]? const Icon(Icons.water_drop_rounded, size: 15, color: Colors.white,) : SizedBox(),
 
-          Weather_Manager.of(context).current_condition == "Clouds"? const Icon(Icons.cloud, size: 15, color: Colors.white,) : SizedBox(),
+          Weather_Manager.of(context).current_condition == Weather_Manager.of(context).conditions_list[3]? const Icon(Icons.cloud, size: 15, color: Colors.white,) : SizedBox(),
 
+          Weather_Manager.of(context).current_condition == Weather_Manager.of(context).conditions_list[4]? const Icon(Icons.cloud_queue_sharp, size: 15, color: Colors.white,) : SizedBox(),
+
+          Weather_Manager.of(context).current_condition == Weather_Manager.of(context).conditions_list[5]? const Icon(Icons.thunderstorm, size: 15, color: Colors.white,) : SizedBox(),
 
 
           Padding(

@@ -1,4 +1,4 @@
-import 'package:csce315_project3_13/Manager_View/Win_Manager_View.dart';
+import 'package:csce315_project3_13/GUI/Pages/Manager_View/Win_Manager_View.dart';
 import 'package:csce315_project3_13/Models/Order%20Models/addon_order.dart';
 import 'package:csce315_project3_13/Models/Order%20Models/curr_order.dart';
 import 'package:csce315_project3_13/Models/Order%20Models/smoothie_order.dart';
