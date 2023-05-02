@@ -1,3 +1,5 @@
+import 'package:csce315_project3_13/GUI/Pages/Sales%20Reports/Win_Itemized_Reports.dart';
+import 'package:csce315_project3_13/GUI/Pages/Sales%20Reports/Win_Reports_Hub.dart';
 import 'package:csce315_project3_13/GUI/Pages/Inventory/Win_Order_Inventory.dart';
 import 'package:csce315_project3_13/GUI/Pages/Manager_View/Win_Manager_View.dart';
 import 'package:csce315_project3_13/GUI/Pages/Server_View/Win_Server_View.dart';
@@ -22,6 +24,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'GUI/Pages/Login/Win_Login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
+import 'GUI/Pages/Sales Reports/Win_Z_Reports.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -365,6 +368,9 @@ class _MyAppState extends State<MyApp> {
                 Win_View_Inventory.route :(BuildContext context) => Win_View_Inventory(),
                 Win_What_Sales.route :(BuildContext context) =>  Win_What_Sales(),
                 Win_Order_Inventory.route :(BuildContext context) => Win_Order_Inventory(),
+                Win_Reports_Hub.route: (BuildContext context) => Win_Reports_Hub(),
+                Win_Z_Reports.route: (BuildContext context) => Win_Z_Reports(),
+                Win_Itemized_Reports.route: (BuildContext context) => Win_Itemized_Reports(),
               },
               initialRoute: Win_Login.route,
             ),
