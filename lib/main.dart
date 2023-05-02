@@ -1,3 +1,4 @@
+import 'package:csce315_project3_13/GUI/Menu%20Board/Win_Menu_Board.dart';
 import 'package:csce315_project3_13/GUI/Pages/Sales%20Reports/Win_Itemized_Reports.dart';
 import 'package:csce315_project3_13/GUI/Pages/Sales%20Reports/Win_Reports_Hub.dart';
 import 'package:csce315_project3_13/GUI/Pages/Inventory/Win_Order_Inventory.dart';
@@ -371,6 +372,7 @@ class _MyAppState extends State<MyApp> {
                 Win_Reports_Hub.route: (BuildContext context) => Win_Reports_Hub(),
                 Win_Z_Reports.route: (BuildContext context) => Win_Z_Reports(),
                 Win_Itemized_Reports.route: (BuildContext context) => Win_Itemized_Reports(),
+                Win_Menu_Board.route : (BuildContext context) => Win_Menu_Board(),
               },
               initialRoute: Win_Login.route,
             ),

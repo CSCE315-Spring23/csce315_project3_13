@@ -28,8 +28,8 @@ class _Win_Manager_ViewState extends State<Win_Manager_View> {
   google_translate_API _google_translate_api = google_translate_API();
 
   //Strings for display
-  List<String> list_page_texts_originals = ["Manager View", "Log out", "Order", "Manage Menu","Manage Inventory", "Reports Hub" ];
-  List<String> list_page_texts = ["Manager View", "Log out", "Order", "Manage Menu", "Manage Inventory", "Reports Hub"  ];
+  List<String> list_page_texts_originals = ["Manager View", "Log out", "Order", "Manage Menu","Manage Inventory", "What Sells Together", "Menu Board", "Reports Hub" ];
+  List<String> list_page_texts = ["Manager View", "Log out", "Order", "Manage Menu", "Manage Inventory",  "What Sells Together", "Menu Board", "Reports Hub" ];
   String text_page_header = "Manager View";
   String text_log_out_button = "Log out";
   String text_order_button = "Order";
@@ -62,9 +62,9 @@ class _Win_Manager_ViewState extends State<Win_Manager_View> {
       text_order_button = list_page_texts[2];
       text_manage_menu = list_page_texts[3];
       text_manage_inventory = list_page_texts[4];
-      text_reports_hub = list_page_texts[5];
       text_view_what_sales = list_page_texts[5];
       text_menu_board = list_page_texts[6];
+      text_reports_hub = list_page_texts[7];
 
       setState(() {
       });
@@ -98,21 +98,31 @@ class _Win_Manager_ViewState extends State<Win_Manager_View> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
-            Login_Button(onTap: (){
-              Navigator.pushReplacementNamed(context,Win_Order.route);
-            }, buttonName: text_order_button),
-            Login_Button(onTap: (){
-              Navigator.pushReplacementNamed(context,Win_View_Menu.route);
-            }, buttonName: text_manage_menu, fontSize: 18, buttonWidth: 180,),
-            Login_Button(onTap: (){
-              Navigator.pushReplacementNamed(context,Win_View_Inventory.route);
-            }, buttonName: text_manage_inventory, fontSize: 18, buttonWidth: 180,),
-            Login_Button(onTap: (){
-              Navigator.pushReplacementNamed(context,Win_Reports_Hub.route);
-            }, buttonName: text_reports_hub, fontSize: 18, buttonWidth: 180,),
-            Login_Button(onTap: (){
-              Navigator.pushReplacementNamed(context,Win_Menu_Board.route);
-            }, buttonName: text_menu_board, fontSize: 18, buttonWidth: 180,),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Login_Button(onTap: (){
+                  Navigator.pushReplacementNamed(context,Win_Order.route);
+                }, buttonName: text_order_button),
+                Login_Button(onTap: (){
+                  Navigator.pushReplacementNamed(context,Win_View_Menu.route);
+                }, buttonName: text_manage_menu, fontSize: 18, buttonWidth: 180,),
+                Login_Button(onTap: (){
+                  Navigator.pushReplacementNamed(context,Win_View_Inventory.route);
+                }, buttonName: text_manage_inventory, fontSize: 18, buttonWidth: 180,),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Login_Button(onTap: (){
+                  Navigator.pushReplacementNamed(context,Win_Reports_Hub.route);
+                }, buttonName: text_reports_hub, fontSize: 18, buttonWidth: 180,),
+                Login_Button(onTap: (){
+                  Navigator.pushReplacementNamed(context,Win_Menu_Board.route);
+                }, buttonName: text_menu_board, fontSize: 18, buttonWidth: 180,),
+              ],
+            ),
           ],
         ),
       ),

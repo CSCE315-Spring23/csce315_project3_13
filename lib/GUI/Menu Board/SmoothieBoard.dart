@@ -231,7 +231,7 @@ class _SmoothieBoardState extends State<SmoothieBoard> {
                               width: widget.width * (2 / 3),
                               height: 25,
                               alignment: Alignment.centerLeft,
-                              padding: const EdgeInsets.only(left: 5),
+                              padding: const EdgeInsets.only(left: 10),
                               margin: const EdgeInsets.only(bottom: 10),
                               child: FittedBox(
                                 fit: BoxFit.scaleDown,
