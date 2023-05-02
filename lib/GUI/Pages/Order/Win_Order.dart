@@ -124,6 +124,8 @@ class Win_Order_State extends State<Win_Order>
 
 
   List<String> _smoothie_names_translated = [];
+  List<String> _snack_names_translated = [];
+  List<String> _addon_names_translated = [];
 
 
 
@@ -223,6 +225,9 @@ class Win_Order_State extends State<Win_Order>
         _smoothie_names.add(clipped_name);
       }
     }
+
+    for (menu_item_obj snack in _snack_items){_snack_names.add(snack.menu_item);}
+    for (menu_item_obj addon in _addon_items){_addon_names.add(addon.menu_item);}
   }
 
   Future<void> getData_part2()async{
@@ -273,8 +278,7 @@ class Win_Order_State extends State<Win_Order>
 
     }
 
-    for (menu_item_obj snack in _snack_items){_snack_names.add(snack.menu_item);}
-    for (menu_item_obj addon in _addon_items){_addon_names.add(addon.menu_item);}
+
 
     // TODO: get categories
     // category_names = ["Feel Energized", "Get Fit", "Manage Weight", "Be Well", "Enjoy a Treat", "Seasonal"];
@@ -468,7 +472,7 @@ class Win_Order_State extends State<Win_Order>
             Expanded(
               child: Center(
                 child: Text(
-                  type == text_smoothie_tab? _smoothie_names_translated[_smoothie_names.indexOf(name)] : name,
+                  type == text_smoothie_tab? _smoothie_names_translated[_smoothie_names.indexOf(name)] :  type == text_snack_tab?  _snack_names_translated[_snack_names.indexOf(name)]:  type == text_addon_tab?  _addon_names_translated[_addon_names.indexOf(name)]: name,
                   style: TextStyle(fontSize:type != text_category_tab ? 15 : 25,),
                   textAlign: TextAlign.center,
                   maxLines: 3,
@@ -803,30 +807,12 @@ class Win_Order_State extends State<Win_Order>
 
       category_names = (await _google_translate_api.translate_batch(category_names_original,_translate_manager.chosen_language));
 
-
-      // await  getData_no_reload(_what_sales_manager);
-      // List<String> names_left = [];
-      // List<String> names_right = [];
-      // row_items.forEach((element) {
-      //   names_left.add(element.item1);
-      //   names_right.add(element.item2);
-      // });
-      // names_left = (await _google_translate_api.translate_batch(names_left,_translate_manager.chosen_language));
-      // names_right = (await _google_translate_api.translate_batch(names_right,_translate_manager.chosen_language));
-      // List<what_sales_together_row> item_row_new = [];
-      // int current_index = 0;
-      // row_items.forEach((element) {
-      //   item_row_new.add(what_sales_together_row(
-      //       row_items[current_index].id1, names_left[current_index], row_items[current_index].id2, names_right[current_index], row_items[current_index].num
-      //   ));
-      //   current_index++;
-      // });
-      // row_items = item_row_new;
-      // _isLoading = false;
       _current_lang = _translate_manager.chosen_language;
       call_set_translation = false;
       await getData();
       _smoothie_names_translated = (await _google_translate_api.translate_batch(_smoothie_names,_translate_manager.chosen_language));
+      _snack_names_translated = (await _google_translate_api.translate_batch(_snack_names,_translate_manager.chosen_language));
+      _addon_names_translated = (await _google_translate_api.translate_batch(_addon_names,_translate_manager.chosen_language));
 
       await getData_part2();
       // setState(() {
@@ -839,18 +825,10 @@ class Win_Order_State extends State<Win_Order>
         });
         // set_translation();
       }
-      print("current language is: " + _current_lang);
-      print("chosen language is: " + _translate_manager.chosen_language);
 
     if ((_isLoading && (_current_lang != _translate_manager.chosen_language))) {
       set_translation();
     }
-
-      // if ((_isLoading && call_set_translation)) {
-      //   set_translation();
-      // } else if (call_set_translation == false) {
-      //   call_set_translation = true;
-      // }
 
     //Translation functions
 
@@ -922,7 +900,7 @@ class Win_Order_State extends State<Win_Order>
                                   final rowIndex = _orderTable.indexOf(rowData);
                                   return DataRow(cells: [
                                     DataCell(Text('${rowData['index']}')),
-                                    DataCell(Text('${rowData['name']}')),
+                                    DataCell(Text('${_smoothie_names.indexOf(rowData['name'] as String) != -1 ? _smoothie_names_translated[_smoothie_names.indexOf(rowData['name'] as String)] : _snack_names_translated[_snack_names.indexOf(rowData['name'] as String)] }')),
                                     DataCell(Text('${rowData['size']}')),
                                     DataCell(Text('${rowData['price']}')),
                                     DataCell(
@@ -1008,7 +986,8 @@ class Win_Order_State extends State<Win_Order>
                                     return DataRow(cells: [
                                       // Todo: add amount column
                                       DataCell(Text('${rowData['index']}')),
-                                      DataCell(Text('${rowData['name']}')),
+                                      DataCell(Text('${_addon_names_translated[_addon_names.indexOf(rowData['name'] as String)] }')),
+                                      // DataCell(Text('${rowData['name']}')),
                                       DataCell(Text('${rowData['price']}')),
                                       DataCell(
                                         IconButton(
