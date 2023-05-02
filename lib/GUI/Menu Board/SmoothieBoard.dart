@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 class SmoothieBoard extends StatefulWidget {
-  final List<Map<String, dynamic>> items;
+  final List<Map<String, String>> items;
   final String category;
   final double width;
   final double height;
@@ -42,9 +42,9 @@ class _SmoothieBoardState extends State<SmoothieBoard> {
     _timer = Timer.periodic(const Duration(seconds: 6), (timer) {
       setState(()
       {
-        _startIndex = (_startIndex + (widget.width / 55).floor()) % (widget.items.length);
+        _startIndex = (_startIndex + (widget.height / 40).floor()) % (widget.items.length);
       });
-      if (_startIndex < (widget.width / 55).floor())
+      if (_startIndex < (widget.height / 40).floor())
         {
           _startIndex = 0;
         }
@@ -68,7 +68,7 @@ class _SmoothieBoardState extends State<SmoothieBoard> {
         child: AnimatedOpacity(
           duration: const Duration(seconds: 1),
           opacity: 1.0,
-          child: Column(
+            child: widget.category != "Snacks" ? Column(
             children: [
               Container(
                 height: 50,
@@ -133,7 +133,7 @@ class _SmoothieBoardState extends State<SmoothieBoard> {
                 ),
               ),
               for (var i = _startIndex;
-              i < _startIndex + (widget.width / 55).floor() && i < widget.items.length;
+              i < _startIndex + (widget.height / 40).floor() && i < widget.items.length;
               i++)
                 Row(
                   children: [
@@ -142,12 +142,12 @@ class _SmoothieBoardState extends State<SmoothieBoard> {
                       height: 22,
                       alignment: Alignment.centerLeft,
                       padding: const EdgeInsets.only(left: 5),
-                      margin: const EdgeInsets.only(bottom: 10),
+                      margin: EdgeInsets.only(bottom: widget.height / 50),
                       child: FittedBox(
                         fit: BoxFit.scaleDown,
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          widget.items[i]['name'],
+                          widget.items[i]['name']!,
                           style: const TextStyle(
                             fontSize: 30,
                           ),
@@ -156,7 +156,7 @@ class _SmoothieBoardState extends State<SmoothieBoard> {
                       ),
                     ),
                     Container(
-                      margin: const EdgeInsets.only(bottom: 10),
+                      margin: EdgeInsets.only(bottom: widget.height / 50),
                       width: (widget.width / 2) - 8,
                       child: Row(
                         children: [
@@ -198,7 +198,67 @@ class _SmoothieBoardState extends State<SmoothieBoard> {
                   ],
                 ),
             ],
-          ),
+          )
+                : Column(
+                    children: [
+                      Container(
+                        height: 50,
+                        margin: const EdgeInsets.only(bottom: 20),
+                        width: widget.width,
+                        decoration: BoxDecoration(
+                          color: widget.color,
+                          borderRadius: BorderRadius.circular(5.0),
+                        ),
+                        child: Center(
+                          child: Text(
+                            widget.category,
+                            style: const TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                      for (var i = _startIndex;
+                      i < _startIndex + (widget.height / 40).floor() && i < widget.items.length;
+                      i++)
+                        Row(
+                          children: [
+                            Container(
+                              width: widget.width * (2 / 3),
+                              height: 25,
+                              alignment: Alignment.centerLeft,
+                              padding: const EdgeInsets.only(left: 5),
+                              margin: const EdgeInsets.only(bottom: 10),
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  widget.items[i]['name']!,
+                                  style: const TextStyle(
+                                    fontSize: 30,
+                                  ),
+                                  textAlign: TextAlign.start,
+                                ),
+                              ),
+                            ),
+                            Container(
+                              margin: const EdgeInsets.only(bottom: 10),
+                              width: (widget.width / 3) - 8,
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(
+                                  '\$${widget.items[i]['price']}',
+                                  style: const TextStyle(fontSize: 15,),
+                                  maxLines: 1,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                    ],
+            ),
         ),
       ),
     );

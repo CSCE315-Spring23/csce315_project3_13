@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:csce315_project3_13/Manager_View/Win_Manager_View.dart';
+import 'package:csce315_project3_13/GUI/Menu%20Board/Board.dart';
 import 'package:csce315_project3_13/Models/Order%20Models/smoothie_order.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -11,6 +11,7 @@ import '../../Services/view_helper.dart';
 import '../Components/Login_Button.dart';
 import '../Components/Page_Header.dart';
 import '../Pages/Login/Win_Login.dart';
+import '../Pages/Manager_View/Win_Manager_View.dart';
 import 'SmoothieBoard.dart';
 
 class Win_Menu_Board extends StatefulWidget {
@@ -50,6 +51,8 @@ class _Win_Menu_BoardState extends State<Win_Menu_Board> {
   List<Map<String, String>> well_info = [];
   List<Map<String, String>> treat_info = [];
   List<Map<String, String>> other_info = [];
+  List<Map<String, String>> snack_info = [];
+  List<String> addon_info = [];
 
   Future<void> getData() async
   {
@@ -182,6 +185,18 @@ class _Win_Menu_BoardState extends State<Win_Menu_Board> {
       }
       );
     }
+
+    for (menu_item_obj snack in _snack_items)
+      {
+        snack_info.add({
+          'name': snack.menu_item,
+          'price' : snack.item_price.toStringAsFixed(2),
+        });
+      }
+    for (menu_item_obj addon in _addon_items)
+    {
+      addon_info.add(addon.menu_item);
+    }
   }
 
   get login_helper_instance => null;
@@ -214,7 +229,7 @@ class _Win_Menu_BoardState extends State<Win_Menu_Board> {
         ),
       ],
     ),
-      backgroundColor: _color_manager.background_color.withAlpha(100),
+      backgroundColor: _color_manager.background_color.withAlpha(122),
       body: _isLoading ? const SpinKitCircle(color: Colors.redAccent,)
           : Stack(
             children: [
@@ -286,6 +301,23 @@ class _Win_Menu_BoardState extends State<Win_Menu_Board> {
                   visible: !_view_smoothies,
                   child: Column(
                     children: [
+                      SizedBox(height: screenHeight / 50,),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Board(items: addon_info,
+                              width: screenWidth * (5 / 8),
+                              height: screenHeight * (6/7),
+                              color: Colors.blueAccent,
+                          ),
+                          SmoothieBoard(items: snack_info,
+                            category: "Snacks",
+                            width: screenWidth * (2/7),
+                            height: screenHeight * (6/7),
+                            color: Colors.redAccent,
+                          ),
+                        ],
+                      ),
                       Expanded(child: TextButton(
                         onPressed: (){
                           _view_smoothies = true;
@@ -294,8 +326,8 @@ class _Win_Menu_BoardState extends State<Win_Menu_Board> {
                         }, child: Container(),
                       ))
                     ],
-                  ))
-
+                  )
+              )
             ],
       ),
     );
