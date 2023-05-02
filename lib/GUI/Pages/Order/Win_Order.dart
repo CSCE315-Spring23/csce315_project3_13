@@ -618,7 +618,7 @@ class Win_Order_State extends State<Win_Order>
                             final rowIndex = _sum.indexOf(rowData);
                             return DataRow(cells: [
                               DataCell(Text('${rowData['index']}')),
-                              DataCell(Text('${rowData['name']}')),
+                              DataCell(Text('${_smoothie_names.indexOf(rowData['name'] as String) != -1 ? _smoothie_names_translated[_smoothie_names.indexOf(rowData['name'] as String)] :_snack_names.indexOf(rowData['name'] as String) != -1 ? _snack_names_translated[_snack_names.indexOf(rowData['name'] as String)] : _addon_names.indexOf(rowData['name'] as String) != -1 ? _addon_names_translated[_addon_names.indexOf(rowData['name'] as String)] : rowData['name'] }')),
                               DataCell(Text('${rowData['price']}')),
                             ]);
                           }).toList(),
@@ -802,7 +802,7 @@ class Win_Order_State extends State<Win_Order>
       text_order_sum_for = build_texts[23];
       text_order_sum = build_texts[24];
       text_order_processed_success = build_texts[25];
-      text_unable_process_order = build_texts[26];
+      // text_unable_process_order = build_texts[26];
 
 
       category_names = (await _google_translate_api.translate_batch(category_names_original,_translate_manager.chosen_language));
