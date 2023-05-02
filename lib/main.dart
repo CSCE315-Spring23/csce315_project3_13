@@ -1,3 +1,4 @@
+import 'package:csce315_project3_13/GUI/Pages/Sales%20Reports/Win_Itemized_Reports.dart';
 import 'package:csce315_project3_13/GUI/Pages/Sales%20Reports/Win_Reports_Hub.dart';
 import 'package:csce315_project3_13/Inherited_Widgets/Color_Manager.dart';
 import 'package:csce315_project3_13/GUI/Pages/Inventory/Win_View_Inventory.dart';
@@ -298,6 +299,7 @@ class _MyAppState extends State<MyApp> {
               Win_View_Inventory.route :(BuildContext context) => Win_View_Inventory(),
               Win_Reports_Hub.route: (BuildContext context) => Win_Reports_Hub(),
               Win_Z_Reports.route: (BuildContext context) => Win_Z_Reports(),
+              Win_Itemized_Reports.route: (BuildContext context) => Win_Itemized_Reports(),
             },
             initialRoute:  Win_Login.route,
           ),

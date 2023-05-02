@@ -12,7 +12,7 @@ import '../../Components/Page_Header.dart';
 import 'Win_Reports_Hub.dart';
 
 class Win_Itemized_Reports extends StatefulWidget {
-  static const String route = '/z-reports';
+  static const String route = '/itemized-reports';
   const Win_Itemized_Reports({super.key});
 
   @override
@@ -22,7 +22,8 @@ class Win_Itemized_Reports extends StatefulWidget {
 class _Win_Itemized_ReportsState extends State<Win_Itemized_Reports> {
   general_helper gen_help = general_helper();
   reports_helper rep_help = reports_helper();
-  DateTime date = DateTime.now();
+  DateTime date_1 = DateTime.now();
+  DateTime date_2 = DateTime.now();
   List<sales_report_row> rows = [];
   bool dataLoaded = true;
 
@@ -30,7 +31,7 @@ class _Win_Itemized_ReportsState extends State<Win_Itemized_Reports> {
   {
     print("Getting data...");
 
-    rows = rep_help.generate_sales_report(date1, date2);
+    rows = await rep_help.generate_sales_report(date1, date2);
     setState(()
     {
       dataLoaded = true;
@@ -40,36 +41,40 @@ class _Win_Itemized_ReportsState extends State<Win_Itemized_Reports> {
   Widget salesList(List<sales_report_row> rows, Color _text_color, Color _box_color)
   {
     print("Constructing sales list...");
-    return ListView.builder(
-      padding: const EdgeInsets.all(8),
-      itemCount: rows.length,
-      itemBuilder: (BuildContext context, int index) =>
+    if (rows.isEmpty) {
+      return Text('No data.',
+        style: TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+          color: _text_color,
+        ),
+      );
+    } else {
+      return ListView.builder(
+        padding: const EdgeInsets.all(8),
+        itemCount: rows.length,
+        itemBuilder: (BuildContext context, int index) =>
           Card(
-              color: _box_color,
-              shape: RoundedRectangleBorder(
-                side: BorderSide(
-                  color: Theme.of(context).colorScheme.outline,
-                ),
-                borderRadius: const BorderRadius.all(Radius.circular(12)),
+            color: _box_color,
+            shape: RoundedRectangleBorder(
+              side: BorderSide(
+                color: Theme.of(context).colorScheme.outline,
               ),
-              child: Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Text('${rows[index].item_name} sold \$${rows[index].amount_sold} units and made \$${rows[index].total_revenue} in revenue.',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: _text_color,
-                  ),
+              borderRadius: const BorderRadius.all(Radius.circular(12)),
+            ),
+            child: Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Text('${rows[index].item_name} sold \$${rows[index].amount_sold} units and made \$${rows[index].total_revenue} in revenue.',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: _text_color,
                 ),
-              )
+              ),
+            )
           ),
-    );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    getData();
+      );
+    }
   }
 
   @override
@@ -110,41 +115,37 @@ class _Win_Itemized_ReportsState extends State<Win_Itemized_Reports> {
           children: [
             Login_Button(
               onTap: () async {
-                DateTime ? newDate = await showDatePicker(
+                DateTime ? newDate_1 = await showDatePicker(
                   context: context,
-                  initialDate: date,
+                  initialDate: date_1,
                   firstDate: DateTime(2020),
                   lastDate: DateTime(2025),
                 );
 
-                if (newDate == null) return;
-
-                setState(() => date = newDate);
+                if (newDate_1 == null) return;
 
                 var formatter = DateFormat('MM/dd/yyyy');
-                String formattedDate = formatter.format(date);
+                String formattedDate_1 = formatter.format(date_1);
 
-                double z_rep = await rep_help.get_z_report(formattedDate);
-
-                showDialog(
-                  barrierDismissible: false,
+                DateTime ? newDate_2 = await showDatePicker(
                   context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      content: Text("Z report for the chosen date: $z_rep"),
-                      actions: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          child: const Text('OK'),
-                        )
-                      ],
-                    );
-                  },
+                  initialDate: date_2,
+                  firstDate: DateTime(2020),
+                  lastDate: DateTime(2025),
                 );
+
+                if (newDate_2 == null) return;
+
+                setState(() => date_1 = newDate_1);
+                setState(() => date_2 = newDate_2);
+
+                String formattedDate_2 = formatter.format(date_2);
+
+                dataLoaded = false;
+
+                getData(formattedDate_1, formattedDate_2);
               },
-              buttonName: "Get Z Report", fontSize: 18, buttonWidth: 180,),
+              buttonName: "Get Itemized Sales Report", fontSize: 18, buttonWidth: 180,),
           ],
         ),
       ),

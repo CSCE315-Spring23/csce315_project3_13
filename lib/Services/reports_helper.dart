@@ -65,61 +65,61 @@ class reports_helper
 
   }
 
-  Future<List<what_sales_together_row>> what_sales_together(String date1, String date2) async
-  {
-    print("Called what sales function");
-    Map<String, int> pairs = {};
-
-    HttpsCallable get_items = FirebaseFunctions.instance.httpsCallable('getItemsInOrder');
-    final res = await get_items.call({
-      'date1': date1,
-      'date2': date2
-    });
-    List<dynamic> order_data = res.data;
-
-    Map<int, List<dynamic>> item_info = await gen_helper.get_all_menu_item_info();
-
-    print("got all item info");
-    for (int index = 0; index < order_data.length; ++index) {
-      List<dynamic> l = order_data[index]['item_ids_in_order'];
-      l.sort();
-      if (l.length > 1) {
-        for (int i = 0; i < l.length; ++i) {
-          if(l[i] < 1000) {
-            if(item_info[l[i]]![1] == "smoothie") {
-              for(int j = i + 1; j < l.length; ++j) {
-                if(l[j] < 1000) {
-                  if(item_info[l[j]]![1] == "smoothie") {
-                    pair curr_pair = pair(l[i], l[j]);
-                    pairs.update(curr_pair.toString(), (value) => value + 1, ifAbsent: () => 1);
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-    print("reached here 1");
-    pairs = Map.fromEntries(pairs.entries.toList()
-      ..sort((e1, e2) => e2.value.compareTo(e1.value)));
-
-    List<what_sales_together_row> report = [];
-    for (MapEntry<String, int> e in pairs.entries) {
-      pair p = pair.fromString(e.key);
-      print("${p.left}, ${p.right} \t ${e.value}");
-      int id1 = p.left;
-      String item1 = item_info[id1]![0];
-      int id2 = p.right;
-      String item2 = item_info[id2]![0];
-      int num = e.value;
-      what_sales_together_row row = what_sales_together_row(id1, item1, id2, item2, num);
-      report.add(row);
-    }
-
-    return report;
-
-  }
+  // Future<List<what_sales_together_row>> what_sales_together(String date1, String date2) async
+  // {
+  //   print("Called what sales function");
+  //   Map<String, int> pairs = {};
+  //
+  //   HttpsCallable get_items = FirebaseFunctions.instance.httpsCallable('getItemsInOrder');
+  //   final res = await get_items.call({
+  //     'date1': date1,
+  //     'date2': date2
+  //   });
+  //   List<dynamic> order_data = res.data;
+  //
+  //   Map<int, List<dynamic>> item_info = await gen_helper.get_all_menu_item_info();
+  //
+  //   print("got all item info");
+  //   for (int index = 0; index < order_data.length; ++index) {
+  //     List<dynamic> l = order_data[index]['item_ids_in_order'];
+  //     l.sort();
+  //     if (l.length > 1) {
+  //       for (int i = 0; i < l.length; ++i) {
+  //         if(l[i] < 1000) {
+  //           if(item_info[l[i]]![1] == "smoothie") {
+  //             for(int j = i + 1; j < l.length; ++j) {
+  //               if(l[j] < 1000) {
+  //                 if(item_info[l[j]]![1] == "smoothie") {
+  //                   pair curr_pair = pair(l[i], l[j]);
+  //                   pairs.update(curr_pair.toString(), (value) => value + 1, ifAbsent: () => 1);
+  //                 }
+  //               }
+  //             }
+  //           }
+  //         }
+  //       }
+  //     }
+  //   }
+  //   print("reached here 1");
+  //   pairs = Map.fromEntries(pairs.entries.toList()
+  //     ..sort((e1, e2) => e2.value.compareTo(e1.value)));
+  //
+  //   List<what_sales_together_row> report = [];
+  //   for (MapEntry<String, int> e in pairs.entries) {
+  //     pair p = pair.fromString(e.key);
+  //     print("${p.left}, ${p.right} \t ${e.value}");
+  //     int id1 = p.left;
+  //     String item1 = item_info[id1]![0];
+  //     int id2 = p.right;
+  //     String item2 = item_info[id2]![0];
+  //     int num = e.value;
+  //     what_sales_together_row row = what_sales_together_row(id1, item1, id2, item2, num);
+  //     report.add(row);
+  //   }
+  //
+  //   return report;
+  //
+  // }
 
   Future<List<sales_report_row>> generate_sales_report(String date1, String date2) async {
     Map<int, int> sales = {};
