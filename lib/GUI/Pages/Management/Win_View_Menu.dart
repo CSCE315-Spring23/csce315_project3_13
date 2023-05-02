@@ -167,7 +167,6 @@ class _Win_View_Menu_State extends State<Win_View_Menu>
       addon_names.add(_addon_items[i].menu_item);
     }
 
-
   }
 
   // Popup that handle price editing
@@ -602,30 +601,12 @@ class _Win_View_Menu_State extends State<Win_View_Menu>
       {
         _isLoading = false;
       });
-
-
-
-
-
-      // category_names = (await _google_translate_api.translate_batch(category_names_original,_translate_manager.chosen_language));
-      //
-      // _current_lang = _translate_manager.chosen_language;
-      // call_set_translation = false;
-      // await getData();
-      // _smoothie_names_translated = (await _google_translate_api.translate_batch(_smoothie_names,_translate_manager.chosen_language));
-      // _snack_names_translated = (await _google_translate_api.translate_batch(_snack_names,_translate_manager.chosen_language));
-      // _addon_names_translated = (await _google_translate_api.translate_batch(_addon_names,_translate_manager.chosen_language));
-      //
-      // await getData_part2();
-      // setState(() {
-      // });
     }
 
     if ((!_isLoading) && (_current_lang != _translate_manager.chosen_language)) {
       setState(() {
         _isLoading = true;
       });
-      // set_translation();
     }
 
     if (((_isLoading && (_current_lang != _translate_manager.chosen_language))) || first_load) {
