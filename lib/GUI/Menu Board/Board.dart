@@ -37,9 +37,9 @@ class _BoardState extends State<Board> {
 
   void _startTimer() {
     _timer = Timer.periodic(const Duration(seconds: 10), (timer) {
-      _startIndex = (_startIndex + ((widget.height / 14).floor())) % (widget.items.length);
+      _startIndex = (_startIndex + ((widget.height / 17).floor())) % (widget.items.length);
       print(_startIndex);
-      if (_startIndex < ((widget.height / 14).floor()))
+      if (_startIndex < ((widget.height / 17).floor()))
       {
         _startIndex = 0;
       }
@@ -63,53 +63,52 @@ class _BoardState extends State<Board> {
           ),
           borderRadius: BorderRadius.circular(25.0),
         ),
-        child: AnimatedOpacity(
-          duration: const Duration(seconds: 1),
-          opacity: 1.0,
-          child:Column(
-            children: [
-              Container(
-                height: 50,
-                width: widget.width,
-                margin: EdgeInsets.only(bottom: widget.height / 100),
-                decoration: BoxDecoration(
-                  color: widget.color,
-                  borderRadius: BorderRadius.circular(5.0),
-                ),
-                child: const Center(
-                  child: Text(
-                    'Addons',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
+        child: Column(
+          children: [
+            Container(
+              height: 50,
+              width: widget.width,
+              margin: EdgeInsets.only(bottom: widget.height / 100),
+              decoration: BoxDecoration(
+                color: widget.color,
+                borderRadius: BorderRadius.circular(5.0),
+              ),
+              child: const Center(
+                child: Text(
+                  'Addons',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
                   ),
                 ),
               ),
-              for (int i = _startIndex;
-              i < _startIndex + (widget.height / 17).floor() && i < widget.items.length;
-              i = i + (widget.width/250).floor())
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                for (int j = i; j < i + (widget.width/250).floor() && j < widget.items.length;j++)
-                  Container(
-                    padding: EdgeInsets.symmetric(vertical: widget.height / 75),
+            ),
+            for (int i = _startIndex;
+            i < _startIndex + (widget.height / 17).floor() && i < widget.items.length;
+            i = i + (widget.width/250).floor())
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+              for (int j = i; j < i + (widget.width/250).floor() && j < widget.items.length;j++)
+                Container(
+                  padding: EdgeInsets.symmetric(vertical: widget.height / 70),
+                  child: SizedBox(
+                    width: 225,
                     child: FittedBox(
                       fit: BoxFit.scaleDown,
                       child: Text(
                           widget.items[j],
                         style: const TextStyle(
-                          fontSize: 22,
+                          fontSize: 20,
                         ),
                       ),
                     ),
                   ),
-                  ],
-              ),
-            ],
-          )
+                ),
+                ],
+            ),
+          ],
         ),
       ),
     );

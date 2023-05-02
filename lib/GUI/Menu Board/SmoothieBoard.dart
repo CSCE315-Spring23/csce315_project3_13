@@ -225,6 +225,7 @@ class _SmoothieBoardState extends State<SmoothieBoard> {
                       i < _startIndex + (widget.height / 40).floor() && i < widget.items.length;
                       i++)
                         Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             Container(
                               width: widget.width * (2 / 3),
