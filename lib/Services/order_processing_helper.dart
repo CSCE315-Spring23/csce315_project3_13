@@ -13,13 +13,18 @@ class order_processing_helper
   {
     Map<String, int> ingredient_amounts = await get_ingredient_totals(order.item_ids_in_order);
     List<String> invalid_items = await is_order_valid(ingredient_amounts);
+    print("Checking if invalid...");
     if(invalid_items.isEmpty) {
+      print("isEmpty!");
       for(MapEntry entry in ingredient_amounts.entries) {
         await inventory_decrement(entry.key, entry.value);
       }
 
       order.transaction_id = await get_new_transaction_id();
       await push_to_table(order.get_values());
+
+      double tot = order.total_price;
+      print('Updating x_rep with $tot');
       await report.update_x_report(order.total_price);
     }
 
