@@ -1,8 +1,10 @@
 import 'package:csce315_project3_13/GUI/Pages/Manager_View/Win_Manager_View.dart';
+import 'package:csce315_project3_13/Inherited_Widgets/Translate_Manager.dart';
 import 'package:csce315_project3_13/Models/Order%20Models/addon_order.dart';
 import 'package:csce315_project3_13/Models/Order%20Models/curr_order.dart';
 import 'package:csce315_project3_13/Models/Order%20Models/smoothie_order.dart';
 import 'package:csce315_project3_13/Models/Order%20Models/snack_order.dart';
+import 'package:csce315_project3_13/Services/google_translate_API.dart';
 import 'package:csce315_project3_13/Services/order_processing_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -23,10 +25,15 @@ class Win_Order extends StatefulWidget {
 
 class Win_Order_State extends State<Win_Order>
 {
-  // GOOGLE TRANSLATE STRINGS START
+  // GOOGLE TRANSLATE VARIABLES START
+  bool call_set_translation = true;
+  google_translate_API _google_translate_api = google_translate_API();
+  String _current_lang = "";
+
+
 
   List<String> build_texts_originals = [
-    "Smoothie King - Texas A&M MSC",
+    "Smoothie King ",
     "Return to Manager View",
     "Index",
     "Name",
@@ -47,7 +54,7 @@ class Win_Order_State extends State<Win_Order>
   ];
 
   List<String> build_texts = [
-    "Smoothie King - Texas A&M MSC",
+    "Smoothie King ",
     "Return to Manager View",
     "Index",
     "Name",
@@ -69,7 +76,7 @@ class Win_Order_State extends State<Win_Order>
 
 
   //Strings for build
-  String text_page_title =  "Smoothie King - Texas A&M MSC";
+  String text_page_title =  "Smoothie King ";
   String text_ret_prev_view = "Return to Manager View";
   String text_datacolumn_index = 'Index';
   String text_datacolumn_name = 'Name';
@@ -90,7 +97,7 @@ class Win_Order_State extends State<Win_Order>
 
 
 
-  // GOOGLE TRANSLATE STRINGS END
+  // GOOGLE TRANSLATE VARIABLES END
 
 
 
@@ -104,7 +111,10 @@ class Win_Order_State extends State<Win_Order>
   List<menu_item_obj> _smoothie_items = [];
   List<menu_item_obj> _snack_items = [];
   List<menu_item_obj> _addon_items = [];
-  List<String> category_names = [];
+
+  //Hardcoded and will be translated
+  List<String> category_names_original = ["Feel Energized", "Get Fit", "Manage Weight", "Be Well", "Enjoy a Treat", "Seasonal"];
+  List<String> category_names = ["Feel Energized", "Get Fit", "Manage Weight", "Be Well", "Enjoy a Treat", "Seasonal"];
 
 
   // controls visibility between smoothies and snacks menu
@@ -163,6 +173,7 @@ class Win_Order_State extends State<Win_Order>
 
   Future<void> getData() async
   {
+    print("called get data");
     view_helper name_helper = view_helper();
   //  _smoothie_names = await name_helper.get_unique_smoothie_names();
 
@@ -229,7 +240,7 @@ class Win_Order_State extends State<Win_Order>
     for (menu_item_obj addon in _addon_items){_addon_names.add(addon.menu_item);}
 
     // TODO: get categories
-    category_names = ["Feel Energized", "Get Fit", "Manage Weight", "Be Well", "Enjoy a Treat", "Seasonal"];
+    // category_names = ["Feel Energized", "Get Fit", "Manage Weight", "Be Well", "Enjoy a Treat", "Seasonal"];
 
     // TODO: remove the need for big list, by checking for type before calling
     _all_menu_items = _smoothie_items;
@@ -246,14 +257,14 @@ class Win_Order_State extends State<Win_Order>
     String price = _all_menu_items.firstWhere((menu_item_obj) => menu_item_obj.menu_item == (item_name)).item_price.toStringAsFixed(2);
     String size_abrv = (size != "-") ? (size == "small") ? "S" : (size == "medium") ? "M" : "L" : "-";
 
-    if (type == 'Smoothie'){
+    if (type == text_smoothie_tab){
       setState(() {
         _curr_smoothie.setSmoothiePrice(double.parse(price));
         price = _curr_smoothie.getCost().toStringAsFixed(2);
         _current_order.addSmoothie(_curr_smoothie);
       });
     }
-    else if (type == 'Snack'){
+    else if (type == text_snack_tab){
       snack_order snack = snack_order(
         name: item,
         price: double.parse(price),
@@ -346,6 +357,7 @@ class Win_Order_State extends State<Win_Order>
         foregroundColor: MaterialStateProperty.all<Color>(Colors.white70),
       ),
       onPressed: _activeMenu != tab_ctrl ?  (){
+        print("tab pressed");
         setState(() {
           if (tab_text == text_smoothies_tab)
           {
@@ -394,7 +406,7 @@ class Win_Order_State extends State<Win_Order>
           }
           else if (type == text_snack_tab) {
             setState(() {
-              _addToOrder(name, '-', 'Snack');
+              _addToOrder(name, '-', text_snack_tab);
             });
           }
           else if (type == text_addon_tab){
@@ -402,8 +414,9 @@ class Win_Order_State extends State<Win_Order>
               _addAddon(name);
             });
           }
-          else if (type == 'Category')
+          else if (type == text_category_tab)
             {
+              print("category tab selected");
               setState(() {
                 _curr_category = name;
                 _activeMenu2 = 2;
@@ -554,10 +567,10 @@ class Win_Order_State extends State<Win_Order>
                             fontWeight: FontWeight.bold,
                           ),
                           columnSpacing: 0,
-                          columns: const [
-                            DataColumn(label: Text('Index'),),
-                            DataColumn(label: Text('Name'),),
-                            DataColumn(label: Text('Price')),
+                          columns: [
+                            DataColumn(label: Text(text_datacolumn_index),),
+                            DataColumn(label: Text(text_datacolumn_name),),
+                            DataColumn(label: Text(text_datacolumn_price)),
                           ],
                           rows: _sum.map((rowData) {
                             final rowIndex = _sum.indexOf(rowData);
@@ -694,7 +707,7 @@ class Win_Order_State extends State<Win_Order>
   @override
   void initState() {
     super.initState();
-    getData();
+
   }
 
   @override
@@ -702,11 +715,103 @@ class Win_Order_State extends State<Win_Order>
     final _color_manager = Color_Manager.of(context);
     screenWidth = MediaQuery.of(context).size.width;
     screenHeight = MediaQuery.of(context).size.height;
+
+
+
+
+
+
+    // ToDo finish translation
+
+    final _translate_manager = Translate_Manager.of(context);
+
+    Future<void> set_translation() async {
+
+
+      build_texts = (await _google_translate_api.translate_batch(build_texts_originals,_translate_manager.chosen_language));
+
+      text_page_title = build_texts[0];
+      text_ret_prev_view = build_texts[1];
+      text_datacolumn_index = build_texts[2];
+      text_datacolumn_name = build_texts[3];
+      text_datacolumn_size = build_texts[4];
+      text_datacolumn_price = build_texts[5];
+      text_datacolumn_edit = build_texts[6];
+      text_datacolumn_delete = build_texts[7];
+      text_total = build_texts[8];
+      text_smoothies_tab = build_texts[9];
+      text_snacks_tab = build_texts[10];
+      text_category_tab = build_texts[11];
+      text_snack_tab = build_texts[12];
+      text_large_label = build_texts[13];
+      text_medium_label = build_texts[14];
+      text_small_label = build_texts[15];
+      text_addon_tab = build_texts[16];
+      // text_smoothie_tab = build_texts[17];
+
+
+      category_names = (await _google_translate_api.translate_batch(category_names_original,_translate_manager.chosen_language));
+
+
+      // await  getData_no_reload(_what_sales_manager);
+      // List<String> names_left = [];
+      // List<String> names_right = [];
+      // row_items.forEach((element) {
+      //   names_left.add(element.item1);
+      //   names_right.add(element.item2);
+      // });
+      // names_left = (await _google_translate_api.translate_batch(names_left,_translate_manager.chosen_language));
+      // names_right = (await _google_translate_api.translate_batch(names_right,_translate_manager.chosen_language));
+      // List<what_sales_together_row> item_row_new = [];
+      // int current_index = 0;
+      // row_items.forEach((element) {
+      //   item_row_new.add(what_sales_together_row(
+      //       row_items[current_index].id1, names_left[current_index], row_items[current_index].id2, names_right[current_index], row_items[current_index].num
+      //   ));
+      //   current_index++;
+      // });
+      // row_items = item_row_new;
+      // _isLoading = false;
+      _current_lang = _translate_manager.chosen_language;
+      call_set_translation = false;
+      getData();
+      // setState(() {
+      // });
+    }
+
+      if ((!_isLoading) && (_current_lang != _translate_manager.chosen_language)) {
+        setState(() {
+          _isLoading = true;
+        });
+        // set_translation();
+      }
+      print("current language is: " + _current_lang);
+      print("chosen language is: " + _translate_manager.chosen_language);
+
+    if ((_isLoading && (_current_lang != _translate_manager.chosen_language))) {
+      set_translation();
+    }
+
+      // if ((_isLoading && call_set_translation)) {
+      //   set_translation();
+      // } else if (call_set_translation == false) {
+      //   call_set_translation = true;
+      // }
+
+    //Translation functions
+
+
+
+
+
+
+
+
     return Scaffold(
       // TODO: Add smoothie king icon to page header
         appBar: Page_Header(
           context: context,
-          pageName: text_page_title,
+          pageName: text_page_title + " - Texas A&M MSC",
           buttons: [
             IconButton(
               tooltip: text_ret_prev_view,
@@ -1226,7 +1331,7 @@ class Win_Order_State extends State<Win_Order>
                                           _addToOrder(
                                             _curr_smoothie.getName(),
                                             _curr_smoothie.getSize(),
-                                            'Smoothie',
+                                            text_smoothie_tab,
                                           );
                                           _activeMenu2 = 0;
                                           _active_table = 0;
