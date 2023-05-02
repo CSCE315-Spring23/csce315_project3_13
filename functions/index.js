@@ -613,6 +613,7 @@ exports.getIngredientNames = functions.https.onCall(async (data, context) => {
         port: 5432,
     });
 
+
     await client.connect()
 
     const res = await client.query("SELECT DISTINCT ingredient_name FROM ingredients_table ORDER BY ingredient_name");
@@ -991,6 +992,25 @@ exports.getAllSmoothieIngredients = functions.https.onCall(async (data, context)
 
        return res.rows;
  });
+
+exports.getMenuItemsInfo = functions.https.onCall(async (data, context) => {
+    const client = new Client({
+      host: 'csce-315-db.engr.tamu.edu',
+      user: 'csce315331_team_13_master',
+      password: 'Lucky_13',
+      database: 'csce315331_team_13',
+      port: 5432,
+    });
+
+    await client.connect()
+
+    const res = await client.query("SELECT * FROM menu_items");
+
+    client.end();
+
+    return res.rows
+
+});
 
 
 

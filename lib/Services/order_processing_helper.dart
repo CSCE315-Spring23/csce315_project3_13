@@ -20,7 +20,6 @@ class order_processing_helper
 
       order.transaction_id = await get_new_transaction_id();
       await push_to_table(order.get_values());
-      // TODO: Find out why this is returning an error. 
       await report.update_x_report(order.total_price);
     }
 
