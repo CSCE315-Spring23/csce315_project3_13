@@ -50,7 +50,16 @@ class Win_Order_State extends State<Win_Order>
     "Medium",
     "Small",
     "Addon",
-    "Smoothie"
+    "Smoothie",
+    "Customer Name",
+    "Customer Name",
+    "Type here",
+    "CANCEL",
+    "CONFIRM",
+    "Order Summary for",
+    "Order Summary",
+    "Order Processed Successfully!",
+    "Unable To Process Order",
   ];
 
   List<String> build_texts = [
@@ -71,7 +80,16 @@ class Win_Order_State extends State<Win_Order>
     "Medium",
     "Small",
     "Addon",
-    "Smoothie"
+    "Smoothie",
+    "Customer Name",
+  "Customer Name",
+  "Type here",
+  "CANCEL",
+  "CONFIRM",
+  "Order Summary for",
+  "Order Summary",
+    "Order Processed Successfully!",
+    "Unable To Process Order",
   ];
 
 
@@ -93,7 +111,22 @@ class Win_Order_State extends State<Win_Order>
   String text_medium_label = "Medium";
   String text_small_label = "Small";
   String text_addon_tab = "Addon";
-  String text_smoothie_tab = "Smoothie";
+  String text_smoothie_tab = "Smoothie test";
+  String _curr_customer = "Customer Name";
+  String text_customer_name = "Customer Name";
+  String text_type_here = "Type here";
+  String text_cancel_button = "CANCEL";
+  String text_ok_button = "CONFIRM";
+  String text_order_sum_for = "Order Summary for";
+  String text_order_sum = "Order Summary";
+  String text_order_processed_success = "Order Processed Successfully!";
+  String text_unable_process_order = "Unable To Process Order";
+
+
+  List<String> _smoothie_names_translated = [];
+
+
+
 
 
 
@@ -132,7 +165,7 @@ class Win_Order_State extends State<Win_Order>
   menu_item_helper item_helper = menu_item_helper();
 
   TextEditingController customer = TextEditingController();
-  String _curr_customer = 'None';
+
 
   // Tracks current order using menu item models
   curr_order _current_order = curr_order();
@@ -173,7 +206,6 @@ class Win_Order_State extends State<Win_Order>
 
   Future<void> getData() async
   {
-    print("called get data");
     view_helper name_helper = view_helper();
   //  _smoothie_names = await name_helper.get_unique_smoothie_names();
 
@@ -191,6 +223,9 @@ class Win_Order_State extends State<Win_Order>
         _smoothie_names.add(clipped_name);
       }
     }
+  }
+
+  Future<void> getData_part2()async{
 
     // TODO: add categories to database, delete this once implemented
     for (String name in _smoothie_names)
@@ -198,6 +233,8 @@ class Win_Order_State extends State<Win_Order>
       if (name.contains("Espresso") || name.contains("Recharge") || name.contains("Cold Brew"))
       {
         energy_smoothies.add(name);
+        // print(_smoothie_names_translated[_smoothie_names.indexOf(name)]);
+        // energy_smoothies.add(_smoothie_names_translated[_smoothie_names.indexOf(name)]);
       }
       else  if (name.contains("Activator") || name.contains("Gladiator")
           || name.contains("Hulk") || name.contains("High Intensity")
@@ -249,6 +286,8 @@ class Win_Order_State extends State<Win_Order>
     setState(() {
       _isLoading = false;
     });
+
+    print(energy_smoothies);
   }
 
   // adds row to order table
@@ -316,20 +355,20 @@ class Win_Order_State extends State<Win_Order>
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Customer Name'),
+          title: Text(text_customer_name),
           content: TextFormField(
             controller: customer,
-            decoration: const InputDecoration(hintText: 'Type here...'),
+            decoration: InputDecoration(hintText: text_type_here + '...'),
           ),
           actions: <Widget>[
             TextButton(
-              child: const Text('CANCEL'),
+              child: Text(text_cancel_button),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: const Text('OK'),
+              child: Text(text_ok_button),
               onPressed: () {
                 setState(() {
                   _curr_customer = customer.text;
@@ -357,13 +396,12 @@ class Win_Order_State extends State<Win_Order>
         foregroundColor: MaterialStateProperty.all<Color>(Colors.white70),
       ),
       onPressed: _activeMenu != tab_ctrl ?  (){
-        print("tab pressed");
         setState(() {
-          if (tab_text == text_smoothies_tab)
+          if (tab_ctrl == 0)
           {
             _activeMenu = 0;
           }
-          else if (tab_text == text_snack_tab)
+          else if (tab_ctrl == 1)
           {
             _activeMenu = 1;
           }
@@ -430,7 +468,7 @@ class Win_Order_State extends State<Win_Order>
             Expanded(
               child: Center(
                 child: Text(
-                  name,
+                  type == text_smoothie_tab? _smoothie_names_translated[_smoothie_names.indexOf(name)] : name,
                   style: TextStyle(fontSize:type != text_category_tab ? 15 : 25,),
                   textAlign: TextAlign.center,
                   maxLines: 3,
@@ -552,9 +590,9 @@ class Win_Order_State extends State<Win_Order>
               Visibility(
                 visible: !_order_processing,
                 child: AlertDialog(
-                  title: Text(_curr_customer != "None"
-                      ? 'Order Summary for $_curr_customer'
-                      : "Order Summary"),
+                  title: Text(_curr_customer != build_texts_originals[18]
+                      ?  text_order_sum_for+ ' $_curr_customer'
+                      : text_order_sum),
                   //backgroundColor: Colors.white,
                   content: SizedBox(
                     width: screenWidth / 2,
@@ -586,13 +624,13 @@ class Win_Order_State extends State<Win_Order>
                   ),
                   actions: <Widget>[
                     TextButton(
-                      child: const Text('CANCEL'),
+                      child: Text(text_cancel_button),
                       onPressed: () {
                         Navigator.of(context).pop();
                       },
                     ),
                     TextButton(
-                        child: const Text('CONFIRM'),
+                        child: Text(text_ok_button),
                         onPressed: ()
                         {
                           Navigator.of(context).pop();
@@ -623,7 +661,7 @@ class Win_Order_State extends State<Win_Order>
               child: SpinKitPouringHourGlass(color: Colors.red,));
         });
     Icon message_icon = const Icon(Icons.check);
-    String message_text = 'Order Processed Successfully!';
+    String message_text = text_order_processed_success;
     try {
       setState(() {
         _order_processing = true;
@@ -650,14 +688,14 @@ class Win_Order_State extends State<Win_Order>
         _current_order.clear();
         _orderTable.clear();
         _addonTable.clear();
-        _curr_customer = "None";
+        _curr_customer = build_texts[18];
       });
     }
     catch (exception) {
       print(exception);
       message_icon = const Icon(Icons
           .error_outline_outlined);
-      message_text = 'Unable To Process Order.';
+      message_text = text_unable_process_order;
     }
     finally {
       setState(() {
@@ -676,7 +714,7 @@ class Win_Order_State extends State<Win_Order>
                       Navigator.of(context).pop();
                       Navigator.of(context).pop();
                     },
-                    child: const Text('OK'))
+                    child: Text(text_ok_button))
               ],
             );
           });
@@ -704,11 +742,6 @@ class Win_Order_State extends State<Win_Order>
     });
   }*/
 
-  @override
-  void initState() {
-    super.initState();
-
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -727,6 +760,11 @@ class Win_Order_State extends State<Win_Order>
 
     Future<void> set_translation() async {
 
+
+      //checks if customer name has been inputted
+      if(_curr_customer == build_texts[18]){
+        _curr_customer = build_texts_originals[18];
+      }
 
       build_texts = (await _google_translate_api.translate_batch(build_texts_originals,_translate_manager.chosen_language));
 
@@ -747,7 +785,20 @@ class Win_Order_State extends State<Win_Order>
       text_medium_label = build_texts[14];
       text_small_label = build_texts[15];
       text_addon_tab = build_texts[16];
-      // text_smoothie_tab = build_texts[17];
+      text_smoothie_tab = build_texts[17];
+
+      if((_curr_customer == build_texts_originals[18])){
+        _curr_customer = build_texts[18];
+      }
+
+      text_customer_name = build_texts[19];
+      text_type_here = build_texts[20];
+      text_cancel_button = build_texts[21];
+      text_ok_button = build_texts[22];
+      text_order_sum_for = build_texts[23];
+      text_order_sum = build_texts[24];
+      text_order_processed_success = build_texts[25];
+      text_unable_process_order = build_texts[26];
 
 
       category_names = (await _google_translate_api.translate_batch(category_names_original,_translate_manager.chosen_language));
@@ -774,7 +825,10 @@ class Win_Order_State extends State<Win_Order>
       // _isLoading = false;
       _current_lang = _translate_manager.chosen_language;
       call_set_translation = false;
-      getData();
+      await getData();
+      _smoothie_names_translated = (await _google_translate_api.translate_batch(_smoothie_names,_translate_manager.chosen_language));
+
+      await getData_part2();
       // setState(() {
       // });
     }
@@ -1269,7 +1323,7 @@ class Win_Order_State extends State<Win_Order>
                                       // - size is originally lowercase becuase our database
                                       //   has lower case size labels
                                         (
-                                        "${_curr_smoothie.getName()} ${_curr_smoothie.getSize() == "large"
+                                        "${_smoothie_names.indexOf(_curr_smoothie.getName()) != -1? _smoothie_names_translated[_smoothie_names.indexOf(_curr_smoothie.getName())]:  _curr_smoothie.getName()} ${_curr_smoothie.getSize() == "large"
                                             ? text_large_label : _curr_smoothie.getSize() == "medium"
                                             ? text_medium_label : text_small_label}",
                                         style: TextStyle(
@@ -1414,28 +1468,28 @@ class Win_Order_State extends State<Win_Order>
                           child: Stack(
                             children: <Widget>[
                               Visibility(
-                                visible: _curr_category == "Get Fit",
-                                child: buttonGrid(fitness_smoothies, "Smoothie", _color_manager.active_color),
+                                visible: _curr_category == category_names[1],
+                                child: buttonGrid(fitness_smoothies, text_smoothie_tab, _color_manager.active_color),
                               ),
                               Visibility(
-                                visible: _curr_category == "Feel Energized",
-                                child: buttonGrid(energy_smoothies, "Smoothie", _color_manager.active_color),
+                                visible: _curr_category == category_names[0],
+                                child: buttonGrid(energy_smoothies, text_smoothie_tab, _color_manager.active_color),
                               ),
                               Visibility(
-                                visible: _curr_category == "Manage Weight",
-                                child: buttonGrid(weight_smoothies, "Smoothie", _color_manager.active_color),
+                                visible: _curr_category == category_names[2],
+                                child: buttonGrid(weight_smoothies, text_smoothie_tab, _color_manager.active_color),
                               ),
                               Visibility(
-                                visible: _curr_category == "Be Well",
-                                child: buttonGrid(well_smoothies, "Smoothie", _color_manager.active_color),
+                                visible: _curr_category == category_names[3],
+                                child: buttonGrid(well_smoothies, text_smoothie_tab, _color_manager.active_color),
                               ),
                               Visibility(
-                                visible: _curr_category == "Enjoy a Treat",
-                                child: buttonGrid(treat_smoothies, "Smoothie", _color_manager.active_color),
+                                visible: _curr_category == category_names[4],
+                                child: buttonGrid(treat_smoothies, text_smoothie_tab, _color_manager.active_color),
                               ),
                               Visibility(
-                                visible: _curr_category == "Seasonal",
-                                child: buttonGrid(other_smoothies, "Smoothie", _color_manager.active_color),
+                                visible: _curr_category == category_names[5],
+                                child: buttonGrid(other_smoothies, text_smoothie_tab, _color_manager.active_color),
                               ),
                             ],
                           ),
