@@ -660,6 +660,7 @@ class _Win_View_Inventory_State extends State<Win_View_Inventory> {
 
     return Scaffold(
       appBar: Page_Header(
+        // showWeather: false,
         context: context,
         pageName: text_page_header,
         buttons: [

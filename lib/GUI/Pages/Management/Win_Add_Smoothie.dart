@@ -331,6 +331,7 @@ class _Win_Add_Smoothie_State extends State<Win_Add_Smoothie>
     getNames();
     return Scaffold(
       appBar: Page_Header(
+        // showWeather: false,
         context: context,
         pageName: text_page_name,
         buttons: [

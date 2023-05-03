@@ -290,6 +290,7 @@ class _Win_Edit_Smoothie_State extends State<Win_Edit_Smoothie> with AutomaticKe
 
     return Scaffold(
       appBar: Page_Header(
+        showWeather: false,
         context: context,
         pageName:  text_currently_editing + ": $_curr_item_name",
         buttons: [

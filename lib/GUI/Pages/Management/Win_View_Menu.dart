@@ -624,6 +624,7 @@ class _Win_View_Menu_State extends State<Win_View_Menu>
 
     return Scaffold(
       appBar: Page_Header(
+        showWeather: false,
         context: context,
         pageName: text_menu_item_man,
         buttons: [
