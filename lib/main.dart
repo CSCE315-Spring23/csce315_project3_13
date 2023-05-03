@@ -21,6 +21,7 @@ import 'package:csce315_project3_13/Services/google_translate_API.dart';
 import 'package:csce315_project3_13/Services/weather_API.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'GUI/Pages/Customer/Win_Cust_Order.dart';
 import 'GUI/Pages/Login/Win_Login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
@@ -373,8 +374,9 @@ class _MyAppState extends State<MyApp> {
                 Win_Z_Reports.route: (BuildContext context) => Win_Z_Reports(),
                 Win_Itemized_Reports.route: (BuildContext context) => Win_Itemized_Reports(),
                 Win_Menu_Board.route : (BuildContext context) => Win_Menu_Board(),
+                Win_Cust_Order.route: (BuildContext context) => Win_Cust_Order(),
               },
-              initialRoute: Win_Login.route,
+              initialRoute: Win_Manager_View.route,
             ),
           ),
         ),

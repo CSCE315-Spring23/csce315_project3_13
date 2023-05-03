@@ -1,4 +1,5 @@
 import 'package:csce315_project3_13/GUI/Menu%20Board/Win_Menu_Board.dart';
+import 'package:csce315_project3_13/GUI/Pages/Customer/Win_Cust_Order.dart';
 import 'package:csce315_project3_13/GUI/Pages/Order/Win_Order.dart';
 import 'package:csce315_project3_13/Inherited_Widgets/Color_Manager.dart';
 import 'package:csce315_project3_13/GUI/Components/Login_Button.dart';
@@ -28,8 +29,8 @@ class _Win_Manager_ViewState extends State<Win_Manager_View> {
   google_translate_API _google_translate_api = google_translate_API();
 
   //Strings for display
-  List<String> list_page_texts_originals = ["Manager View", "Log out", "Order", "Manage Menu","Manage Inventory", "What Sells Together", "Menu Board", "Reports Hub" ];
-  List<String> list_page_texts = ["Manager View", "Log out", "Order", "Manage Menu", "Manage Inventory",  "What Sells Together", "Menu Board", "Reports Hub" ];
+  List<String> list_page_texts_originals = ["Manager View", "Log out", "Order", "Manage Menu","Manage Inventory", "What Sells Together", "Menu Board", "Reports Hub", "Self-Serve"];
+  List<String> list_page_texts = ["Manager View", "Log out", "Order", "Manage Menu", "Manage Inventory",  "What Sells Together", "Menu Board", "Reports Hub", "Self-Serve"];
   String text_page_header = "Manager View";
   String text_log_out_button = "Log out";
   String text_order_button = "Order";
@@ -38,7 +39,7 @@ class _Win_Manager_ViewState extends State<Win_Manager_View> {
   String text_view_what_sales = "What Sells Together";
   String text_menu_board = "Menu Board";
   String text_reports_hub = "Reports Hub";
-
+  String cust_order = "Self Serve";
 
 
 
@@ -65,7 +66,7 @@ class _Win_Manager_ViewState extends State<Win_Manager_View> {
       text_view_what_sales = list_page_texts[5];
       text_menu_board = list_page_texts[6];
       text_reports_hub = list_page_texts[7];
-
+      cust_order = list_page_texts[8];
       setState(() {
       });
     }
@@ -121,6 +122,14 @@ class _Win_Manager_ViewState extends State<Win_Manager_View> {
                 Login_Button(onTap: (){
                   Navigator.pushReplacementNamed(context,Win_Menu_Board.route);
                 }, buttonName: text_menu_board, fontSize: 18, buttonWidth: 180,),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Login_Button(onTap: (){
+                  Navigator.pushReplacementNamed(context,Win_Cust_Order.route);
+                }, buttonName: cust_order, fontSize: 18, buttonWidth: 180,),
               ],
             ),
           ],
