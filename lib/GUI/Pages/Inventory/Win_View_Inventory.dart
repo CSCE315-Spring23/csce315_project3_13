@@ -1,3 +1,5 @@
+/// Window for viewing the inventory.
+
 import 'package:csce315_project3_13/GUI/Components/Login_Button.dart';
 import 'package:csce315_project3_13/GUI/Pages/Inventory/Win_Order_Inventory.dart';
 import 'package:csce315_project3_13/GUI/Pages/Manager_View/Win_Manager_View.dart';

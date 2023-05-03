@@ -1,3 +1,5 @@
+/// Window for editing a smoothie.
+
 import 'package:csce315_project3_13/GUI/Pages/Management/Win_View_Menu.dart';
 import 'package:csce315_project3_13/Inherited_Widgets/Translate_Manager.dart';
 import 'package:csce315_project3_13/Services/google_translate_API.dart';
