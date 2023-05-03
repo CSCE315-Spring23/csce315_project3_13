@@ -9,6 +9,12 @@ PreferredSizeWidget Page_Header({required BuildContext context, required String 
   return AppBar(
     backgroundColor: Color_Manager.of(context).primary_color,
     centerTitle: false,
+    leading: Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Image.asset("logo.png",
+      color: Color_Manager.of(context).text_color,
+      ),
+    ),
     title: Text(pageName,
       style: const TextStyle(
         fontSize: 18,
