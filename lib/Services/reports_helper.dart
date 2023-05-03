@@ -1,18 +1,18 @@
 import 'dart:collection';
-import 'dart:core';
+import 'dart:math';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:csce315_project3_13/Services/general_helper.dart';
+import 'package:csce315_project3_13/Services/inventory_helper.dart';
+import 'package:intl/intl.dart';
 import '../Models/models_library.dart';
 import 'dart:math';
 
-/// A helper class for generating sales reports and obtaining Z Reports
 class reports_helper
 {
 
   general_helper gen_helper = general_helper();
+  inventory_item_helper inv_helper = inventory_item_helper();
 
-  /// Returns the sales amount of a single day's Z report as a double.
-  /// Dates should be in the format "mm-dd-yyyy".
   Future<double> get_z_report(String date) async
   {
     HttpsCallable getter = FirebaseFunctions.instance.httpsCallable('getZReport');
@@ -29,8 +29,7 @@ class reports_helper
   }
 
 
-  /// Returns a map of all Z reports between two given dates.
-  /// The keys of the map are strings representing the dates, and the values are the sales
+
   Future<Map<String, double>> get_all_z_reports() async
   {
     HttpsCallable getter = FirebaseFunctions.instance.httpsCallable('getAllZReports');
@@ -47,8 +46,6 @@ class reports_helper
   return z_reports;
   }
 
-  /// Updates the X report by adding a given amount.
-  /// If the current amount is 0, then a new Z report is created.
   Future<void> update_x_report(double amount) async
   {
     String date = await gen_helper.get_current_date();
@@ -72,9 +69,6 @@ class reports_helper
 
   }
 
-  /// Returns a list of all item pairs that were sold together between two given dates.
-  /// The returned list is sorted in descending order of frequency of sales.
-  /// Dates should be in the format "mm-dd-yyyy".
   Future<List<what_sales_together_row>> what_sales_together(String date1, String date2) async
   {
     print("Called what sales function");
@@ -131,11 +125,6 @@ class reports_helper
 
   }
 
-  /// Generates a sales report for menu items sold within a specified date range.
-  /// - [date1]: A [String] representing the starting date of the date range.
-  /// - [date2]: A [String] representing the ending date of the date range.
-  /// Returns: A [Future] of a [List] of [sales_report_row], each containing information
-  /// about the type of menu item, its ID, name, amount sold, and total revenue.
   Future<List<sales_report_row>> generate_sales_report(String date1, String date2) async {
     Map<int, int> sales = {};
     Map<int, List<dynamic>> item_info = await gen_helper.get_all_menu_item_info();
@@ -174,14 +163,11 @@ class reports_helper
     return report;
   }
 
-  /// Generates a restock report for ingredients used in menu items sold within the last week.
-  ///
-  /// Returns: A [Future] of a [Map] with ingredient names as keys and the number of new minimums for each inventory item as values
-  Future<Map<dynamic, int>> generate_restock_report() async {
+  Future<Map<String, int>> generate_restock_report() async {
 // Get the ingredients amount for each ingredient in every smoothie
     Map<int, Map<String, int>> smoothie_ingredient_dict = {};
     HttpsCallable dict_filler = FirebaseFunctions.instance.httpsCallable('getAllSmoothieIngredients');
-    Map<int, List<dynamic>> item_info = await gen_helper.get_all_menu_item_info();
+    Map<int, List> item_info = await gen_helper.get_all_menu_item_info();
     final filler_res = await dict_filler();
     List<dynamic> ingr_info = filler_res.data;
     for(dynamic d in ingr_info) {
@@ -200,10 +186,10 @@ class reports_helper
       smoothie_ingredient_dict[id] = entry;
     }
 
-// Print out all of the ingredient info for every smoothie
-    for(MapEntry<int, Map<String, int>> e in smoothie_ingredient_dict.entries) {
-      print("${e.key} \t ${e.value}");
-    }
+// // Print out all of the ingredient info for every smoothie
+//     for(MapEntry<int, Map<String, int>> e in smoothie_ingredient_dict.entries) {
+//       print("${e.key} \t ${e.value}");
+//     }
 
 // Get the list of item IDs for orders placed within the last week
     HttpsCallable getWeekOrders = FirebaseFunctions.instance.httpsCallable('generateWeekOrders');
@@ -214,6 +200,7 @@ class reports_helper
     Map<String, int> ingredientMap = Map();
     for(int i = 0; i < orders.length; i++){
       List<int> itemIDs = List<int>.from(orders[i]['item_ids_in_order']);
+      //print(itemIDs);
       for(int item_id in itemIDs) {
         if(smoothie_ingredient_dict[item_id] != null) { // Meaning the item from the order is a smoothie
           Map<String, int> smoothie_ings = smoothie_ingredient_dict[item_id] as Map<String, int>;
@@ -231,9 +218,9 @@ class reports_helper
       }
     }
 
-    print(ingredientMap);
+   //print(ingredientMap);
 
-print("after");
+   // print("after");
 // Update the minimum inventory levels
     HttpsCallable getMin = FirebaseFunctions.instance.httpsCallable('getInventoryMin');
     final resInv = await getMin.call();
@@ -247,13 +234,65 @@ print("after");
       }
     }
 
-// Call the generateRestockReport function and return the updated inventory levels
-    HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('generateRestockReport');
-    final result = await callable.call({'invMin': invMin});
-    Map<String, dynamic> reportMap = result.data;
+    Map<String, num> inventoryItems = await inv_helper.get_order_items();
+    final mapToReturn = <String, int>{};
+    for (final entry in invMin.entries) {
+      final ingredient = entry.key;
+      if(ingredient == "Vegan Dark Chocolate Banana"){
+        continue;
+      }
+      final minimum = entry.value;
+      final amountInvStock = inventoryItems[ingredient] ?? 0;
+      if (amountInvStock < minimum) {
+        final newAmount = (minimum * 1.1).ceil();
+        mapToReturn[ingredient] = newAmount;
+      }
+    }
 
-    print(invMin);
-    return invMin;
+   // print(mapToReturn);
+    return mapToReturn;
   }
+
+Future<void> restock() async {
+  Map<String, String> expire = await inv_helper.getExpire();
+  Map<dynamic, int> restock_report = await generate_restock_report();
+  Map<String, int> conv;
+
+  for (var entry in restock_report.keys) {
+    if(entry == 'Vegan Dark Chocolate Banana'){
+      continue;
+    }
+
+    conv = await inv_helper.place_order(entry);
+    // Get the conversion map for the ingredient
+    final val = conv.entries.elementAt(0);
+    String unit = val.key;
+    int conversion = val.value;
+    String ingredient = entry;
+    int? amount_inv_stock = restock_report[entry];
+    String expiration_date = expire[ingredient]!;
+    int amount_ordered = (amount_inv_stock! / conversion).ceil();
+    String date_ordered = DateFormat('MM/dd/yyyy').format(DateTime.now());
+    amount_inv_stock = conversion * amount_ordered;
+    inventory_item_obj item = inventory_item_obj(
+      0, // inv_order_id
+      "available", // status
+      ingredient,
+      amount_inv_stock!,
+      amount_ordered,
+      unit,
+      date_ordered,
+      expiration_date,
+      conversion,
+    );
+
+    // print(item.toJson());
+
+    // Add new inventory item object to the database
+   await inv_helper.add_inventory_row(item);
+  }
+print("done");
+}
+
 
 }

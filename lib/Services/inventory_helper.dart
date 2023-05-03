@@ -1,13 +1,14 @@
+import 'dart:collection';
+
 import 'package:cloud_functions/cloud_functions.dart';
+import 'package:csce315_project3_13/Services/reports_helper.dart';
 
 import '../Models/models_library.dart';
 
-
-/// This class provides helper functions to interact with the inventory table in the Firebase database.
 class inventory_item_helper
 {
-  /// Retrieves a map of inventory items with their respective amounts in stock.
-  /// Returns a Future<Map<String, num>> representing the inventory items and their amounts.
+  //reports_helper report = reports_helper();
+
   Future<Map<String, num>> get_inventory_items() async
   {
     HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('getInventoryItems');
@@ -36,9 +37,7 @@ class inventory_item_helper
     return inventoryItems;
   }
 
-  /// Adds a new row to the inventory table in the Firebase database.
-  /// [item] is an [inventory_item_obj] object that contains the values to be added to the table.
-  /// Returns a Future<int> representing the ID of the newly added row.
+
   Future<int> add_inventory_row(inventory_item_obj item) async
   {
     HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('addInventoryRow');
@@ -47,18 +46,12 @@ class inventory_item_helper
     return result.data;
   }
 
-  /// Deletes a row from the inventory table in the Firebase database.
-  /// [itemName] is a String representing the name of the item to be deleted.
   Future<void> deleteInventoryItem(String itemName) async
   {
     HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('deleteInventoryItem');
     final result = await callable.call({'itemName': itemName});
   }
 
-  /// Edits the amount of an existing row in the inventory table in the Firebase database.
-  /// [itemName] is a String representing the name of the item to be edited.
-  /// [changeAmount] is a num representing the amount to be added to the existing amount.
-  /// Returns a Future<bool> representing the success of the operation.
   Future<bool> edit_inventory_entry(String itemName, num changeAmount) async {
     HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('editInventoryEntry');
     final result = await callable.call({'itemName': itemName, 'changeAmount': changeAmount});
@@ -66,6 +59,98 @@ class inventory_item_helper
     return result.data;
   }
 
+  Future<Map<String, int>> place_order(String itemName) async {
+    HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('getIngredientOrder');
+    final result = await callable.call({'itemName': itemName});
+    Map<String, int> map = HashMap();
+    for(var i in result.data){
+    map[i["unit"]] = i["conversion"];
+    }
+    //print(map);
+    return map;
+  }
+
+  Future<Map<String, num>> get_order_items() async
+  {
+    HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('getOrderItems');
+    final result = await callable.call();
+
+    Map<String, num> inventoryItems = {};
+    for (var itemData in result.data)
+    {
+      String itemName = itemData["ingredient"];
+      if (!inventoryItems.containsKey(itemName))
+      {
+        inventoryItems[itemName] = 0;
+      }
+      inventoryItems[itemName] = (inventoryItems[itemName] ?? 0) + (itemData["amount_inv_stock"] ?? 0);
+
+    }
+    // for (String itemName in inventoryItems.keys) {
+    //   num? amount = inventoryItems[itemName];
+    //   print("$itemName: $amount");
+    // }
+
+    return inventoryItems;
+  }
+
+  Future<Map<String, String>> getExpire() async {
+    HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('getExpiration');
+    final result = await callable.call();
+    Map<String, String> map = HashMap();
+    for (var i in result.data) {
+      int years = i['interval']['years'] ?? 0;
+      int days = i['interval']['days'] ?? 0;
+
+      // Compute the new expiration date
+      DateTime now = DateTime.now();
+      DateTime expirationDate = DateTime(now.year + years, now.month, now.day + days);
+
+      // Format the expiration date as a string
+      String formattedExpirationDate = "${expirationDate.month}/${expirationDate.day}/${expirationDate.year}";
+
+      map[i['ingredient']] = formattedExpirationDate;
+    }
+
+   // print(map);
+    return map;
+  }
+
+  // Future<void> restock() async {
+  //   Map<String, String> expire = await getExpire();
+  //   Map<dynamic, int> restock_report = await report.generate_restock_report();
+  //   Map<String, int> conv;
+  //
+  //   for (var entry in restock_report.keys.first) {
+  //     conv = await place_order(entry);
+  //     // Get the conversion map for the ingredient
+  //     String ingredient = entry.key;
+  //     int amount_inv_stock = entry.value;
+  //     int conversion = conv['conversion']!;
+  //     String unit = conv['unit']!.toString();
+  //     String expiration_date = expire[ingredient]!;
+  //     int amount_ordered = (amount_inv_stock / conversion).ceil();
+  //     String date_ordered = DateTime.now().toString();
+  //
+  //     inventory_item_obj item = inventory_item_obj(
+  //       0, // inv_order_id
+  //       "available", // status
+  //       ingredient,
+  //       amount_inv_stock,
+  //       amount_ordered,
+  //       unit,
+  //       date_ordered,
+  //       expiration_date,
+  //       conversion,
+  //     );
+  //
+  //     item.toJson();
+  //     // Add new inventory item object to the database
+  //   //  await DatabaseHelper.instance.insertInventory(item);
+  //   }
+  //
+  //
+  // }
 
 
 }
