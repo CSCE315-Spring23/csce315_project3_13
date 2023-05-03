@@ -7,13 +7,19 @@ class SmoothieBoard extends StatefulWidget {
   final double width;
   final double height;
   final Color color;
+  final bool isSnacks;
+  final List<String> orginal_names;
+  final List<String> translated_names;
 
   SmoothieBoard({Key? key,
+    required this.orginal_names,
+    required this.translated_names,
     required this.items,
     required this.category,
     required this.width,
     required this.height,
     required this.color,
+    required this.isSnacks,
   }) : super(key: key);
 
   @override
@@ -68,7 +74,7 @@ class _SmoothieBoardState extends State<SmoothieBoard> {
         child: AnimatedOpacity(
           duration: const Duration(seconds: 1),
           opacity: 1.0,
-            child: widget.category != "Snacks" ? Column(
+            child: (widget.isSnacks == false)? Column(
             children: [
               Container(
                 height: 50,
@@ -148,7 +154,7 @@ class _SmoothieBoardState extends State<SmoothieBoard> {
                         fit: BoxFit.scaleDown,
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          widget.items[i]['name']!,
+                          widget.translated_names[widget.orginal_names.indexOf(widget.items[i]['name'] as String)] ,
                           style: const TextStyle(
                             fontSize: 30,
                           ),
@@ -222,7 +228,7 @@ class _SmoothieBoardState extends State<SmoothieBoard> {
                         ),
                       ),
                       for (var i = _startIndex;
-                      i < _startIndex + (widget.height / 40).floor() && i < widget.items.length;
+                      i < (_startIndex + (widget.height / 40).floor()- 1) && (i < widget.items.length);
                       i++)
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -237,7 +243,7 @@ class _SmoothieBoardState extends State<SmoothieBoard> {
                                 fit: BoxFit.scaleDown,
                                 alignment: Alignment.centerLeft,
                                 child: Text(
-                                  widget.items[i]['name']!,
+                                  widget.translated_names[widget.orginal_names.indexOf(widget.items[i]['name'] as String)],
                                   style: const TextStyle(
                                     fontSize: 30,
                                   ),

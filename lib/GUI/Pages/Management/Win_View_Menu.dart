@@ -254,6 +254,8 @@ class _Win_View_Menu_State extends State<Win_View_Menu>
                   setState(() {
                     items.removeAt(index);
                   });
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pushReplacementNamed(Win_View_Menu.route);
                 }
                 catch(exception)
                 {
