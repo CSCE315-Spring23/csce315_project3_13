@@ -1046,7 +1046,7 @@ exports.getExcessIngredients = functions.https.onCall(async (data, context) => {
 
     await client.connect()
 
-    const res = await client.query("SELECT DISTINCT ingredient from inventory");
+    const res = await client.query("SELECT DISTINCT ingredient from inventory ORDER BY ingredient");
 
     client.end()
 
