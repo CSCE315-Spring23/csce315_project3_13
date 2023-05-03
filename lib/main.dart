@@ -23,6 +23,7 @@ import 'package:csce315_project3_13/Services/weather_API.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'GUI/Pages/Customer/Win_Cust_Order.dart';
+import 'GUI/Pages/Inventory/Win_Restock_Inventory.dart';
 import 'GUI/Pages/Login/Win_Login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
@@ -379,7 +380,7 @@ class _MyAppState extends State<MyApp> {
                 Win_Restock_Inventory.route : (BuildContext context) => Win_Restock_Inventory(),
                 Win_Cust_Order.route: (BuildContext context) => Win_Cust_Order(),
               },
-              initialRoute: Win_Login.route,
+              initialRoute: Win_Manager_View.route,
             ),
           ),
         ),

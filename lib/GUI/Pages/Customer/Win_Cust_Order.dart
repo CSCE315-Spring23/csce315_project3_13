@@ -421,8 +421,8 @@ class Win_Cust_Order_State extends State<Win_Cust_Order>
   Widget buttonGrid(List<String> button_names, String type, Color _button_color){
     return GridView.count(
       shrinkWrap: true,
-      crossAxisCount: type != text_category_tab ?  type != text_addon_tab ? 5 : 5 : 3,
-      childAspectRatio:type != text_category_tab? 1.2 : 2,
+      crossAxisCount: type != text_category_tab ?  type != text_addon_tab ? 5 : 4 : 3,
+      childAspectRatio:type != text_category_tab? 1.5 : 2,
       padding: const EdgeInsets.all(5),
       mainAxisSpacing: 20,
       crossAxisSpacing: 20,
@@ -434,7 +434,12 @@ class Win_Cust_Order_State extends State<Win_Cust_Order>
           style: ButtonStyle(
             backgroundColor: MaterialStatePropertyAll(_button_color),
             minimumSize: MaterialStateProperty.all(const Size(125, 75)),
-            elevation: const MaterialStatePropertyAll(6),
+            elevation: const MaterialStatePropertyAll(8),
+            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
+              ),
+            ),
           ),
           onPressed: () {
             if (type == text_smoothie_tab ) {
@@ -475,14 +480,14 @@ class Win_Cust_Order_State extends State<Win_Cust_Order>
                 child: Center(
                   child: Text(
                     type == text_smoothie_tab? _smoothie_names_translated[_smoothie_names.indexOf(name)] :  type == text_snack_tab?  _snack_names_translated[_snack_names.indexOf(name)]:  type == text_addon_tab?  _addon_names_translated[_addon_names.indexOf(name)]: name,
-                    style: TextStyle(fontSize:type != text_category_tab ? 20 : 30,),
+                    style: TextStyle(fontSize:type != text_category_tab ? type !=text_addon_tab ? 20: 15 : 30,),
                     textAlign: TextAlign.center,
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ),
-              type != text_category_tab ? Padding(
+              type != text_category_tab ? type != text_addon_tab ? Padding(
                 padding: const EdgeInsets.only(bottom: 2),
                 child: type != text_smoothie_tab ? Text(
                   _all_menu_items.firstWhere((menu_item_obj) => menu_item_obj.menu_item == (name)).item_price.toStringAsFixed(2),
@@ -510,7 +515,7 @@ class Win_Cust_Order_State extends State<Win_Cust_Order>
                       ),
                     ]
                 ),
-              ) : Container(),
+              ) : Container() : Container(),
             ],
           ),
         ),
@@ -829,7 +834,7 @@ class Win_Cust_Order_State extends State<Win_Cust_Order>
         // - avoid using background color when loaded widget because it messes with alphas adjustments
         backgroundColor: _isLoading ? Colors.white : Colors.white,
         body: _isLoading ?  Center(
-          child: SpinKitCircle(color: _color_manager.text_color,),
+          child: SpinKitCircle(color: _color_manager.primary_color,),
         ) : Center(
           child: Stack(
             children: <Widget>[
@@ -1239,6 +1244,11 @@ class Win_Cust_Order_State extends State<Win_Cust_Order>
                                                       backgroundColor: MaterialStateProperty.all(
                                                         _color_manager.active_color,
                                                       ),
+                                                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                                        RoundedRectangleBorder(
+                                                          borderRadius: BorderRadius.circular(20),
+                                                        ),
+                                                      ),
                                                     ),
                                                     child: const Text(
                                                       "S",
@@ -1260,6 +1270,11 @@ class Win_Cust_Order_State extends State<Win_Cust_Order>
                                                     style: ButtonStyle(
                                                       backgroundColor: MaterialStateProperty.all(
                                                         _color_manager.active_color,
+                                                      ),
+                                                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                                        RoundedRectangleBorder(
+                                                          borderRadius: BorderRadius.circular(20),
+                                                        ),
                                                       ),
                                                     ),
                                                     child: const Text(
@@ -1283,7 +1298,13 @@ class Win_Cust_Order_State extends State<Win_Cust_Order>
                                                       backgroundColor: MaterialStateProperty.all(
                                                         _color_manager.active_color,
                                                       ),
+                                                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                                        RoundedRectangleBorder(
+                                                          borderRadius: BorderRadius.circular(20),
+                                                        ),
+                                                      ),
                                                     ),
+
                                                     child: const Text(
                                                       "L",
                                                     )
@@ -1340,66 +1361,89 @@ class Win_Cust_Order_State extends State<Win_Cust_Order>
                           // Addon table
                           Row(
                             children: [
-                              Container(
-                                decoration: const BoxDecoration(
-                                  border: Border(
-                                    right: BorderSide(
-                                      color: Colors.white38,
-                                      width: 1.0,
+                              SizedBox(
+                                child: SizedBox(
+                                  width: screenWidth * (1/4) +  screenWidth * (1/ 20),
+                                  height: screenHeight - 242,
+                                  child: Container(
+                                    margin: const EdgeInsets.only(left: 8),
+                                    alignment: Alignment.topCenter,
+                                    height: screenHeight - 190,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(30),
+                                      color: _color_manager.background_color.withAlpha(30),
+                                      border: Border.all(width: 0.5, color: _color_manager.background_color)
+                                    ),
+                                    child: ListView(
+                                      shrinkWrap: true,
+                                      children: [
+                                        DataTable(
+                                          headingRowColor: MaterialStatePropertyAll(_color_manager.background_color) ,
+                                          headingTextStyle: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                            color: _color_manager.text_color,
+                                          ),
+                                          columnSpacing: 0,
+                                          columns: [
+
+                                            DataColumn(label: Text(text_datacolumn_index),),
+                                            DataColumn(label: Text(text_datacolumn_name),),
+                                            DataColumn(label: Text(text_datacolumn_price)),
+                                            DataColumn(label: Text(text_datacolumn_edit)),
+                                          ],
+                                          rows: _addonTable.map((rowData) {
+                                            final rowIndex = _addonTable.indexOf(rowData);
+                                            return DataRow(cells: [
+                                              // Todo: add amount column
+                                              DataCell(Text(
+                                                '${rowData['index']}',
+                                                style: TextStyle(
+                                                    fontSize: 24,
+                                                    color: _color_manager.text_color.withAlpha(200)),
+                                              )),
+                                              DataCell(Text(
+                                                '${_addon_names_translated[_addon_names.indexOf(rowData['name'] as String)] }',
+                                              style: TextStyle(
+                                                  fontSize: 22,
+                                                  color: _color_manager.text_color),)),
+                                              // DataCell(Text('${rowData['name']}')),
+                                              DataCell(Text(
+                                                '${rowData['price']}',
+                                                style: TextStyle(
+                                                    fontSize: 20,
+                                                    color: _color_manager.text_color),)),
+                                              DataCell(
+                                                IconButton(
+                                                  icon: Icon(Icons.delete, color: _color_manager.text_color.withAlpha(200),),
+                                                  onPressed: () {
+                                                    setState(() {
+                                                      _addonTable.removeAt(rowIndex);
+                                                      _curr_smoothie.removeAddon(rowIndex);
+                                                      for (int i = rowIndex; i < _addonTable.length; i++) {
+                                                        _addonTable[i]['index'] = (i + 1).toString();
+                                                      }
+                                                    });
+                                                  },
+                                                ),
+                                              ),
+                                            ]);
+                                          }).toList(),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),
-                                width: screenWidth * (1/4) +  screenWidth * (1/ 20),
-                                child: Container(
-                                  color: _color_manager.background_color.withAlpha(30),
-                                  alignment: Alignment.topCenter,
-                                  height: screenHeight - 212,
-                                  child: ListView(
-                                    shrinkWrap: true,
-                                    children: [
-                                      DataTable(
-                                        headingTextStyle: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16,
-                                        ),
-                                        columnSpacing: 0,
-                                        columns: [
-
-                                          DataColumn(label: Text(text_datacolumn_index),),
-                                          DataColumn(label: Text(text_datacolumn_name),),
-                                          DataColumn(label: Text(text_datacolumn_price)),
-                                          DataColumn(label: Text(text_datacolumn_price)),
-                                        ],
-                                        rows: _addonTable.map((rowData) {
-                                          final rowIndex = _addonTable.indexOf(rowData);
-                                          return DataRow(cells: [
-                                            // Todo: add amount column
-                                            DataCell(Text('${rowData['index']}')),
-                                            DataCell(Text('${_addon_names_translated[_addon_names.indexOf(rowData['name'] as String)] }')),
-                                            // DataCell(Text('${rowData['name']}')),
-                                            DataCell(Text('${rowData['price']}')),
-                                            DataCell(
-                                              IconButton(
-                                                icon: const Icon(Icons.delete),
-                                                onPressed: () {
-                                                  setState(() {
-                                                    _addonTable.removeAt(rowIndex);
-                                                    _curr_smoothie.removeAddon(rowIndex);
-                                                    for (int i = rowIndex; i < _addonTable.length; i++) {
-                                                      _addonTable[i]['index'] = (i + 1).toString();
-                                                    }
-                                                  });
-                                                },
-                                              ),
-                                            ),
-                                          ]);
-                                        }).toList(),
-                                      ),
-                                    ],
+                              ),
+                              Container(
+                                decoration: const BoxDecoration(
+                                  border: Border(
+                                    left: BorderSide(
+                                      color: Colors.white38,
+                                      width: 0.25,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              SizedBox(
                                 width: screenWidth * (1/2),
                                 height: screenHeight - 212,
                                 child: buttonGrid(_addon_names, text_addon_tab, _color_manager.active_color.withBlue(255)),
