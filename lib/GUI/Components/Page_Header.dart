@@ -1,3 +1,13 @@
+/// Builds a page header widget for the app bar.
+/// The widget contains a logo, page name, weather condition and temperature (optional), and a list of buttons (optional).
+/// If the weather condition is enabled, it will be displayed in an icon and text format, otherwise, it won't be displayed.
+/// @param context The build context.
+/// @param pageName The name of the page being displayed.
+/// @param buttons A list of buttons to be displayed in the header.
+/// @param showWeather A boolean that determines whether or not to display the current weather condition and temperature.
+/// @return The page header widget.
+
+
 import 'package:csce315_project3_13/Inherited_Widgets/Color_Manager.dart';
 import 'package:csce315_project3_13/GUI/Components/Settings_Button.dart';
 import 'package:csce315_project3_13/Inherited_Widgets/Weather_Manager.dart';

@@ -1,3 +1,5 @@
+/// The initial view of the server.
+
 import 'package:csce315_project3_13/GUI/Pages/Order/Win_Order.dart';
 import 'package:csce315_project3_13/Inherited_Widgets/Color_Manager.dart';
 import 'package:csce315_project3_13/GUI/Components/Login_Button.dart';

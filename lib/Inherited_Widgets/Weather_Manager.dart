@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// Widget to manage the weather API info that is displayed in the header of every GUI page
 class Weather_Manager extends InheritedWidget {
 
   final String current_condition;

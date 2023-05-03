@@ -1,3 +1,5 @@
+/// Window for placing a new order for the system.
+
 import 'package:csce315_project3_13/GUI/Pages/Manager_View/Win_Manager_View.dart';
 import 'package:csce315_project3_13/Inherited_Widgets/Translate_Manager.dart';
 import 'package:csce315_project3_13/Models/Order%20Models/addon_order.dart';

@@ -1,3 +1,5 @@
+/// Window for viewing an editable inventory.
+
 import 'package:csce315_project3_13/GUI/Components/Login_Button.dart';
 import 'package:csce315_project3_13/GUI/Pages/Management/WIn_Edit_Smoothie.dart';
 import 'package:csce315_project3_13/GUI/Pages/Management/Win_Add_Smoothie.dart';
