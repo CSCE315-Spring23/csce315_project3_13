@@ -5,8 +5,10 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 
 import '../../../Inherited_Widgets/Color_Manager.dart';
+import '../../../Inherited_Widgets/Translate_Manager.dart';
 import '../../../Services/excess_helper.dart';
 import '../../../Services/general_helper.dart';
+import '../../../Services/google_translate_API.dart';
 import '../../Components/Page_Header.dart';
 import 'Win_Reports_Hub.dart';
 
@@ -24,6 +26,17 @@ class _Win_Excess_ReportsState extends State<Win_Excess_Reports> {
   DateTime date = DateTime.now();
   List<String> rows = [];
   bool dataLoaded = true;
+
+  bool call_set_translation = true;
+  google_translate_API _google_translate_api = google_translate_API();
+
+  //Strings for display
+  List<String> list_page_texts_originals = ["Excess Reports", "Return to Reports Hub", "Get Excess Report", "No data."];
+  List<String> list_page_texts = ["Excess Reports", "Return to Reports Hub", "Get Excess Report", "No data."];
+  String text_page_header = "Excess Reports";
+  String text_back_button = "Return to Reports Hub";
+  String text_get_button = "Get Excess Report";
+  String text_no_data = "No data.";
 
   void getData(String date) async
   {
@@ -45,7 +58,7 @@ class _Win_Excess_ReportsState extends State<Win_Excess_Reports> {
   {
     print("Constructing sales list...");
     if (rows.isEmpty) {
-      return Text('No data.',
+      return Text(text_no_data,
         style: TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.bold,
@@ -83,14 +96,37 @@ class _Win_Excess_ReportsState extends State<Win_Excess_Reports> {
   @override
   Widget build(BuildContext context) {
     final _color_manager = Color_Manager.of(context);
+
+    final _translate_manager = Translate_Manager.of(context);
+
+    Future<void> set_translation() async {
+      call_set_translation = false;
+
+      //set the new Strings here
+      list_page_texts = (await _google_translate_api.translate_batch(list_page_texts_originals,_translate_manager.chosen_language));
+      text_page_header = list_page_texts[0];
+      text_back_button = list_page_texts[1];
+      text_get_button = list_page_texts[2];
+      text_no_data = list_page_texts[3];
+
+      setState(() {
+      });
+    }
+
+    if(call_set_translation){
+      set_translation();
+    }else{
+      call_set_translation = true;
+    }
+
     return Scaffold(
       backgroundColor: _color_manager.background_color,
       appBar: Page_Header(
         context: context,
-        pageName: "Excess Reports",
+        pageName: text_page_header,
         buttons: [
           IconButton(
-            tooltip: "Return to Reports Hub",
+            tooltip: text_back_button,
             padding: const EdgeInsets.only(left: 25, right: 10),
             onPressed: ()
             {
@@ -136,7 +172,7 @@ class _Win_Excess_ReportsState extends State<Win_Excess_Reports> {
 
                 getData(formattedDate);
               },
-              buttonName: "Get Excess Report", fontSize: 18, buttonWidth: 180,),
+              buttonName: text_get_button, fontSize: 18, buttonWidth: 180,),
           ],
         ),
       ),

@@ -5,8 +5,10 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 
 import '../../../Inherited_Widgets/Color_Manager.dart';
+import '../../../Inherited_Widgets/Translate_Manager.dart';
 import '../../../Models/models_library.dart';
 import '../../../Services/general_helper.dart';
+import '../../../Services/google_translate_API.dart';
 import '../../../Services/reports_helper.dart';
 import '../../Components/Page_Header.dart';
 import 'Win_Reports_Hub.dart';
@@ -26,6 +28,20 @@ class _Win_Itemized_ReportsState extends State<Win_Itemized_Reports> {
   DateTime date_2 = DateTime.now();
   List<sales_report_row> rows = [];
   bool dataLoaded = true;
+
+  bool call_set_translation = true;
+  google_translate_API _google_translate_api = google_translate_API();
+
+  //Strings for display
+  List<String> list_page_texts_originals = ["Itemized Sales Reports", "Return to Reports Hub", "Get Itemized Sales Report", "No data.", "sold", "units and made", "in revenue"];
+  List<String> list_page_texts = ["Itemized Sales Reports", "Return to Reports Hub", "Get Itemized Sales Report", "No data.", "sold", "units and made", "in revenue"];
+  String text_page_header = "Itemized Sales Reports";
+  String text_back_button = "Return to Reports Hub";
+  String text_get_button = "Get Itemized Sales Report";
+  String text_no_data = "No data.";
+  String sold = "sold";
+  String units_and_made = "units and made";
+  String in_revenue = "in revenue";
 
   void getData(String date1, String date2) async
   {
@@ -47,7 +63,7 @@ class _Win_Itemized_ReportsState extends State<Win_Itemized_Reports> {
   {
     print("Constructing sales list...");
     if (rows.isEmpty) {
-      return Text('No data.',
+      return Text(text_no_data,
         style: TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.bold,
@@ -69,7 +85,7 @@ class _Win_Itemized_ReportsState extends State<Win_Itemized_Reports> {
             ),
             child: Padding(
               padding: EdgeInsets.all(16.0),
-              child: Text('${rows[index].item_name} sold ${rows[index].amount_sold} units and made \$${rows[index].total_revenue} in revenue.',
+              child: Text('${rows[index].item_name} $sold ${rows[index].amount_sold} $units_and_made \$${rows[index].total_revenue} $in_revenue.',
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -85,14 +101,40 @@ class _Win_Itemized_ReportsState extends State<Win_Itemized_Reports> {
   @override
   Widget build(BuildContext context) {
     final _color_manager = Color_Manager.of(context);
+
+    final _translate_manager = Translate_Manager.of(context);
+
+    Future<void> set_translation() async {
+      call_set_translation = false;
+
+      //set the new Strings here
+      list_page_texts = (await _google_translate_api.translate_batch(list_page_texts_originals,_translate_manager.chosen_language));
+      text_page_header = list_page_texts[0];
+      text_back_button = list_page_texts[1];
+      text_get_button = list_page_texts[2];
+      text_no_data = list_page_texts[3];
+      sold = list_page_texts[4];
+      units_and_made = list_page_texts[5];
+      in_revenue = list_page_texts[6];
+
+      setState(() {
+      });
+    }
+
+    if(call_set_translation){
+      set_translation();
+    }else{
+      call_set_translation = true;
+    }
+
     return Scaffold(
       backgroundColor: _color_manager.background_color,
       appBar: Page_Header(
         context: context,
-        pageName: "Itemized Reports",
+        pageName: text_page_header,
         buttons: [
           IconButton(
-            tooltip: "Return to Reports Hub",
+            tooltip: text_back_button,
             padding: const EdgeInsets.only(left: 25, right: 10),
             onPressed: ()
             {
@@ -149,7 +191,7 @@ class _Win_Itemized_ReportsState extends State<Win_Itemized_Reports> {
 
                 getData(formattedDate_1, formattedDate_2);
               },
-              buttonName: "Get Itemized Sales Report", fontSize: 18, buttonWidth: 180,),
+              buttonName: text_get_button, fontSize: 18, buttonWidth: 180,),
           ],
         ),
       ),

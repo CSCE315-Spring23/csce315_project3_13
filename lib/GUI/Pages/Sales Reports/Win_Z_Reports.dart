@@ -5,7 +5,9 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 
 import '../../../Inherited_Widgets/Color_Manager.dart';
+import '../../../Inherited_Widgets/Translate_Manager.dart';
 import '../../../Services/general_helper.dart';
+import '../../../Services/google_translate_API.dart';
 import '../../../Services/reports_helper.dart';
 import '../../Components/Page_Header.dart';
 import 'Win_Reports_Hub.dart';
@@ -25,6 +27,17 @@ class _Win_Z_ReportsState extends State<Win_Z_Reports> {
   List<String> dates = [];
   List<double> sales = [];
   bool dataLoaded = false;
+
+  bool call_set_translation = true;
+  google_translate_API _google_translate_api = google_translate_API();
+
+  //Strings for display
+  List<String> list_page_texts_originals = ["Z Reports", "Return to Reports Hub", "Get Z Report", "Z report for the chosen date"];
+  List<String> list_page_texts = ["Z Reports", "Return to Reports Hub", "Get Z Report", "Z report for the chosen date"];
+  String text_page_header = "Z Reports";
+  String text_back_button = "Return to Reports Hub";
+  String text_get_button = "Get Z Report";
+  String text_z_report = "Z report for the chosen date";
 
   void getData() async
   {
@@ -83,14 +96,37 @@ class _Win_Z_ReportsState extends State<Win_Z_Reports> {
   @override
   Widget build(BuildContext context) {
     final _color_manager = Color_Manager.of(context);
+
+    final _translate_manager = Translate_Manager.of(context);
+
+    Future<void> set_translation() async {
+      call_set_translation = false;
+
+      //set the new Strings here
+      list_page_texts = (await _google_translate_api.translate_batch(list_page_texts_originals,_translate_manager.chosen_language));
+      text_page_header = list_page_texts[0];
+      text_back_button = list_page_texts[1];
+      text_get_button = list_page_texts[2];
+      text_z_report = list_page_texts[3];
+
+      setState(() {
+      });
+    }
+
+    if(call_set_translation){
+      set_translation();
+    }else{
+      call_set_translation = true;
+    }
+
     return Scaffold(
       backgroundColor: _color_manager.background_color,
       appBar: Page_Header(
         context: context,
-        pageName: "Z Reports",
+        pageName: text_page_header,
         buttons: [
           IconButton(
-            tooltip: "Return to Reports Hub",
+            tooltip: text_back_button,
             padding: const EdgeInsets.only(left: 25, right: 10),
             onPressed: ()
             {
@@ -139,7 +175,7 @@ class _Win_Z_ReportsState extends State<Win_Z_Reports> {
                   context: context,
                   builder: (BuildContext context) {
                     return AlertDialog(
-                      content: Text("Z report for the chosen date: $z_rep"),
+                      content: Text("$text_z_report: $z_rep"),
                       actions: [
                         TextButton(
                           onPressed: () {
@@ -152,7 +188,7 @@ class _Win_Z_ReportsState extends State<Win_Z_Reports> {
                   },
                 );
               },
-              buttonName: "Get Z Report", fontSize: 18, buttonWidth: 180,),
+              buttonName: text_get_button, fontSize: 18, buttonWidth: 180,),
           ],
         ),
       ),
