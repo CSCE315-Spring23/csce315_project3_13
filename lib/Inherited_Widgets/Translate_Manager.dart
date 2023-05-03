@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+/// Widget used for changing the current language of the app
+/// Allows users to choose a new language and initiates the translation process
 class Translate_Manager extends InheritedWidget {
 
   final String chosen_language;
