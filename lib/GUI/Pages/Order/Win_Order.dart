@@ -427,14 +427,14 @@ class Win_Order_State extends State<Win_Order>
     return GridView.count(
       shrinkWrap: true,
       crossAxisCount: type != text_category_tab ?  type != text_addon_tab ? 4 : 5 : 2,
-      childAspectRatio:type != text_snack_tab? 1 : 2,
+      childAspectRatio:type != text_snack_tab? 1 : type != text_category_tab ? 1.5: 2,
       padding: const EdgeInsets.all(10),
       mainAxisSpacing: 20,
       crossAxisSpacing: 20,
       children: button_names.map((name) => ElevatedButton(
         style: ButtonStyle(
           backgroundColor: MaterialStatePropertyAll(_button_color),
-          minimumSize: MaterialStateProperty.all(const Size(125, 50)),
+          minimumSize: MaterialStateProperty.all(const Size(125, 75)),
         ),
         onPressed: () {
           if (type == text_smoothie_tab ) {
@@ -486,14 +486,14 @@ class Win_Order_State extends State<Win_Order>
               padding: const EdgeInsets.only(bottom: 2),
               child: type != text_smoothie_tab ? Text(
                 _all_menu_items.firstWhere((menu_item_obj) => menu_item_obj.menu_item == (name)).item_price.toStringAsFixed(2),
-                style: const TextStyle(color: Colors.white24),
+                style: const TextStyle(color: Colors.white60),
               ): Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Expanded(
                       child: Text(
                         _all_menu_items.firstWhere((menu_item_obj) => menu_item_obj.menu_item == ("$name small"), orElse: () {return _blank_item;},).item_price.toStringAsFixed(2),
-                        style: const TextStyle(color: Colors.white24),
+                        style: const TextStyle(color: Colors.white60),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -501,7 +501,7 @@ class Win_Order_State extends State<Win_Order>
                     Expanded(
                       child: Text(
                         _all_menu_items.firstWhere((menu_item_obj) => menu_item_obj.menu_item == ("$name medium"), orElse: () {return _blank_item;}).item_price.toStringAsFixed(2),
-                        style: const TextStyle(color: Colors.white24),
+                        style: const TextStyle(color: Colors.white60),
                         maxLines: 1, // Limits the number of lines to 2
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -509,7 +509,7 @@ class Win_Order_State extends State<Win_Order>
                     Expanded(
                       child: Text(
                         _all_menu_items.firstWhere((menu_item_obj) => menu_item_obj.menu_item == ("$name large"), orElse: () {return _blank_item;}).item_price.toStringAsFixed(2),
-                        style: const TextStyle(color: Colors.white24),
+                        style: const TextStyle(color: Colors.white60),
                         maxLines: 1, // Limits the number of lines to 2
                         overflow: TextOverflow.ellipsis,
                       ),
