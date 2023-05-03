@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+/// Widget used to manage the color filter that is set on the app
+/// Allows for us to switch between multiple color presets
 class Color_Manager extends InheritedWidget {
   final Color primary_color;
   final Color secondary_color;

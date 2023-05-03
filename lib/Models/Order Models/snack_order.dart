@@ -1,4 +1,5 @@
 
+/// Object representing a snack when constructing an order on the GUI
 class snack_order{
   String name;
   double price;

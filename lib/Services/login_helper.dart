@@ -8,8 +8,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+/// A helper class for logging in a user with email and password.
 class login_helper{
 
+  /// Logs in a user with the given email and password.
+  ///
+  /// Returns `true` if the sign-in was successful, `false` otherwise.
   void login({required BuildContext context, required String username, required String password}) async {
     String cleared_username = username.replaceAll(" ", "");
     bool sign_in_successful = await sign_in_email_password(user_email: cleared_username, user_password: password);
@@ -41,6 +45,12 @@ class login_helper{
   }
 
 
+
+  /// Sign in the user with their email and password.
+  ///
+  /// @param user_email The email of the user trying to sign in.
+  /// @param user_password The password of the user trying to sign in.
+  /// @return A Future that resolves to a boolean value indicating whether the sign in was successful or not.
   Future<bool> sign_in_email_password({required String user_email, required String user_password}) async {
     //signs the user in with email and password
 
@@ -62,7 +72,10 @@ class login_helper{
   }
 
 
-
+  /// Navigate the logged in user to the correct first page for them.
+  ///
+  /// @param context The BuildContext of the current screen.
+  /// @return A Future with no return value.
   Future<void> navigate_to_landing({required BuildContext context}) async {
     // this navigates the logged in user to the correct first page for them
 
@@ -129,6 +142,10 @@ class login_helper{
   }
 
 
+  ///  Signs up a user with the provided email and password.
+  ///  @param context The [BuildContext] used for navigation and displaying an alert dialog if an error occurs.
+  ///  @param user_email The email address of the user to be signed up.
+  ///  @param user_password The password of the user to be signed up.
   Future<void> create_account({ required BuildContext context, required String user_email, required String user_password}) async {
     //signs the user in with email and password
 
@@ -163,7 +180,9 @@ class login_helper{
   }
 
 
-
+  ///  Sends a password reset email to the provided email address.
+  ///  @param user_email The email address of the user who needs to reset their password.
+  ///  @param context The [BuildContext] used for displaying an alert dialog if an error occurs.
   Future<void> reset_password({required String user_email, required BuildContext context}) async {
     //signs the user in with email and password
 
@@ -196,6 +215,8 @@ class login_helper{
   }
 
 
+  ///  Checks if a user is signed in to the app
+  ///  Returns true if the user is signed in, false otherwise
   Future<bool> is_signed_in() async {
     // returns true if the user is signed in
 
@@ -211,7 +232,8 @@ class login_helper{
     return user != null;
   }
 
-
+  ///  Retrieves the UID of the currently signed in user from Firebase
+  ///  Returns the UID as a string if the user is signed in, and an empty string otherwise
   Future<String> get_firebase_uid() async {
     // gets the UID of the signed in user from firebase users
 
@@ -226,6 +248,8 @@ class login_helper{
     }
   }
 
+  /// Retrieves the email address of the currently signed in user from Firebase
+  /// Returns the email address as a string if the user is signed in, and an empty string otherwise
   Future<String> get_firebase_email() async {
     // gets the email of the signed in user from firebase users
 
@@ -242,7 +266,9 @@ class login_helper{
     }
   }
 
-
+  /// Signs out the user
+  /// This function signs out the user by calling the signOut method of the FirebaseAuth instance.
+  /// Returns a Future that completes when the user has been signed out.
   Future<void> sign_out() async {
     //signs out the user
     await FirebaseAuth.instance.signOut();
@@ -253,6 +279,13 @@ class login_helper{
   // returns an employee object populated by the row with the given uid
   // if the uid is not in the database, the function returns an employee with
   // role = 'Customer', and email and name set to the logged in email and name
+  /// Queries the psql database to get the data from the employee table
+  /// This function queries the psql database to get the data from the employee table and returns an employee object populated
+  /// by the row with the given uid. If the uid is not in the database, the function returns an employee with
+  /// role = 'Customer', and email and name set to the logged in email and name.
+  /// employee_uid - the uid of the employee to be retrieved from the database.
+  ///
+  /// Returns a Future that completes with the employee object populated with the retrieved
   Future<employee> get_employee_by_UID_database(String employee_uid) async {
 
     String employee_email = await get_firebase_email();

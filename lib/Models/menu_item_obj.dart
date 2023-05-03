@@ -1,5 +1,7 @@
 part of models_library;
 
+
+/// A class representing a menu item.
 class menu_item_obj
 {
   // Variables match SQL table menu_items
@@ -12,6 +14,7 @@ class menu_item_obj
   List<String> ingredients = <String>[];
 
   // Constructor
+  /// Constructor for creating a new [menu_item_obj] instance.
   menu_item_obj(int menu_item_id, String menu_item, double item_price, int amount_in_stock, String type, String status, List<String> ingredients)
   {
     this.menu_item_id = menu_item_id;
@@ -23,7 +26,7 @@ class menu_item_obj
     this.ingredients = ingredients;
   }
 
-  // Returns a comma-separated list of all the fields of the object, should be used when using VALUES() in SQL commands
+  /// Returns a comma-separated list of all the fields of the object, should be used when using VALUES() in SQL commands
   String get_values()
   {
     return "${this.menu_item_id}, '${this.menu_item}', ${this.item_price}, ${this.amount_in_stock}, '${this.type}', '${this.status}'";
