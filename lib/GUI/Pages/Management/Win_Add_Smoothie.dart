@@ -1,4 +1,5 @@
 import 'package:csce315_project3_13/GUI/Pages/Management/Win_View_Menu.dart';
+import 'package:csce315_project3_13/Inherited_Widgets/Translate_Manager.dart';
 import 'package:csce315_project3_13/Services/google_translate_API.dart';
 import 'package:csce315_project3_13/Services/ingredients_table_helper.dart';
 import 'package:csce315_project3_13/Services/menu_item_helper.dart';
@@ -23,8 +24,46 @@ class _Win_Add_Smoothie_State extends State<Win_Add_Smoothie>
   google_translate_API _google_translate_api = google_translate_API();
   String _current_lang = "";
 
-  List<String> build_texts_original = [];
+  List<String> build_texts_original = [
+   'Index',
+  'Name',
+  'Delete',
+   "Add New Ingredient",
+  "Create New Smoothie",
+   "Return to Menu Management",
+  'Successfully Added Item',
+   'Unable to add item',
+   "Accept",
+    'Add New Item',
+    "Ingredients",
+   'New Ingredient',
+  'CANCEL',
+   "ADD",
+   "New Smoothie Name",
+  "Price of Medium",
+  "Amount in Stock",
+  ];
+  List<String> build_texts = [
+    'Index',
+    'Name',
+    'Delete',
+    "Add New Ingredient",
+    "Create New Smoothie",
+    "Return to Menu Management",
+    'Successfully Added Item',
+    'Unable to add item',
+    "Accept",
+    'Add New Item',
+    "Ingredients",
+    'New Ingredient',
+    'CANCEL',
+    "ADD",
+    "New Smoothie Name",
+    "Price of Medium",
+    "Amount in Stock",
+  ];
 
+  List<String> _ing_names_translated = [];
 
   String text_data_col_index = 'Index';
   String text_data_col_name = 'Name';
@@ -111,7 +150,8 @@ class _Win_Add_Smoothie_State extends State<Win_Add_Smoothie>
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
-              name,
+                _ing_names.indexOf(name) != -1? _ing_names_translated[_ing_names.indexOf(name)] : name,
+               // name,
               style: const TextStyle(fontSize: 20,),
               textAlign: TextAlign.center,
               maxLines: 2, // Limits the number of lines to 2
@@ -150,7 +190,9 @@ class _Win_Add_Smoothie_State extends State<Win_Add_Smoothie>
               final rowIndex = _ing_table.indexOf(rowData);
               return DataRow(cells: [
                 DataCell(Text('${rowData['index']}')),
-                DataCell(Text('${rowData['name']}')),
+                // _ing_names.indexOf(rowData['name'] as String) != -1? _ing_names_translated[_ing_names.indexOf(rowData['name'] as String)] : rowData['name'] as String,
+                DataCell(Text('${_ing_names.indexOf(rowData['name'] as String) != -1? _ing_names_translated[_ing_names.indexOf(rowData['name'] as String)] : rowData['name'] as String}')),
+                // DataCell(Text('${rowData['name']}')),
                 DataCell(
                   IconButton(
                     icon: Icon(Icons.delete, color: text_color.withAlpha(150),),
@@ -221,9 +263,70 @@ class _Win_Add_Smoothie_State extends State<Win_Add_Smoothie>
   }
 
   @override
+  void initState() {
+    first_load = true;
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context)
   {
     final _color_manager = Color_Manager.of(context);
+
+
+
+    final _translate_manager = Translate_Manager.of(context);
+
+    Future<void> set_translation() async {
+
+      build_texts = (await _google_translate_api.translate_batch(build_texts_original,_translate_manager.chosen_language));
+      text_data_col_index = build_texts[0];
+      text_data_col_name = build_texts[1];
+      text_data_col_delete = build_texts[2];
+      text_add_new_ingredient = build_texts[3];
+      text_page_name = build_texts[4];
+      text_ret_menu_management = build_texts[5];
+      text_successfully_added = build_texts[6];
+      text_unable_add = build_texts[7];
+      text_accept_button = build_texts[8];
+      text_add_new_item = build_texts[9];
+      text_ingredient =  build_texts[10];
+      text_new_ingredient = build_texts[11];
+      text_cancel_button = build_texts[12];
+      text_add_button = build_texts[13];
+      text_new_smoothie_name = build_texts[14];
+      text_price_of_medium = build_texts[15];
+      text_amount_in_stock = build_texts[16];
+
+
+      _current_lang = _translate_manager.chosen_language;
+      await getNames();
+
+
+
+      _ing_names_translated = (await _google_translate_api.translate_batch(_ing_names,_translate_manager.chosen_language));
+
+
+
+      first_load = false;
+      setState(()
+      {
+        _isLoading = false;
+      });
+    }
+
+    if ((!_isLoading) && (_current_lang != _translate_manager.chosen_language)) {
+      setState(() {
+        _isLoading = true;
+      });
+    }
+
+    if (((_isLoading && (_current_lang != _translate_manager.chosen_language))) || first_load) {
+      set_translation();
+    }
+
+
+
     screenWidth = MediaQuery.of(context).size.width;
     getNames();
     return Scaffold(
@@ -394,7 +497,7 @@ class _Win_Add_Smoothie_State extends State<Win_Add_Smoothie>
                                           content: SizedBox(
                                             width: (screenWidth / 5) + 10,
                                             height: 45,
-                                            child: custTextfield(context, _new_ingredient , 'Add New Ingredient...', 'Add Ingredient'),
+                                            child: custTextfield(context, _new_ingredient , text_add_new_ingredient + '...', text_add_new_ingredient),
                                           ),
                                           actions: <Widget>[
                                             TextButton(
