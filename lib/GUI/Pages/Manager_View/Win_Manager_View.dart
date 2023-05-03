@@ -1,3 +1,5 @@
+/// The initial view of the manager.
+
 import 'package:csce315_project3_13/GUI/Menu%20Board/Win_Menu_Board.dart';
 import 'package:csce315_project3_13/GUI/Pages/Customer/Win_Cust_Order.dart';
 import 'package:csce315_project3_13/GUI/Pages/Order/Win_Order.dart';

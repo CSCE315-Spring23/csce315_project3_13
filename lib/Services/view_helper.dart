@@ -1,6 +1,9 @@
 import 'package:cloud_functions/cloud_functions.dart';
 
+/// A helper class for retrieving data related to menu items, such as names, prices, and IDs.
 class view_helper {
+  /// Retrieves a list of all smoothie names from the Firebase Cloud Functions.
+  /// Returns a Future containing a List of Strings.
   Future<List<String>> get_all_smoothie_names() async {
 
     HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('getSmoothieNames');
@@ -17,6 +20,9 @@ class view_helper {
     return names;
   }
 
+  /// Retrieves the price of a specified menu item from the Firebase Cloud Functions.
+  /// Takes a String argument of the menu item's name.
+  /// Returns a Future containing a double value representing the item's price.
   Future<double> get_item_price(String item_name) async
   {
     HttpsCallable getter = FirebaseFunctions.instance.httpsCallable('getItemPrice');
@@ -28,6 +34,9 @@ class view_helper {
     return item_price;
   }
 
+  /// Retrieves the ID of a specified menu item from the Firebase Cloud Functions.
+  /// Takes a String argument of the menu item's name.
+  /// Returns a Future containing an integer value representing the item's ID.
   Future<int> get_item_id(String item_name) async
   {
     HttpsCallable getter = FirebaseFunctions.instance.httpsCallable('getItemID');
@@ -38,6 +47,8 @@ class view_helper {
     return item_id;
   }
 
+  /// Retrieves a list of unique smoothie names from the Firebase Cloud Functions.
+  /// Returns a Future containing a List of Strings.
   Future<List<String>> get_unique_smoothie_names() async {
 
     HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('getSmoothieNames');
@@ -58,6 +69,9 @@ class view_helper {
     return names;
   }
 
+  /// Retrieves a list of addon names from Firebase Functions.
+  ///
+  /// Returns a [Future] that completes with a [List] of [String] values representing the addon names.
   Future<List<String>> get_addon_names() async {
 
     HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('getAddonNames');
@@ -74,6 +88,10 @@ class view_helper {
     return names;
   }
 
+  /// Retrieves a list of snack names from Firebase Functions.
+  ///
+  /// Returns a [Future] that completes with a [List] of [String] values representing
+  /// the snack names.
   Future<List<String>> get_snack_names() async {
 
     HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('getSnackNames');

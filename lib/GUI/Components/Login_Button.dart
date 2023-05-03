@@ -1,3 +1,9 @@
+/// A button that can be used for logging in or other actions.
+/// The button can be customized with a [onTap] function to execute when the button is pressed, a [buttonName] string for the button text,
+/// a [textColor] color for the button text, a [fontSize] double for the button text font size and a [buttonWidth] double for the button's width.
+/// The button's appearance changes depending on whether the user is hovering over it or not. It uses the [Color_Manager] class to get the appropriate
+/// color values for the button and text based on the current color scheme.
+
 import 'package:csce315_project3_13/Inherited_Widgets/Color_Manager.dart';
 import 'package:csce315_project3_13/Colors/constants.dart';
 import 'package:flutter/material.dart';

@@ -1,3 +1,5 @@
+/// Window for making an inventory order.
+
 import 'package:csce315_project3_13/GUI/Components/Login_Button.dart';
 import 'package:csce315_project3_13/GUI/Pages/Manager_View/Win_Manager_View.dart';
 import 'package:csce315_project3_13/Inherited_Widgets/Translate_Manager.dart';
@@ -699,6 +701,7 @@ class _Win_Order_Inventory_State extends State<Win_Order_Inventory> {
 
     return Scaffold(
       appBar: Page_Header(
+        // showWeather: false,
         context: context,
         pageName: text_page_header,
         buttons: [

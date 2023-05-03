@@ -1,3 +1,4 @@
+/// This library contains various models representing custom objects representing items from the SQL database and custom datatypes
 library models_library;
 
 part "ingredient_obj.dart";

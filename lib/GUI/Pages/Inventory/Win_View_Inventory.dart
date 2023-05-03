@@ -1,3 +1,5 @@
+/// Window for viewing the inventory.
+
 import 'package:csce315_project3_13/GUI/Components/Login_Button.dart';
 import 'package:csce315_project3_13/GUI/Pages/Inventory/Win_Order_Inventory.dart';
 import 'package:csce315_project3_13/GUI/Pages/Manager_View/Win_Manager_View.dart';
@@ -660,6 +662,7 @@ class _Win_View_Inventory_State extends State<Win_View_Inventory> {
 
     return Scaffold(
       appBar: Page_Header(
+        // showWeather: false,
         context: context,
         pageName: text_page_header,
         buttons: [

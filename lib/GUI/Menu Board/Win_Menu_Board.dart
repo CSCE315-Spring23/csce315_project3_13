@@ -1,16 +1,15 @@
 import 'dart:async';
 import 'package:csce315_project3_13/GUI/Menu%20Board/Board.dart';
-import 'package:csce315_project3_13/Models/Order%20Models/smoothie_order.dart';
+import 'package:csce315_project3_13/Inherited_Widgets/Translate_Manager.dart';
+import 'package:csce315_project3_13/Services/google_translate_API.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-
 import '../../Inherited_Widgets/Color_Manager.dart';
 import '../../Models/models_library.dart';
 import '../../Services/menu_item_helper.dart';
 import '../../Services/view_helper.dart';
 import '../Components/Login_Button.dart';
 import '../Components/Page_Header.dart';
-import '../Pages/Login/Win_Login.dart';
 import '../Pages/Manager_View/Win_Manager_View.dart';
 import 'SmoothieBoard.dart';
 
@@ -24,7 +23,67 @@ class Win_Menu_Board extends StatefulWidget {
 
 
 class _Win_Menu_BoardState extends State<Win_Menu_Board> {
+
+  // GOOGLE TRANSLATE VARIABLES BEGIN
+  google_translate_API _google_translate_api = google_translate_API();
+  String _current_lang = "";
+
+  bool first_load = false;
+
+  List<String> build_texts_original = [
+  "Smoothie King Menu",
+  "More",
+  "Return to Manager View",
+  "Feel Energized",
+  "Get Fit",
+  "Manage Weight",
+  "Be Well",
+  "Enjoy A Treat",
+  "Seasonal",
+  "Snacks",
+    "Addons",
+  ];
+  List<String> build_texts = [
+    "Smoothie King Menu",
+    "More",
+    "Return to Manager View",
+    "Feel Energized",
+    "Get Fit",
+    "Manage Weight",
+    "Be Well",
+    "Enjoy A Treat",
+    "Seasonal",
+    "Snacks",
+    "Addons",
+  ];
+
+  String text_smoothie_king_menu = "Smoothie King Menu";
+  String text_more = "More";
+  String text_ret_manager_view = "Return to Manager View";
+  String text_feel_energized = "Feel Energized";
+  String text_get_fit = "Get Fit";
+  String text_manage_weight = "Manage Weight";
+  String text_be_well = "Be Well";
+  String text_enjoy_a_treat = "Enjoy A Treat";
+  String text_seasonal = "Seasonal";
+  String text_snacks = "Snacks";
+  String text_addons = "Addons";
+
+  List<String> smoothie_names = [];
+  List<String> snack_names = [];
+  List<String> addon_names = [];
+
+  List<String> smoothie_names_translated = [];
+  List<String> snack_names_translated = [];
+  List<String> addon_names_translated = [];
+
+  // GOOGLE TRANSLATE VARIABLES END
+
+
+
   bool _isLoading = true;
+
+
 
   List<String> _smoothie_names = [];
   List<String> _snack_names = [];
@@ -56,12 +115,28 @@ class _Win_Menu_BoardState extends State<Win_Menu_Board> {
 
   Future<void> getData() async
   {
+    other_info = [];
     view_helper name_helper = view_helper();
     menu_item_helper item_helper = menu_item_helper();
 
     _smoothie_items = await item_helper.getAllSmoothiesInfo();
     _snack_items = await item_helper.getAllSnackInfo();
     _addon_items = await item_helper.getAllAddonInfo();
+
+    _snack_items = await item_helper.getAllSnackInfo();
+    _addon_items = await item_helper.getAllAddonInfo();
+
+    for(int i = 0; i < _smoothie_items.length; i++){
+      smoothie_names.add(_smoothie_items[i].menu_item);
+    }
+
+    for(int i = 0; i < _snack_items.length; i++){
+      snack_names.add(_snack_items[i].menu_item);
+    }
+
+    for(int i = 0; i < _addon_items.length; i++){
+      addon_names.add(_addon_items[i].menu_item);
+    }
 
     String clipped_name = "";
     int unclipped_length = 0;
@@ -129,10 +204,7 @@ class _Win_Menu_BoardState extends State<Win_Menu_Board> {
     _all_menu_items.addAll(_snack_items);
     _all_menu_items.addAll(_addon_items);
 
-    setState(()
-    {
-      _isLoading = false;
-    });
+
 
     for (String smoothie in energy_smoothies)
     {
@@ -186,6 +258,25 @@ class _Win_Menu_BoardState extends State<Win_Menu_Board> {
       );
     }
 
+    for (String smoothie in treat_smoothies)
+    {
+      treat_info.add({'name': smoothie,
+        'small':
+        _smoothie_items.firstWhere((menu_item_obj) => menu_item_obj.menu_item == ('$smoothie small')).item_price.toStringAsFixed(2),
+        'medium':
+        _smoothie_items.firstWhere((menu_item_obj) => menu_item_obj.menu_item == ('$smoothie medium')).item_price.toStringAsFixed(2),
+        'large':
+        _smoothie_items.firstWhere((menu_item_obj) => menu_item_obj.menu_item == ('$smoothie large')).item_price.toStringAsFixed(2),
+      }
+      );
+    }
+
+
+
+
+
+    print("About to print snack item");
+    print(_snack_items.length);
     for (menu_item_obj snack in _snack_items)
       {
         snack_info.add({
@@ -193,18 +284,41 @@ class _Win_Menu_BoardState extends State<Win_Menu_Board> {
           'price' : snack.item_price.toStringAsFixed(2),
         });
       }
+
     for (menu_item_obj addon in _addon_items)
     {
       addon_info.add(addon.menu_item);
     }
+
+    try {
+      other_info = [];
+      for (String smoothie in other_smoothies) {
+        other_info.add({'name': smoothie,
+          'small':
+          _all_menu_items
+              .firstWhere((menu_item_obj) =>
+          menu_item_obj.menu_item == ('$smoothie small'))
+              .item_price
+              .toStringAsFixed(2),
+          'medium':
+          _all_menu_items
+              .firstWhere((menu_item_obj) =>
+          menu_item_obj.menu_item == ('$smoothie medium'))
+              .item_price
+              .toStringAsFixed(2),
+          'large':
+          _all_menu_items
+              .firstWhere((menu_item_obj) =>
+          menu_item_obj.menu_item == ('$smoothie large'))
+              .item_price
+              .toStringAsFixed(2),
+        }
+        );
+      }
+    }catch(e){}
   }
 
   get login_helper_instance => null;
-  @override
-  void initState() {
-    super.initState();
-    getData();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -212,13 +326,68 @@ class _Win_Menu_BoardState extends State<Win_Menu_Board> {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
+
+
+    final _translate_manager = Translate_Manager.of(context);
+
+    Future<void> set_translation() async {
+
+      build_texts = (await _google_translate_api.translate_batch(build_texts_original,_translate_manager.chosen_language));
+      text_smoothie_king_menu = build_texts[0];
+      text_more = build_texts[1];
+      text_ret_manager_view = build_texts[2];
+      text_feel_energized = build_texts[3];
+      text_get_fit = build_texts[4];
+      text_manage_weight = build_texts[5];
+      text_be_well = build_texts[6];
+      text_enjoy_a_treat = build_texts[7];
+      text_seasonal = build_texts[8];
+      text_snacks = build_texts[9];
+      text_addons = build_texts[10];
+
+
+      _current_lang = _translate_manager.chosen_language;
+      await getData();
+
+
+
+      smoothie_names_translated = (await _google_translate_api.translate_batch(_smoothie_names,_translate_manager.chosen_language));
+
+      snack_names_translated = (await _google_translate_api.translate_batch(snack_names,_translate_manager.chosen_language));
+
+      addon_names_translated = (await _google_translate_api.translate_batch(addon_names,_translate_manager.chosen_language));
+
+
+      first_load = false;
+      setState(()
+      {
+        _isLoading = false;
+      });
+    }
+
+    if ((!_isLoading) && (_current_lang != _translate_manager.chosen_language)) {
+      setState(() {
+        _isLoading = true;
+      });
+    }
+
+    if (((_isLoading && (_current_lang != _translate_manager.chosen_language))) || first_load) {
+      set_translation();
+    }
+
+
     return Scaffold(
       appBar: Page_Header(
       context: context,
-      pageName: "Smoothie King Menu- Texas A&M MSC",
+      pageName: text_smoothie_king_menu + " - Texas A&M MSC",
       buttons: [
+        Login_Button(onTap: (){
+          _view_smoothies = !_view_smoothies;
+          setState(() {
+          });
+        }, buttonName: text_more),
         IconButton(
-          tooltip: "Return to Manager View",
+          tooltip: text_ret_manager_view,
           padding: const EdgeInsets.only(left: 25, right: 10),
           onPressed: ()
           {
@@ -242,20 +411,32 @@ class _Win_Menu_BoardState extends State<Win_Menu_Board> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          SmoothieBoard(items: energy_info,
-                            category: "Feel Energized",
+                          SmoothieBoard(
+                            orginal_names: _smoothie_names,
+                            translated_names: smoothie_names_translated,
+                            items: energy_info,
+                            isSnacks: false,
+                            category: text_feel_energized,
                             width: screenWidth * (2/7),
                             height: screenHeight * (3/7),
                             color: Colors.green,
                           ),
-                          SmoothieBoard(items: fitness_info,
-                            category: "Get Fit",
+                          SmoothieBoard(
+                            orginal_names: _smoothie_names,
+                            translated_names: smoothie_names_translated,
+                            items: fitness_info,
+                            isSnacks: false,
+                            category: text_get_fit,
                             width: screenWidth * (2/7),
                             height: screenHeight * (3/7),
                             color: Colors.redAccent,
                           ),
-                          SmoothieBoard(items: weight_info,
-                            category: "Manage Weight",
+                          SmoothieBoard(
+                            orginal_names: _smoothie_names,
+                            translated_names: smoothie_names_translated,
+                            items: weight_info,
+                            isSnacks: false,
+                            category: text_manage_weight,
                             width: screenWidth * (2/7),
                             height: screenHeight * (3/7),
                             color: Colors.lightBlueAccent,
@@ -266,20 +447,32 @@ class _Win_Menu_BoardState extends State<Win_Menu_Board> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          SmoothieBoard(items: energy_info,
-                            category: "Be Well",
+                          SmoothieBoard(
+                            orginal_names: _smoothie_names,
+                            translated_names: smoothie_names_translated,
+                            items: well_info,
+                            isSnacks: false,
+                            category: text_be_well,
                             width: screenWidth * (2/7),
                             height: screenHeight * (3/7),
                             color: Colors.pink,
                           ),
-                          SmoothieBoard(items: fitness_info,
-                            category: "Enjoy A Teat",
+                          SmoothieBoard(
+                            orginal_names: _smoothie_names,
+                            translated_names: smoothie_names_translated,
+                            items: treat_info,
+                            isSnacks: false,
+                            category: text_enjoy_a_treat,
                             width: screenWidth * (2/7),
                             height: screenHeight * (3/7),
                             color: Colors.yellow.shade800,
                           ),
-                          SmoothieBoard(items: weight_info,
-                            category: "Seasonal",
+                          SmoothieBoard(
+                            orginal_names: _smoothie_names,
+                            translated_names: smoothie_names_translated,
+                            items: other_info,
+                            isSnacks: false,
+                            category: text_seasonal,
                             width: screenWidth * (2/7),
                             height: screenHeight * (3/7),
                             color: Colors.deepOrange,
@@ -305,26 +498,27 @@ class _Win_Menu_BoardState extends State<Win_Menu_Board> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Board(items: addon_info,
+                          Board(
+                            orginal_names: addon_names,
+                            translated_names: addon_names_translated,
+                            title: text_addons,
+                            items: addon_info,
                             width: screenWidth * (5 / 8),
                             height: screenHeight * (6/7),
                             color: Colors.blueAccent,
                           ),
-                          SmoothieBoard(items: snack_info,
-                            category: "Snacks",
+                          SmoothieBoard(
+                            orginal_names: snack_names,
+                            translated_names: snack_names_translated,
+                            items: snack_info,
+                            isSnacks: true,
+                            category: text_snacks,
                             width: screenWidth * (2/7),
                             height: screenHeight * (6/7),
                             color: Colors.redAccent,
                           ),
                         ],
                       ),
-                      Expanded(child: TextButton(
-                        onPressed: (){
-                          _view_smoothies = true;
-                          setState(() {
-                          });
-                        }, child: Container(),
-                      ))
                     ],
                   )
               ),

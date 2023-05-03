@@ -1,4 +1,8 @@
-import 'package:csce315_project3_13/Inherited_Widgets/Color_Manager.dart';
+/// A widget that displays a settings icon button and opens a settings dialog when pressed.
+/// This widget is typically used as an AppBar action button.
+/// The button is an [IconButton] with the [Icons.settings] icon and a size of 15 pixels.
+/// When pressed, it opens a [Settings_Dialog] dialog.
+
 import 'package:csce315_project3_13/GUI/Components/Settings_Dialog.dart';
 import 'package:flutter/material.dart';
 

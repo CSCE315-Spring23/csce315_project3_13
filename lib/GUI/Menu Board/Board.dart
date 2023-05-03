@@ -6,8 +6,14 @@ class Board extends StatefulWidget {
   final double width;
   final double height;
   final Color color;
+  final String title;
+  final List<String> orginal_names;
+  final List<String> translated_names;
 
   const Board({Key? key,
+    required this.orginal_names,
+    required this.translated_names,
+    required this.title,
     required this.items,
     required this.width,
     required this.height,
@@ -73,9 +79,9 @@ class _BoardState extends State<Board> {
                 color: widget.color,
                 borderRadius: BorderRadius.circular(5.0),
               ),
-              child: const Center(
+              child:  Center(
                 child: Text(
-                  'Addons',
+                  widget.title,
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -85,7 +91,7 @@ class _BoardState extends State<Board> {
               ),
             ),
             for (int i = _startIndex;
-            i < _startIndex + (widget.height / 17).floor() && i < widget.items.length;
+            i < _startIndex - 2 + (widget.height / 17).floor() && i < widget.items.length;
             i = i + (widget.width/250).floor())
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -98,7 +104,7 @@ class _BoardState extends State<Board> {
                     child: FittedBox(
                       fit: BoxFit.scaleDown,
                       child: Text(
-                          widget.items[j],
+                        widget.translated_names[widget.orginal_names.indexOf(widget.items[j] as String)],
                         style: const TextStyle(
                           fontSize: 20,
                         ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// Widget for managing the backend calls for what_sales_together()
 class What_Sales_Manager extends InheritedWidget {
   final String date1;
   final String date2;
