@@ -5,18 +5,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
 
-PreferredSizeWidget Page_Header({required BuildContext context, required String pageName, required List<Widget> buttons}){
+PreferredSizeWidget Page_Header({required BuildContext context, required String pageName, required List<Widget> buttons, bool showWeather = true}){
   return AppBar(
     backgroundColor: Color_Manager.of(context).primary_color,
     centerTitle: false,
-    title: Text(pageName,
+    leading: Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Image.asset("logo.png",
+      color: Color_Manager.of(context).text_color,
+      ),
+    ),
+    title: Text(
+      pageName,
       style: const TextStyle(
         fontSize: 18,
         color: Colors.white,
       ),
     ),
     flexibleSpace: Center(
-      child: Row(
+      child: showWeather? Row(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -56,7 +63,7 @@ PreferredSizeWidget Page_Header({required BuildContext context, required String 
           ),
 
         ],
-      ),
+      ) : SizedBox(),
     ),
     actions: [Row(
       children: <Widget>[const Settings_Button()] + buttons,
