@@ -4,6 +4,13 @@ const functions = require('firebase-functions');
 //This imports a postgres library for JavaScript
 const { Client } = require('pg');
 
+// create global variables for client credentials
+const DB_HOST = 'csce-315-db.engr.tamu.edu';
+const DB_USER = 'csce315331_team_13_master';
+const DB_PASS = 'Lucky_13';
+const DB_NAME = 'csce315331_team_13';
+const DB_PORT = 5432;
+
 //This creates an object we can use to connect to our database
 
 // This is a function without parameters, it's very similar to a parameterized function
@@ -19,13 +26,13 @@ const { Client } = require('pg');
 // also we likely won't use context
 exports.getEmployeesTest = functions.https.onCall(async (data, context) => {
 
-     const client = new Client({
-           host: 'csce-315-db.engr.tamu.edu',
-           user: 'csce315331_team_13_master',
-           password: 'Lucky_13',
-           database: 'csce315331_team_13',
-           port: 5432,
-     });
+    const client = new Client({
+          host: DB_HOST,
+          user: DB_USER,
+          password: DB_PASS,
+          database: DB_NAME,
+          port: DB_PORT,
+    });
 // await makes the rest of the function wait until this line completes
 // this connects to our database
     await client.connect()
@@ -47,13 +54,13 @@ exports.getEmployeesTest = functions.https.onCall(async (data, context) => {
 // this is a function with a parameter
 exports.getOneEmployeeByIdTest = functions.https.onCall(async (data, context) => {
 
-     const client = new Client({
-           host: 'csce-315-db.engr.tamu.edu',
-           user: 'csce315331_team_13_master',
-           password: 'Lucky_13',
-           database: 'csce315331_team_13',
-           port: 5432,
-     });
+    const client = new Client({
+          host: DB_HOST,
+          user: DB_USER,
+          password: DB_PASS,
+          database: DB_NAME,
+          port: DB_PORT,
+    });
 
 //  this is makes the function have the parameter employee_id
     const {employee_id} = data;
@@ -74,12 +81,12 @@ exports.getOneEmployeeByIdTest = functions.https.onCall(async (data, context) =>
 exports.getEmployeeByUID = functions.https.onCall(async (data, context) => {
 
     const client = new Client({
-           host: 'csce-315-db.engr.tamu.edu',
-           user: 'csce315331_team_13_master',
-           password: 'Lucky_13',
-           database: 'csce315331_team_13',
-           port: 5432,
-     });
+          host: DB_HOST,
+          user: DB_USER,
+          password: DB_PASS,
+          database: DB_NAME,
+          port: DB_PORT,
+    });
 
     const {employee_uid} = data;
 
@@ -98,11 +105,11 @@ exports.getEmployeeByUID = functions.https.onCall(async (data, context) => {
 // Gets the largest id from the menu_items table, so that it can be used when adding new menu items
 exports.getLastMenuItemID = functions.https.onCall(async (data, context) => {
     const client = new Client({
-          host: 'csce-315-db.engr.tamu.edu',
-          user: 'csce315331_team_13_master',
-          password: 'Lucky_13',
-          database: 'csce315331_team_13',
-          port: 5432,
+          host: DB_HOST,
+          user: DB_USER,
+          password: DB_PASS,
+          database: DB_NAME,
+          port: DB_PORT,
     });
 
     await client.connect()
@@ -118,11 +125,11 @@ exports.getLastMenuItemID = functions.https.onCall(async (data, context) => {
 // Gets the largest id from the ingredients_table table, so that it can be used when adding an item's ingredients
 exports.getLastIngredientsTableID = functions.https.onCall(async (data, context) => {
     const client = new Client({
-          host: 'csce-315-db.engr.tamu.edu',
-          user: 'csce315331_team_13_master',
-          password: 'Lucky_13',
-          database: 'csce315331_team_13',
-          port: 5432,
+          host: DB_HOST,
+          user: DB_USER,
+          password: DB_PASS,
+          database: DB_NAME,
+          port: DB_PORT,
     });
 
     await client.connect()
@@ -139,11 +146,11 @@ exports.getLastIngredientsTableID = functions.https.onCall(async (data, context)
 exports.addMenuItem = functions.https.onCall(async (data, context) => {
 
     const client = new Client({
-          host: 'csce-315-db.engr.tamu.edu',
-          user: 'csce315331_team_13_master',
-          password: 'Lucky_13',
-          database: 'csce315331_team_13',
-          port: 5432,
+          host: DB_HOST,
+          user: DB_USER,
+          password: DB_PASS,
+          database: DB_NAME,
+          port: DB_PORT,
     });
 
     await client.connect()
@@ -159,13 +166,13 @@ exports.addMenuItem = functions.https.onCall(async (data, context) => {
 
 exports.editItemPrice = functions.https.onCall(async (data, context) => {
 
-     const client = new Client({
-           host: 'csce-315-db.engr.tamu.edu',
-           user: 'csce315331_team_13_master',
-           password: 'Lucky_13',
-           database: 'csce315331_team_13',
-           port: 5432,
-     });
+    const client = new Client({
+          host: DB_HOST,
+          user: DB_USER,
+          password: DB_PASS,
+          database: DB_NAME,
+          port: DB_PORT,
+    });
 
      await client.connect()
 
@@ -181,13 +188,13 @@ exports.editItemPrice = functions.https.onCall(async (data, context) => {
 
 exports.deleteMenuItem = functions.https.onCall(async (data, context) => {
 
-     const client = new Client({
-           host: 'csce-315-db.engr.tamu.edu',
-           user: 'csce315331_team_13_master',
-           password: 'Lucky_13',
-           database: 'csce315331_team_13',
-           port: 5432,
-     });
+    const client = new Client({
+          host: DB_HOST,
+          user: DB_USER,
+          password: DB_PASS,
+          database: DB_NAME,
+          port: DB_PORT,
+    });
 
      await client.connect()
 
@@ -203,11 +210,11 @@ exports.deleteMenuItem = functions.https.onCall(async (data, context) => {
 // Adds an ingredient row to the ingredients_table table
 exports.insertIntoIngredientsTable = functions.https.onCall(async (data, context) => {
     const client = new Client({
-          host: 'csce-315-db.engr.tamu.edu',
-          user: 'csce315331_team_13_master',
-          password: 'Lucky_13',
-          database: 'csce315331_team_13',
-          port: 5432,
+          host: DB_HOST,
+          user: DB_USER,
+          password: DB_PASS,
+          database: DB_NAME,
+          port: DB_PORT,
     });
 
     await client.connect()
@@ -222,13 +229,13 @@ exports.insertIntoIngredientsTable = functions.https.onCall(async (data, context
 });
 
 exports.getIngredientRowId = functions.https.onCall(async (data, context) => {
-     const client = new Client({
-           host: 'csce-315-db.engr.tamu.edu',
-           user: 'csce315331_team_13_master',
-           password: 'Lucky_13',
-           database: 'csce315331_team_13',
-           port: 5432,
-     });
+    const client = new Client({
+          host: DB_HOST,
+          user: DB_USER,
+          password: DB_PASS,
+          database: DB_NAME,
+          port: DB_PORT,
+    });
 
      await client.connect()
 
@@ -245,11 +252,11 @@ exports.getIngredientRowId = functions.https.onCall(async (data, context) => {
 // Takes a row_id and a new_amount, updates the ingredients_table at row_id and changes the quantity to new_amount
 exports.updateIngredientsTableRow = functions.https.onCall(async (data, context) => {
     const client = new Client({
-          host: 'csce-315-db.engr.tamu.edu',
-          user: 'csce315331_team_13_master',
-          password: 'Lucky_13',
-          database: 'csce315331_team_13',
-          port: 5432,
+          host: DB_HOST,
+          user: DB_USER,
+          password: DB_PASS,
+          database: DB_NAME,
+          port: DB_PORT,
     });
 
     await client.connect()
@@ -267,11 +274,11 @@ exports.updateIngredientsTableRow = functions.https.onCall(async (data, context)
 // Deletes an individual row from the ingredients_table
 exports.deleteIngredientsTableRow = functions.https.onCall(async (data, context) => {
     const client = new Client({
-          host: 'csce-315-db.engr.tamu.edu',
-          user: 'csce315331_team_13_master',
-          password: 'Lucky_13',
-          database: 'csce315331_team_13',
-          port: 5432,
+          host: DB_HOST,
+          user: DB_USER,
+          password: DB_PASS,
+          database: DB_NAME,
+          port: DB_PORT,
     });
 
     await client.connect()
@@ -286,13 +293,13 @@ exports.deleteIngredientsTableRow = functions.https.onCall(async (data, context)
 });
 
 exports.getMenuItemName = functions.https.onCall(async (data, context) => {
-    const client = new Client({
-          host: 'csce-315-db.engr.tamu.edu',
-          user: 'csce315331_team_13_master',
-          password: 'Lucky_13',
-          database: 'csce315331_team_13',
-          port: 5432,
-    });
+     const client = new Client({
+           host: DB_HOST,
+           user: DB_USER,
+           password: DB_PASS,
+           database: DB_NAME,
+           port: DB_PORT,
+     });
 
     await client.connect()
 
@@ -307,11 +314,11 @@ exports.getMenuItemName = functions.https.onCall(async (data, context) => {
 
 exports.getMenuItemType = functions.https.onCall(async (data, context) => {
     const client = new Client({
-          host: 'csce-315-db.engr.tamu.edu',
-          user: 'csce315331_team_13_master',
-          password: 'Lucky_13',
-          database: 'csce315331_team_13',
-          port: 5432,
+          host: DB_HOST,
+          user: DB_USER,
+          password: DB_PASS,
+          database: DB_NAME,
+          port: DB_PORT,
     });
 
     await client.connect()
@@ -328,11 +335,11 @@ exports.getMenuItemType = functions.https.onCall(async (data, context) => {
 
 exports.getItemPrice = functions.https.onCall(async (data, context) => {
     const client = new Client({
-          host: 'csce-315-db.engr.tamu.edu',
-          user: 'csce315331_team_13_master',
-          password: 'Lucky_13',
-          database: 'csce315331_team_13',
-          port: 5432,
+          host: DB_HOST,
+          user: DB_USER,
+          password: DB_PASS,
+          database: DB_NAME,
+          port: DB_PORT,
     });
 
     await client.connect()
@@ -348,11 +355,11 @@ exports.getItemPrice = functions.https.onCall(async (data, context) => {
 
 exports.getItemID = functions.https.onCall(async (data, context) => {
     const client = new Client({
-          host: 'csce-315-db.engr.tamu.edu',
-          user: 'csce315331_team_13_master',
-          password: 'Lucky_13',
-          database: 'csce315331_team_13',
-          port: 5432,
+          host: DB_HOST,
+          user: DB_USER,
+          password: DB_PASS,
+          database: DB_NAME,
+          port: DB_PORT,
     });
 
     await client.connect()
@@ -370,11 +377,11 @@ exports.getItemID = functions.https.onCall(async (data, context) => {
 
 exports.getMenuItemIngredients = functions.https.onCall(async (data, context) => {
     const client = new Client({
-          host: 'csce-315-db.engr.tamu.edu',
-          user: 'csce315331_team_13_master',
-          password: 'Lucky_13',
-          database: 'csce315331_team_13',
-          port: 5432,
+          host: DB_HOST,
+          user: DB_USER,
+          password: DB_PASS,
+          database: DB_NAME,
+          port: DB_PORT,
     });
 
     await client.connect()
@@ -390,11 +397,11 @@ exports.getMenuItemIngredients = functions.https.onCall(async (data, context) =>
 
 exports.getAmountInvStock = functions.https.onCall(async (data, context) => {
     const client = new Client({
-          host: 'csce-315-db.engr.tamu.edu',
-          user: 'csce315331_team_13_master',
-          password: 'Lucky_13',
-          database: 'csce315331_team_13',
-          port: 5432,
+          host: DB_HOST,
+          user: DB_USER,
+          password: DB_PASS,
+          database: DB_NAME,
+          port: DB_PORT,
     });
 
     await client.connect()
@@ -410,11 +417,11 @@ exports.getAmountInvStock = functions.https.onCall(async (data, context) => {
 
 exports.updateInventoryRow = functions.https.onCall(async (data, context) => {
     const client = new Client({
-          host: 'csce-315-db.engr.tamu.edu',
-          user: 'csce315331_team_13_master',
-          password: 'Lucky_13',
-          database: 'csce315331_team_13',
-          port: 5432,
+          host: DB_HOST,
+          user: DB_USER,
+          password: DB_PASS,
+          database: DB_NAME,
+          port: DB_PORT,
     });
 
     await client.connect()
@@ -431,13 +438,13 @@ exports.updateInventoryRow = functions.https.onCall(async (data, context) => {
 });
 
 exports.insertIntoOrderHistory = functions.https.onCall(async (data, context) => {
-     const client = new Client({
-           host: 'csce-315-db.engr.tamu.edu',
-           user: 'csce315331_team_13_master',
-           password: 'Lucky_13',
-           database: 'csce315331_team_13',
-           port: 5432,
-     });
+    const client = new Client({
+          host: DB_HOST,
+          user: DB_USER,
+          password: DB_PASS,
+          database: DB_NAME,
+          port: DB_PORT,
+    });
 
      await client.connect()
 
@@ -452,11 +459,11 @@ exports.insertIntoOrderHistory = functions.https.onCall(async (data, context) =>
 
 exports.getSmoothieNames = functions.https.onCall(async (data, context) => {
     const client = new Client({
-        host: 'csce-315-db.engr.tamu.edu',
-        user: 'csce315331_team_13_master',
-        password: 'Lucky_13',
-        database: 'csce315331_team_13',
-        port: 5432,
+          host: DB_HOST,
+          user: DB_USER,
+          password: DB_PASS,
+          database: DB_NAME,
+          port: DB_PORT,
     });
 
     await client.connect()
@@ -470,11 +477,11 @@ exports.getSmoothieNames = functions.https.onCall(async (data, context) => {
 
 exports.getSnackNames = functions.https.onCall(async (data, context) => {
     const client = new Client({
-        host: 'csce-315-db.engr.tamu.edu',
-        user: 'csce315331_team_13_master',
-        password: 'Lucky_13',
-        database: 'csce315331_team_13',
-        port: 5432,
+          host: DB_HOST,
+          user: DB_USER,
+          password: DB_PASS,
+          database: DB_NAME,
+          port: DB_PORT,
     });
 
     await client.connect()
@@ -488,11 +495,11 @@ exports.getSnackNames = functions.https.onCall(async (data, context) => {
 
 exports.getAddonNames = functions.https.onCall(async (data, context) => {
     const client = new Client({
-        host: 'csce-315-db.engr.tamu.edu',
-        user: 'csce315331_team_13_master',
-        password: 'Lucky_13',
-        database: 'csce315331_team_13',
-        port: 5432,
+          host: DB_HOST,
+          user: DB_USER,
+          password: DB_PASS,
+          database: DB_NAME,
+          port: DB_PORT,
     });
 
     await client.connect()
@@ -506,11 +513,11 @@ exports.getAddonNames = functions.https.onCall(async (data, context) => {
 
 exports.getIngredientNames = functions.https.onCall(async (data, context) => {
     const client = new Client({
-        host: 'csce-315-db.engr.tamu.edu',
-        user: 'csce315331_team_13_master',
-        password: 'Lucky_13',
-        database: 'csce315331_team_13',
-        port: 5432,
+          host: DB_HOST,
+          user: DB_USER,
+          password: DB_PASS,
+          database: DB_NAME,
+          port: DB_PORT,
     });
 
     await client.connect()
@@ -523,13 +530,13 @@ exports.getIngredientNames = functions.https.onCall(async (data, context) => {
 });
 
 exports.makeZReport = functions.https.onCall(async (data, context) => {
-   const client = new Client({
-       host: 'csce-315-db.engr.tamu.edu',
-       user: 'csce315331_team_13_master',
-       password: 'Lucky_13',
-       database: 'csce315331_team_13',
-       port: 5432,
-   });
+    const client = new Client({
+          host: DB_HOST,
+          user: DB_USER,
+          password: DB_PASS,
+          database: DB_NAME,
+          port: DB_PORT,
+    });
 
    await client.connect()
 
@@ -545,11 +552,11 @@ exports.makeZReport = functions.https.onCall(async (data, context) => {
 
 exports.getZReport = functions.https.onCall(async (data, context) => {
     const client = new Client({
-        host: 'csce-315-db.engr.tamu.edu',
-        user: 'csce315331_team_13_master',
-        password: 'Lucky_13',
-        database: 'csce315331_team_13',
-        port: 5432,
+          host: DB_HOST,
+          user: DB_USER,
+          password: DB_PASS,
+          database: DB_NAME,
+          port: DB_PORT,
     });
 
     await client.connect()
@@ -565,11 +572,11 @@ exports.getZReport = functions.https.onCall(async (data, context) => {
 
 exports.getAllZReports = functions.https.onCall(async (data, context) => {
     const client = new Client({
-        host: 'csce-315-db.engr.tamu.edu',
-        user: 'csce315331_team_13_master',
-        password: 'Lucky_13',
-        database: 'csce315331_team_13',
-        port: 5432,
+          host: DB_HOST,
+          user: DB_USER,
+          password: DB_PASS,
+          database: DB_NAME,
+          port: DB_PORT,
     });
 
     await client.connect()
@@ -585,11 +592,11 @@ exports.getAllZReports = functions.https.onCall(async (data, context) => {
 
 exports.updateXReport = functions.https.onCall(async (data, context) => {
     const client = new Client({
-        host: 'csce-315-db.engr.tamu.edu',
-        user: 'csce315331_team_13_master',
-        password: 'Lucky_13',
-        database: 'csce315331_team_13',
-        port: 5432,
+          host: DB_HOST,
+          user: DB_USER,
+          password: DB_PASS,
+          database: DB_NAME,
+          port: DB_PORT,
     });
 
     await client.connect()
@@ -606,11 +613,11 @@ exports.updateXReport = functions.https.onCall(async (data, context) => {
 
 exports.getIngredientNames = functions.https.onCall(async (data, context) => {
     const client = new Client({
-        host: 'csce-315-db.engr.tamu.edu',
-        user: 'csce315331_team_13_master',
-        password: 'Lucky_13',
-        database: 'csce315331_team_13',
-        port: 5432,
+          host: DB_HOST,
+          user: DB_USER,
+          password: DB_PASS,
+          database: DB_NAME,
+          port: DB_PORT,
     });
 
 
@@ -625,11 +632,11 @@ exports.getIngredientNames = functions.https.onCall(async (data, context) => {
 
 exports.getItemsInOrder = functions.https.onCall(async (data, context) => {
     const client = new Client({
-        host: 'csce-315-db.engr.tamu.edu',
-        user: 'csce315331_team_13_master',
-        password: 'Lucky_13',
-        database: 'csce315331_team_13',
-        port: 5432,
+          host: DB_HOST,
+          user: DB_USER,
+          password: DB_PASS,
+          database: DB_NAME,
+          port: DB_PORT,
     });
 
     await client.connect()
@@ -649,11 +656,11 @@ exports.getItemsInOrder = functions.https.onCall(async (data, context) => {
 
 exports.getAllSmoothieInfo = functions.https.onCall(async (data, context) => {
     const client = new Client({
-        host: 'csce-315-db.engr.tamu.edu',
-        user: 'csce315331_team_13_master',
-        password: 'Lucky_13',
-        database: 'csce315331_team_13',
-        port: 5432,
+          host: DB_HOST,
+          user: DB_USER,
+          password: DB_PASS,
+          database: DB_NAME,
+          port: DB_PORT,
     });
 
     await client.connect()
@@ -668,11 +675,11 @@ exports.getAllSmoothieInfo = functions.https.onCall(async (data, context) => {
 
 exports.getAllSnacksInfo = functions.https.onCall(async (data, context) => {
     const client = new Client({
-        host: 'csce-315-db.engr.tamu.edu',
-        user: 'csce315331_team_13_master',
-        password: 'Lucky_13',
-        database: 'csce315331_team_13',
-        port: 5432,
+          host: DB_HOST,
+          user: DB_USER,
+          password: DB_PASS,
+          database: DB_NAME,
+          port: DB_PORT,
     });
 
     await client.connect()
@@ -686,11 +693,11 @@ exports.getAllSnacksInfo = functions.https.onCall(async (data, context) => {
 
 exports.getAllAddonInfo = functions.https.onCall(async (data, context) => {
     const client = new Client({
-        host: 'csce-315-db.engr.tamu.edu',
-        user: 'csce315331_team_13_master',
-        password: 'Lucky_13',
-        database: 'csce315331_team_13',
-        port: 5432,
+          host: DB_HOST,
+          user: DB_USER,
+          password: DB_PASS,
+          database: DB_NAME,
+          port: DB_PORT,
     });
 
     await client.connect()
@@ -704,13 +711,13 @@ exports.getAllAddonInfo = functions.https.onCall(async (data, context) => {
 
 exports.getInventoryItems = functions.https.onCall(async (data, context) =>
 {
-      const client = new Client({
-        host: 'csce-315-db.engr.tamu.edu',
-        user: 'csce315331_team_13_master',
-        password: 'Lucky_13',
-        database: 'csce315331_team_13',
-        port: 5432,
-      });
+    const client = new Client({
+          host: DB_HOST,
+          user: DB_USER,
+          password: DB_PASS,
+          database: DB_NAME,
+          port: DB_PORT,
+    });
 
       await client.connect();
 
@@ -725,11 +732,11 @@ exports.addInventoryRow = functions.https.onCall(async (data, context) =>
 {
 
     const client = new Client({
-          host: 'csce-315-db.engr.tamu.edu',
-          user: 'csce315331_team_13_master',
-          password: 'Lucky_13',
-          database: 'csce315331_team_13',
-          port: 5432,
+          host: DB_HOST,
+          user: DB_USER,
+          password: DB_PASS,
+          database: DB_NAME,
+          port: DB_PORT,
     });
 
     await client.connect()
@@ -758,13 +765,13 @@ exports.addInventoryRow = functions.https.onCall(async (data, context) =>
 });
 
 exports.deleteInventoryItem = functions.https.onCall(async (data, context) => {
-  const client = new Client({
-    host: 'csce-315-db.engr.tamu.edu',
-    user: 'csce315331_team_13_master',
-    password: 'Lucky_13',
-    database: 'csce315331_team_13',
-    port: 5432,
-  });
+    const client = new Client({
+          host: DB_HOST,
+          user: DB_USER,
+          password: DB_PASS,
+          database: DB_NAME,
+          port: DB_PORT,
+    });
 
   await client.connect();
 
@@ -785,13 +792,13 @@ exports.editInventoryEntry = functions.https.onCall(async (data, context) => {
   const itemName = data.itemName;
   const changeAmount = data.changeAmount;
 
-  const client = new Client({
-    host: 'csce-315-db.engr.tamu.edu',
-    user: 'csce315331_team_13_master',
-    password: 'Lucky_13',
-    database: 'csce315331_team_13',
-    port: 5432,
-  });
+    const client = new Client({
+          host: DB_HOST,
+          user: DB_USER,
+          password: DB_PASS,
+          database: DB_NAME,
+          port: DB_PORT,
+    });
 
   await client.connect();
 
@@ -868,13 +875,13 @@ exports.editInventoryEntry = functions.https.onCall(async (data, context) => {
 
 exports.getSmoothie = functions.https.onCall(async (data, context) =>
 {
-      const client = new Client({
-        host: 'csce-315-db.engr.tamu.edu',
-        user: 'csce315331_team_13_master',
-        password: 'Lucky_13',
-        database: 'csce315331_team_13',
-        port: 5432,
-      });
+    const client = new Client({
+          host: DB_HOST,
+          user: DB_USER,
+          password: DB_PASS,
+          database: DB_NAME,
+          port: DB_PORT,
+    });
 
       await client.connect();
 
@@ -887,13 +894,13 @@ exports.getSmoothie = functions.https.onCall(async (data, context) =>
 
 exports.getInventoryMin = functions.https.onCall(async (data, context) =>
 {
-      const client = new Client({
-        host: 'csce-315-db.engr.tamu.edu',
-        user: 'csce315331_team_13_master',
-        password: 'Lucky_13',
-        database: 'csce315331_team_13',
-        port: 5432,
-      });
+    const client = new Client({
+          host: DB_HOST,
+          user: DB_USER,
+          password: DB_PASS,
+          database: DB_NAME,
+          port: DB_PORT,
+    });
 
       await client.connect();
 
@@ -906,13 +913,13 @@ exports.getInventoryMin = functions.https.onCall(async (data, context) =>
 
 
 exports.generateWeekOrders = functions.https.onCall(async (data, context) => {
-  const client = new Client({
-    host: 'csce-315-db.engr.tamu.edu',
-    user: 'csce315331_team_13_master',
-    password: 'Lucky_13',
-    database: 'csce315331_team_13',
-    port: 5432,
-  });
+    const client = new Client({
+          host: DB_HOST,
+          user: DB_USER,
+          password: DB_PASS,
+          database: DB_NAME,
+          port: DB_PORT,
+    });
 
   await client.connect();
 
@@ -924,13 +931,13 @@ exports.generateWeekOrders = functions.https.onCall(async (data, context) => {
 
 
 exports.generateRestockReport = functions.https.onCall(async (data, context) => {
-  const client = new Client({
-    host: 'csce-315-db.engr.tamu.edu',
-    user: 'csce315331_team_13_master',
-    password: 'Lucky_13',
-    database: 'csce315331_team_13',
-    port: 5432,
-  });
+    const client = new Client({
+          host: DB_HOST,
+          user: DB_USER,
+          password: DB_PASS,
+          database: DB_NAME,
+          port: DB_PORT,
+    });
 
   await client.connect();
 
@@ -976,13 +983,13 @@ exports.generateRestockReport = functions.https.onCall(async (data, context) => 
 
 exports.getAllSmoothieIngredients = functions.https.onCall(async (data, context) =>
  {
-       const client = new Client({
-         host: 'csce-315-db.engr.tamu.edu',
-         user: 'csce315331_team_13_master',
-         password: 'Lucky_13',
-         database: 'csce315331_team_13',
-         port: 5432,
-       });
+    const client = new Client({
+          host: DB_HOST,
+          user: DB_USER,
+          password: DB_PASS,
+          database: DB_NAME,
+          port: DB_PORT,
+    });
 
        await client.connect();
 
@@ -995,11 +1002,11 @@ exports.getAllSmoothieIngredients = functions.https.onCall(async (data, context)
 
 exports.getMenuItemsInfo = functions.https.onCall(async (data, context) => {
     const client = new Client({
-      host: 'csce-315-db.engr.tamu.edu',
-      user: 'csce315331_team_13_master',
-      password: 'Lucky_13',
-      database: 'csce315331_team_13',
-      port: 5432,
+          host: DB_HOST,
+          user: DB_USER,
+          password: DB_PASS,
+          database: DB_NAME,
+          port: DB_PORT,
     });
 
     await client.connect()
@@ -1014,11 +1021,11 @@ exports.getMenuItemsInfo = functions.https.onCall(async (data, context) => {
 
 exports.getExcessInventoryData = functions.https.onCall(async (data, context) => {
     const client = new Client({
-        host: 'csce-315-db.engr.tamu.edu',
-        user: 'csce315331_team_13_master',
-        password: 'Lucky_13',
-        database: 'csce315331_team_13',
-        port: 5432,
+          host: DB_HOST,
+          user: DB_USER,
+          password: DB_PASS,
+          database: DB_NAME,
+          port: DB_PORT,
     });
 
     await client.connect()
@@ -1037,11 +1044,11 @@ exports.getExcessInventoryData = functions.https.onCall(async (data, context) =>
 
 exports.getExcessIngredients = functions.https.onCall(async (data, context) => {
     const client = new Client({
-        host: 'csce-315-db.engr.tamu.edu',
-        user: 'csce315331_team_13_master',
-        password: 'Lucky_13',
-        database: 'csce315331_team_13',
-        port: 5432,
+         host: DB_HOST,
+         user: DB_USER,
+         password: DB_PASS,
+         database: DB_NAME,
+         port: DB_PORT,
     });
 
     await client.connect()
