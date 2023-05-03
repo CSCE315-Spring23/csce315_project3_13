@@ -1,4 +1,4 @@
-/// Window for making an inventory order.
+import 'dart:collection';
 
 import 'package:csce315_project3_13/GUI/Components/Login_Button.dart';
 import 'package:csce315_project3_13/GUI/Pages/Manager_View/Win_Manager_View.dart';
@@ -11,6 +11,7 @@ import '../../../Models/models_library.dart';
 import 'package:flutter/material.dart';
 import '../../../Services/reports_helper.dart';
 import '../../Components/Page_Header.dart';
+import 'Win_View_Inventory.dart';
 
 class Win_Order_Inventory extends StatefulWidget {
   static const String route = '/view-order-manager';
@@ -135,14 +136,14 @@ class _Win_Order_Inventory_State extends State<Win_Order_Inventory> {
 
   Future<void> getData_no_reload() async {
     print("Building Page...");
-    inventoryItems = await inv_helper.get_inventory_items();
+    inventoryItems = await inv_helper.get_order_items();
     reportItems = await report.generate_restock_report();
     print("Obtained Inventory...");
   }
 
   Future<void> getData() async {
     print("Building Page...");
-    inventoryItems = await inv_helper.get_inventory_items();
+    inventoryItems = await inv_helper.get_order_items();
     reportItems = await report.generate_restock_report();
     print("Obtained Inventory...");
     setState(() {
@@ -150,159 +151,6 @@ class _Win_Order_Inventory_State extends State<Win_Order_Inventory> {
     });
   }
 
-  void editInventoryItem(Map<dynamic, num> items, String itemName, num currentAmount) {
-    final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        TextEditingController amountController = TextEditingController(text: currentAmount.toString());
-        return AlertDialog(
-          title: Text(text_item_amount),
-          content: Form(
-            key: _formKey,
-            child: TextFormField(
-              controller: amountController,
-              decoration: InputDecoration(hintText: text_hint_new_amount + "..."),
-              keyboardType: TextInputType.number,
-              validator: (value) {
-                if (value?.isEmpty ?? true) {
-                  return "Please enter a number";
-                }
-                num newValue = num.tryParse(value!) ?? 0;
-                if (newValue < 0) {
-                  return "Invalid Amount";
-                }
-                return null;
-              },
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: Text(text_cancel_button),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: Text(text_confirm_button),
-              onPressed: () async {
-                if (_formKey.currentState?.validate() ?? false) {
-                  Navigator.of(context).pop();
-                  try {
-                    num changeAmount = int.parse(amountController.text) - currentAmount;
-                    bool success = await inv_helper.edit_inventory_entry(itemName, changeAmount);
-                    if (!success) {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: const Icon(Icons.error_outline_sharp),
-                            content: Text(text_not_enough_inventory),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: Text(text_ok_button),
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    } else {
-                      setState(() {
-                        items[itemName] = int.parse(amountController.text);
-                      });
-                    }
-                  } catch (exception) {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: const Icon(Icons.error_outline_sharp),
-                          content: Text(text_unable_to_change_amount),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: Text(text_ok_button),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  }
-                }
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-
-  // INSERT INTO menu_items (menu_item_id, menu_item, item_price, amount_in_stock, type, status) VALUES(407, 'The Smoothie Squad Special small', 6.18, 60, 'smoothie', 'available')
-  void confirmInventoryItemRemoval(String itemName) {
-    Icon message_icon = const Icon(Icons.check);
-    String message_text = text_message_text_rem;
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(text_confirm_item_deletion),
-          content: Text( text_certain_you_want_del + " $itemName ?"),
-          actions: <Widget>[
-            TextButton(
-              child: Text(text_cancel_button),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: Text(text_confirm_button),
-              onPressed: () async {
-                try {
-                  await inv_helper.deleteInventoryItem(itemName);
-                  getData();
-                  setState(() {
-
-                  });
-                  Navigator.pop(context);
-                } catch (exception) {
-                  print(exception);
-                  message_icon = const Icon(Icons.error_outline_outlined);
-                  message_text = text_message_text_rem_alt;
-                } finally {
-                  showDialog(
-                    barrierDismissible: false,
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: message_icon,
-                        content: Text(message_text),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: Text(text_ok_button),
-                          )
-                        ],
-                      );
-                    },
-                  );
-                  Navigator.of(context).pop();
-                }
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
 
   Widget itemList(Map<String, num> items1, Map<dynamic, num> items2, Color tile_color, Color _text_color, Color _icon_color) {
     return Row(
@@ -348,12 +196,13 @@ class _Win_Order_Inventory_State extends State<Win_Order_Inventory> {
                   trailing: SizedBox(
                     width: 150,
                     child: IconButton(
-                      tooltip: text_edit_amount,
+                      tooltip: "Order",
                       icon: const Icon(Icons.add),
                       color: _text_color.withAlpha(122),
                       onPressed: () {
                         //_menu_info.removeAt(index);
-                        editInventoryItem(items1, entry.key, entry.value);
+                        // editInventoryItem(items1, entry.key, entry.value);
+                        newItemSubWin(entry.key);
                       },
                       iconSize: 35,
                     ),
@@ -408,16 +257,6 @@ class _Win_Order_Inventory_State extends State<Win_Order_Inventory> {
                   ),
                   trailing: SizedBox(
                     width: 150,
-                    child: IconButton(
-                      tooltip: text_edit_amount,
-                      icon: const Icon(Icons.add),
-                      color: _text_color.withAlpha(122),
-                      onPressed: () {
-                        //_menu_info.removeAt(index);
-                        editInventoryItem(items2, entry.key, entry.value);
-                      },
-                      iconSize: 35,
-                    ),
                   ),
                 ),
               );
@@ -429,7 +268,7 @@ class _Win_Order_Inventory_State extends State<Win_Order_Inventory> {
   }
 
 
-  void newItemSubWin()
+  void newItemSubWin(String itemName)
   {
     TextEditingController _ingredient_name = TextEditingController();
     TextEditingController _amount_inv_stock = TextEditingController();
@@ -447,35 +286,13 @@ class _Win_Order_Inventory_State extends State<Win_Order_Inventory> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(text_new_item_creation),
+          title: Text("New Order"),
           content: SizedBox(
             width: 400,
             height: 400,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                TextFormField(
-                  controller: _ingredient_name,
-                  decoration:  InputDecoration(
-                    hintText: text_ingredient_name + "...",
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                  ),
-                ),
-                // TextFormField(
-                //   controller: _amount_inv_stock,
-                //     decoration:  InputDecoration(
-                //       hintText: text_amount_in_stock + "...",
-                //       filled: true,
-                //       fillColor: Colors.white,
-                //       border: OutlineInputBorder(
-                //         borderRadius: BorderRadius.circular(10.0),
-                //       ),
-                //     )
-                // ),
                 TextFormField(
                     controller: _amount_ordered,
                     decoration:  InputDecoration(
@@ -488,49 +305,48 @@ class _Win_Order_Inventory_State extends State<Win_Order_Inventory> {
                     )
                 ),
                 TextFormField(
-                    controller: _unit,
-                    decoration:  InputDecoration(
-                      hintText: text_unit + "...",
-                      filled: true,
-                      fillColor: Colors.white,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                    )
+                  controller: _date_ordered,
+                  decoration: InputDecoration(
+                    hintText: text_date_ordered + "...",
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      throw Exception('Please enter a value');
+                    }
+                    final currentDate = DateTime.now();
+                    final dateOrdered = DateTime.parse(value);
+                    if (dateOrdered.isBefore(currentDate)) {
+                      throw Exception('Date ordered cannot be before the current date');
+                    }
+                  },
                 ),
                 TextFormField(
-                    controller: _date_ordered,
-                    decoration:  InputDecoration(
-                      hintText: text_date_ordered + "...",
-                      filled: true,
-                      fillColor: Colors.white,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                    )
+                  controller: _expiration_date,
+                  decoration: InputDecoration(
+                    hintText: text_expiration_date + "...",
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      throw Exception('Please enter a value');
+                    }
+                    final currentDate = DateTime.now();
+                    final expirationDate = DateTime.parse(value);
+                    if (expirationDate.isBefore(currentDate)) {
+                      throw Exception('Expiration date cannot be before the current date');
+                    }
+                  },
                 ),
-                TextFormField(
-                    controller: _expiration_date,
-                    decoration:  InputDecoration(
-                      hintText:  text_expiration_date + "...",
-                      filled: true,
-                      fillColor: Colors.white,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                    )
-                ),
-                TextFormField(
-                    controller: _conversion,
-                    decoration:  InputDecoration(
-                      hintText: text_conversion + "...",
-                      filled: true,
-                      fillColor: Colors.white,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                    )
-                ),
+
               ],
             ),
           ),
@@ -542,20 +358,28 @@ class _Win_Order_Inventory_State extends State<Win_Order_Inventory> {
               },
             ),
             TextButton(
-              child: Text(text_add_item),
+              child: Text("ORDER"),
               onPressed: () async {
                 try {
+                  Map<String, int> map = HashMap();
+                  map = await inv_helper.place_order(itemName);
+                  final entry = map.entries.elementAt(0);
+                  String unit = entry.key;
+                  int conversion = entry.value;
+                  print(unit);
+                  print(conversion);
                   inventory_item_obj new_item = inventory_item_obj(
                       0,
                       text_available,
-                      _ingredient_name.text,
-                      int.parse(_conversion.text) * int.parse(_amount_ordered.text),
+                      itemName,
+                      conversion * int.parse(_amount_ordered.text),
                       int.parse(_amount_ordered.text),
-                      _unit.text,
+                      unit,
                       _date_ordered.text,
                       _expiration_date.text,
-                      int.parse(_conversion.text)
+                      conversion
                   );
+                  print("done");
                   await inv_helper.add_inventory_row(new_item);
                   getData();
                   setState(() {
@@ -568,6 +392,23 @@ class _Win_Order_Inventory_State extends State<Win_Order_Inventory> {
                   print(exception);
                   message_icon = const Icon(Icons.error_outline_outlined);
                   message_text = text_message_text_add_alt;
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: message_icon,
+                        content: Text("Could not place order"),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: Text(text_ok_button),
+                          ),
+                        ],
+                      );
+                    },
+                  );
                 }
                 finally{
                   showDialog(
@@ -701,7 +542,6 @@ class _Win_Order_Inventory_State extends State<Win_Order_Inventory> {
 
     return Scaffold(
       appBar: Page_Header(
-        // showWeather: false,
         context: context,
         pageName: text_page_header,
         buttons: [
@@ -739,27 +579,69 @@ class _Win_Order_Inventory_State extends State<Win_Order_Inventory> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Login_Button(
-              onTap: () {
-                newItemSubWin();
+            IconButton(
+              tooltip: "Return to Inventory Management",
+              padding: const EdgeInsets.only(left: 75, right: 10, top: 15),
+              onPressed: ()
+              {
+                Navigator.pushReplacementNamed(context,Win_View_Inventory.route);
               },
-              buttonWidth: 200,
-              buttonName: text_add_inventory,
+              icon: const Icon(Icons.close_rounded),
+              iconSize: 40,
             ),
-            Login_Button(
-              onTap: () {
-                newItemSubWin();
-              },
-              buttonWidth: 200,
-              buttonName: 'Order',
+            Padding(
+              padding: EdgeInsets.only(left: 500.0),
+              child: Login_Button(
+                onTap: () async {
+                  try {
+                    showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (BuildContext context) {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      },
+                    );
+                    await report.restock();
+                    getData();
+                    setState(() {
+
+                    });
+                    await Future.delayed(Duration(seconds: 2));
+                    Navigator.pop(context); // Close the loading dialog
+                  } catch (e) {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text("Error"),
+                          content: Text("Could not restock: $e"),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Text("OK"),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  }
+                },
+                buttonWidth: 200,
+                buttonName: 'Restock All Items',
+              ),
             ),
-            Login_Button(
-              onTap: () {
-                newItemSubWin();
-              },
-              buttonWidth: 200,
-              buttonName: 'Restock Report',
-            ),
+
+            // Login_Button(
+            //   onTap: () {
+            //     newItemSubWin();
+            //   },
+            //   buttonWidth: 200,
+            //   buttonName: 'Restock Report',
+            // ),
           ],
         ),
       ),

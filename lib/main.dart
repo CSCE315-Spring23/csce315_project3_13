@@ -376,6 +376,7 @@ class _MyAppState extends State<MyApp> {
                 Win_Itemized_Reports.route: (BuildContext context) => Win_Itemized_Reports(),
                 Win_Menu_Board.route : (BuildContext context) => Win_Menu_Board(),
                 Win_Excess_Reports.route: (BuildContext context) => Win_Excess_Reports(),
+                Win_Restock_Inventory.route : (BuildContext context) => Win_Restock_Inventory(),
                 Win_Cust_Order.route: (BuildContext context) => Win_Cust_Order(),
               },
               initialRoute: Win_Login.route,
