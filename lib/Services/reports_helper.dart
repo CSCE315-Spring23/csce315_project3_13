@@ -5,11 +5,14 @@ import 'package:csce315_project3_13/Services/general_helper.dart';
 import '../Models/models_library.dart';
 import 'dart:math';
 
+/// A helper class for generating sales reports and obtaining Z Reports
 class reports_helper
 {
 
   general_helper gen_helper = general_helper();
 
+  /// Returns the sales amount of a single day's Z report as a double.
+  /// Dates should be in the format "mm-dd-yyyy".
   Future<double> get_z_report(String date) async
   {
     HttpsCallable getter = FirebaseFunctions.instance.httpsCallable('getZReport');
@@ -26,7 +29,8 @@ class reports_helper
   }
 
 
-
+  /// Returns a map of all Z reports between two given dates.
+  /// The keys of the map are strings representing the dates, and the values are the sales
   Future<Map<String, double>> get_all_z_reports() async
   {
     HttpsCallable getter = FirebaseFunctions.instance.httpsCallable('getAllZReports');
@@ -43,6 +47,8 @@ class reports_helper
   return z_reports;
   }
 
+  /// Updates the X report by adding a given amount.
+  /// If the current amount is 0, then a new Z report is created.
   Future<void> update_x_report(double amount) async
   {
     String date = await gen_helper.get_current_date();
@@ -66,6 +72,9 @@ class reports_helper
 
   }
 
+  /// Returns a list of all item pairs that were sold together between two given dates.
+  /// The returned list is sorted in descending order of frequency of sales.
+  /// Dates should be in the format "mm-dd-yyyy".
   Future<List<what_sales_together_row>> what_sales_together(String date1, String date2) async
   {
     print("Called what sales function");
@@ -122,6 +131,11 @@ class reports_helper
 
   }
 
+  /// Generates a sales report for menu items sold within a specified date range.
+  /// - [date1]: A [String] representing the starting date of the date range.
+  /// - [date2]: A [String] representing the ending date of the date range.
+  /// Returns: A [Future] of a [List] of [sales_report_row], each containing information
+  /// about the type of menu item, its ID, name, amount sold, and total revenue.
   Future<List<sales_report_row>> generate_sales_report(String date1, String date2) async {
     Map<int, int> sales = {};
     Map<int, List<dynamic>> item_info = await gen_helper.get_all_menu_item_info();
@@ -160,6 +174,9 @@ class reports_helper
     return report;
   }
 
+  /// Generates a restock report for ingredients used in menu items sold within the last week.
+  ///
+  /// Returns: A [Future] of a [Map] with ingredient names as keys and the number of new minimums for each inventory item as values
   Future<Map<dynamic, int>> generate_restock_report() async {
 // Get the ingredients amount for each ingredient in every smoothie
     Map<int, Map<String, int>> smoothie_ingredient_dict = {};

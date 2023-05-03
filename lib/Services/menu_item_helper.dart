@@ -3,6 +3,7 @@ import 'package:csce315_project3_13/Services/ingredients_table_helper.dart';
 import '../Models/models_library.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 
+/// A helper class for menu item-related functions.
 class menu_item_helper
 {
   general_helper gen_helper = general_helper();
@@ -13,6 +14,9 @@ class menu_item_helper
   // -If the menu item is a smoothie, it will get added three different times (small, medium, large)
   //    and will add its ingredients to the ingredients_table table
   // -If it is not a smoothie, then it will just be added as is to the menu_items table
+  /// Adds a menu item to the database. A [menu_item_obj] object is passed in, which mirrors a row from the menu_items table. If the menu item is a smoothie, it will be added three different times (small, medium, large) and its ingredients will be added to the ingredients_table table. If it is not a smoothie, then it will just be added as is to the menu_items table.
+  ///
+  /// Returns a [Future] of [void].
   Future<void> add_menu_item(menu_item_obj new_item) async
   {
     HttpsCallable getItemID = FirebaseFunctions.instance.httpsCallable('getLastMenuItemID');
@@ -81,6 +85,9 @@ class menu_item_helper
 
   }
 
+  /// Edits the ingredients of a smoothie menu item.
+  /// `menu_item_id` - The ID of the menu item to edit.
+  /// `new_ingredients` - A map of ingredient names to their new amounts.
   Future<void> edit_smoothie_ingredients(int menu_item_id, Map<String, int> new_ingredients) async
   {
     Map<String, int> current_ingredients = await gen_helper.get_smoothie_ingredients(menu_item_id);
@@ -112,6 +119,9 @@ class menu_item_helper
     }
   }
 
+  /// Edits the price of a menu item.
+  /// `menu_item_id` - The ID of the menu item to edit.
+  /// `new_price` - The new price for the menu item.
   Future<void> edit_item_price(int menu_item_id, double new_price) async
   {
     HttpsCallable editor = FirebaseFunctions.instance.httpsCallable('editItemPrice');
@@ -121,6 +131,9 @@ class menu_item_helper
     });
   }
 
+  /// Deletes a menu item.
+  ///
+  /// `menu_item_id` - The ID of the menu item to delete.
   Future<void> delete_menu_item(int menu_item_id) async
   {
     String menu_item = await gen_helper.get_item_name(menu_item_id);
@@ -132,6 +145,9 @@ class menu_item_helper
     await remover.call({'menu_item': menu_item});
   }
 
+  /// Gets information about all smoothie menu items.
+  ///
+  /// Returns a list of `menu_item_obj` objects containing information about each menu item.
   Future<List<menu_item_obj>> getAllSmoothiesInfo() async
   {
     HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('getAllSmoothieInfo');
@@ -148,6 +164,9 @@ class menu_item_helper
     return items;
   }
 
+  /// Fetches all snack menu items from Firebase and returns them as a list of [menu_item_obj].
+  ///
+  /// Returns a [Future] that resolves to a list of [menu_item_obj], representing all available snack menu items.
   Future<List<menu_item_obj>> getAllSnackInfo() async
   {
     HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('getAllSnacksInfo');
@@ -164,6 +183,9 @@ class menu_item_helper
     return items;
   }
 
+  /// Fetches all addon menu items from Firebase and returns them as a list of [menu_item_obj].
+  ///
+  /// Returns a [Future] that resolves to a list of [menu_item_obj], representing all available addon menu items.
   Future<List<menu_item_obj>> getAllAddonInfo() async
   {
     HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('getAllAddonInfo');

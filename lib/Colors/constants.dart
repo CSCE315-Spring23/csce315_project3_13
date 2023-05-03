@@ -3,6 +3,8 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
+/// These are our default colors for our app
+
 const Color k_primary_color = Color(0xFF932126);
 const Color k_secondary_color = Color(0xFF932126);
 const Color k_background_color = Color(0xFFE38286);

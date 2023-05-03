@@ -1,5 +1,6 @@
 part of models_library;
 
+/// Represents a row for the table in the sales report GUI
 class sales_report_row
 {
   // All of the variables that will be displayed on the table that comes up when you run a sales report
@@ -10,6 +11,7 @@ class sales_report_row
   double total_revenue = 0;
 
   // Constructor
+  /// Constructs a row using the passed parameters
   sales_report_row(String type, int id, String item_name, int amount_sold, double total_revenue)
   {
     this.type = type;

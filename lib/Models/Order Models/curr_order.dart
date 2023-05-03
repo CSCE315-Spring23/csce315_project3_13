@@ -1,6 +1,7 @@
 import 'smoothie_order.dart';
 import 'snack_order.dart';
 
+/// Object representing the current order that the GUI is referencing
 class curr_order {
 
   //Vector for storing snack names
@@ -39,6 +40,7 @@ class curr_order {
     smoothies.add(smoothie);
   }
 
+  ///    Sorts the IDs of the smoothies and sorts the IDs of the snacks
   void reorderIndexes(int startingIndex)
   {
     for (smoothie_order smoothie in [...smoothies]) {
@@ -54,6 +56,8 @@ class curr_order {
     }
   }
 
+  ///    Removes an item from the current order
+  ///    @param index the index of the item to be removed
   smoothie_order remove(int index)
   {
        for (smoothie_order smoothie in smoothies) {
