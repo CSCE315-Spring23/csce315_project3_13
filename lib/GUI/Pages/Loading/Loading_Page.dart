@@ -1,4 +1,9 @@
-import 'dart:async';
+/// A widget representing a loading page shown while the application is loading.
+/// This widget is used as the first screen shown to users when the application starts
+/// and shows a spinning circle indicating the application is loading.
+/// This widget extends [StatefulWidget] and overrides the [createState] method to
+/// return a new instance of [_Win_Loading_PageState]. [_Win_Loading_PageState] is
+/// responsible for building the UI of this widget.
 
 import 'package:csce315_project3_13/Inherited_Widgets/Color_Manager.dart';
 import 'package:csce315_project3_13/GUI/Components/Page_Header.dart';

@@ -1,3 +1,8 @@
+/// A dialog widget that allows the user to change settings such as color and language.
+///
+/// This widget contains functionality to update the texts on the page and other data
+/// after a user selects a new language through [Translate_Manager].
+
 import 'package:csce315_project3_13/Inherited_Widgets/Color_Manager.dart';
 import 'package:csce315_project3_13/Inherited_Widgets/Translate_Manager.dart';
 import 'package:csce315_project3_13/Services/google_translate_API.dart';
