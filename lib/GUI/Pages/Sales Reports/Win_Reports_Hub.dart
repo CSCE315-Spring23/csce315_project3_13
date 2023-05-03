@@ -10,6 +10,7 @@ import '../../../Services/reports_helper.dart';
 import '../../Components/Login_Button.dart';
 import '../../Components/Page_Header.dart';
 import '../Manager_View/Win_Manager_View.dart';
+import 'Win_Excess_Reports.dart';
 
 class Win_Reports_Hub extends StatefulWidget {
   static const String route = '/reports-hub';
@@ -83,6 +84,9 @@ class _Win_Reports_HubState extends State<Win_Reports_Hub> {
                   Login_Button(onTap: (){
                     Navigator.pushReplacementNamed(context,Win_What_Sales.route);
                   }, buttonName: "What Sales Together", fontSize: 18, buttonWidth: 180,),
+                  Login_Button(onTap: (){
+                    Navigator.pushReplacementNamed(context,Win_Excess_Reports.route);
+                  }, buttonName: "Excess Reports", fontSize: 18, buttonWidth: 180,),
                 ],
               ),
             ],
