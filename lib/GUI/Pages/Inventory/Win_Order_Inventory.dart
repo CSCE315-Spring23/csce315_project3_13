@@ -1,1086 +1,650 @@
-//This imports firebase functions so that we can use it
-const functions = require('firebase-functions');
+import 'dart:collection';
 
-//This imports a postgres library for JavaScript
-const { Client } = require('pg');
+import 'package:csce315_project3_13/GUI/Components/Login_Button.dart';
+import 'package:csce315_project3_13/GUI/Pages/Manager_View/Win_Manager_View.dart';
+import 'package:csce315_project3_13/Inherited_Widgets/Translate_Manager.dart';
+import 'package:csce315_project3_13/Services/google_translate_API.dart';
+import 'package:csce315_project3_13/Services/inventory_helper.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import '../../../Inherited_Widgets/Color_Manager.dart';
+import '../../../Models/models_library.dart';
+import 'package:flutter/material.dart';
+import '../../../Services/reports_helper.dart';
+import '../../Components/Page_Header.dart';
+import 'Win_View_Inventory.dart';
 
-//This creates an object we can use to connect to our database
+class Win_Order_Inventory extends StatefulWidget {
+  static const String route = '/view-order-manager';
+  const Win_Order_Inventory({Key? key}) : super(key: key);
 
-// This is a function without parameters, it's very similar to a parameterized function
-// If you want to create a new function you should replace getEmployeesTest with the function name
-// The rest should be the same for all our functions
-// functions is the name we gave to the firebase functions package
-// https is the protocol used
-// onCall means that it can be invoked on the client side (i.e. from our dart code)
-// async means that it will have parts that are waiting for other parts
-// data is an an optional parameter that can be used for passing data
-// context is an optional parameter that is used for giving the function other types of information
-// data and context are auto assigned by system variables if not given so don't stress about them being here
-// also we likely won't use context
-exports.getEmployeesTest = functions.https.onCall(async (data, context) => {
-
-     const client = new Client({
-           host: 'csce-315-db.engr.tamu.edu',
-           user: 'csce315331_team_13_master',
-           password: 'Lucky_13',
-           database: 'csce315331_team_13',
-           port: 5432,
-     });
-// await makes the rest of the function wait until this line completes
-// this connects to our database
-    await client.connect()
-
-// this creates a const that will store the result of our query
-// it also queries the client with the given string argument
-    const res = await client.query('SELECT * FROM employees')
-
-//  this closes our connection to our database
-    client.end()
-
-//  this returns a list of dictionaries populated with the values of the request
-//  e.g. if only Jonas existed it would return this [{employee_id: 2, employee_name: Jonas, employee_role: Server, passcode: 56, hourly_rate: $14.99}]
-    return res.rows
-});
+  @override
+  State<Win_Order_Inventory> createState() => _Win_Order_Inventory_State();
+}
 
 
+class _Win_Order_Inventory_State extends State<Win_Order_Inventory> {
 
-// this is a function with a parameter
-exports.getOneEmployeeByIdTest = functions.https.onCall(async (data, context) => {
+  //Keeps track of whether to update name or not
+  bool call_set_translation = true;
 
-     const client = new Client({
-           host: 'csce-315-db.engr.tamu.edu',
-           user: 'csce315331_team_13_master',
-           password: 'Lucky_13',
-           database: 'csce315331_team_13',
-           port: 5432,
-     });
+  google_translate_API _google_translate_api = google_translate_API();
 
-//  this is makes the function have the parameter employee_id
-    const {employee_id} = data;
+  //Strings for display
+  List<String> list_page_texts_originals = [
+    "Inventory Item Management",
+    "Edit Item Amount",
+    "New Amount",
+    "CANCEL",
+    "CONFIRM",
+    "Not enough inventory to satisfy the requested change.",
+    "OK",
+    "Unable to change amount for this item.",
+    "Successfully Removed Item",
+    "Unable to remove inventory item",
+    "Confirm Item Deletion",
+    "Are you sure you want to delete",
+    "Stock",
+    "Remove from Inventory",
+    "Edit Amount",
+    "Successfully Added Item",
+    "Unable to add item",
+    "New Inventory Item Creation",
+    "Ingredient Name",
+    "Amount in Stock",
+    "Amount Ordered",
+    "Unit",
+    "Date Ordered",
+    "Expiration Date",
+    "Conversion",
+    "ADD ITEM",
+    "available",
+    "Return to Manager View",
+    "Add Inventory"
+  ];
+  List<String> list_page_texts = [
+    "Inventory Item Management",
+    "Edit Item Amount",
+    "New Amount",
+    "CANCEL",
+    "CONFIRM",
+    "Not enough inventory to satisfy the requested change.",
+    "OK",
+    "Unable to change amount for this item.",
+    "Successfully Removed Item",
+    "Unable to remove inventory item",
+    "Confirm Item Deletion",
+    "Are you sure you want to delete",
+    "Stock",
+    "Remove from Inventory",
+    "Edit Amount",
+    "Successfully Added Item",
+    "Unable to add item",
+    "New Inventory Item Creation",
+    "Ingredient Name",
+    "Amount in Stock",
+    "Amount Ordered",
+    "Unit",
+    "Date Ordered",
+    "Expiration Date",
+    "Conversion",
+    "ADD ITEM",
+    "available",
+    "Return to Manager View",
+    "Add Inventory"
+  ];
+  String text_page_header = "Inventory Item Management";
+  String text_item_amount = "Edit Item Amount";
+  String text_hint_new_amount = "New Amount";
+  String text_cancel_button = "CANCEL";
+  String text_confirm_button = "CONFIRM";
+  String text_not_enough_inventory = "Not enough inventory to satisfy the requested change.";
+  String text_ok_button = "OK";
+  String text_unable_to_change_amount = "Unable to change amount for this item.";
+  String text_message_text_rem = "Successfully Removed Item";
+  String text_message_text_rem_alt = "Unable to remove inventory item";
+  String text_confirm_item_deletion = "Confirm Item Deletion";
+  String text_certain_you_want_del = "Are you sure you want to delete";
+  String text_stock = "Stock";
+  String text_remove_from_inventory = "Remove from Inventory";
+  String text_edit_amount = "Edit Amount";
+  String text_message_text_add = "Successfully Added Item";
+  String text_message_text_add_alt = "Unable to add item";
+  String text_new_item_creation = "New Inventory Item Creation";
+  String text_ingredient_name = "Ingredient Name";
+  String text_amount_in_stock = "Amount in Stock";
+  String text_amount_ordered = "Amount Ordered";
+  String text_unit = "Unit";
+  String text_date_ordered = "Date Ordered";
+  String text_expiration_date = "Expiration Date";
+  String text_conversion = "Conversion";
+  String text_add_item = "ADD ITEM";
+  String text_available = "available";
+  String text_ret_man = "Return to Manager View";
+  String text_add_inventory = "Add Inventory";
 
-    await client.connect()
-
-//  you can simply add variables to the query
-    const res = await client.query('SELECT * FROM employees WHERE employee_id =' + employee_id)
-
-    client.end()
-
-    return res.rows
-
-});
-
-
-// for getting the user's info after logging in
-exports.getEmployeeByUID = functions.https.onCall(async (data, context) => {
-
-    const client = new Client({
-           host: 'csce-315-db.engr.tamu.edu',
-           user: 'csce315331_team_13_master',
-           password: 'Lucky_13',
-           database: 'csce315331_team_13',
-           port: 5432,
-     });
-
-    const {employee_uid} = data;
-
-    await client.connect()
-
-    const res = await client.query("SELECT * FROM employees WHERE employee_uid ='" + employee_uid+"'")
-
-    client.end()
-
-    return res.rows
-
-});
 
 
 
-// Gets the largest id from the menu_items table, so that it can be used when adding new menu items
-exports.getLastMenuItemID = functions.https.onCall(async (data, context) => {
-    const client = new Client({
-          host: 'csce-315-db.engr.tamu.edu',
-          user: 'csce315331_team_13_master',
-          password: 'Lucky_13',
-          database: 'csce315331_team_13',
-          port: 5432,
+
+
+  int visibility_ctrl = 0;
+  bool _isLoading = true;
+  Map<String, num> inventoryItems = {};
+  Map<dynamic, num> reportItems = {};
+  inventory_item_helper inv_helper = inventory_item_helper();
+  reports_helper report = reports_helper();
+
+  Future<void> getData_no_reload() async {
+    print("Building Page...");
+    inventoryItems = await inv_helper.get_order_items();
+    reportItems = await report.generate_restock_report();
+    print("Obtained Inventory...");
+  }
+
+  Future<void> getData() async {
+    print("Building Page...");
+    inventoryItems = await inv_helper.get_order_items();
+    reportItems = await report.generate_restock_report();
+    print("Obtained Inventory...");
+    setState(() {
+      _isLoading = false;
     });
-
-    await client.connect()
-
-    const res = await client.query('SELECT menu_item_id FROM menu_items ORDER BY menu_item_id DESC LIMIT 1');
-
-    client.end()
-
-    return res.rows
-
-});
-
-// Gets the largest id from the ingredients_table table, so that it can be used when adding an item's ingredients
-exports.getLastIngredientsTableID = functions.https.onCall(async (data, context) => {
-    const client = new Client({
-          host: 'csce-315-db.engr.tamu.edu',
-          user: 'csce315331_team_13_master',
-          password: 'Lucky_13',
-          database: 'csce315331_team_13',
-          port: 5432,
-    });
-
-    await client.connect()
-
-    const res = await client.query('SELECT row_id FROM ingredients_table ORDER BY row_id DESC LIMIT 1');
-
-    client.end()
-
-    return res.rows
-
-});
-
-// Adds a menu item to the menu_items table
-exports.addMenuItem = functions.https.onCall(async (data, context) => {
-
-    const client = new Client({
-          host: 'csce-315-db.engr.tamu.edu',
-          user: 'csce315331_team_13_master',
-          password: 'Lucky_13',
-          database: 'csce315331_team_13',
-          port: 5432,
-    });
-
-    await client.connect()
-
-    const {values} = data
-
-    const res = await client.query('INSERT INTO menu_items (menu_item_id, menu_item, item_price, amount_in_stock, type, status) VALUES(' + values + ')')
-
-    client.end()
-
-    return "Added menu item to database"
-});
-
-exports.editItemPrice = functions.https.onCall(async (data, context) => {
-
-     const client = new Client({
-           host: 'csce-315-db.engr.tamu.edu',
-           user: 'csce315331_team_13_master',
-           password: 'Lucky_13',
-           database: 'csce315331_team_13',
-           port: 5432,
-     });
-
-     await client.connect()
-
-     const {menu_item_id} = data
-     const {new_price} = data
-
-     const res = await client.query('UPDATE menu_items SET item_price=' + new_price + ' WHERE menu_item_id=' + menu_item_id)
-
-     client.end()
-
-     return "updated menu item price in the database"
- });
-
-exports.deleteMenuItem = functions.https.onCall(async (data, context) => {
-
-     const client = new Client({
-           host: 'csce-315-db.engr.tamu.edu',
-           user: 'csce315331_team_13_master',
-           password: 'Lucky_13',
-           database: 'csce315331_team_13',
-           port: 5432,
-     });
-
-     await client.connect()
-
-     const {menu_item} = data
-
-     const res = await client.query('UPDATE menu_items SET status=\'unavailable\' WHERE menu_item LIKE \'%' + menu_item + '%\'')
-
-     client.end()
-
-     return "deleted menu item from database"
- });
-
-// Adds an ingredient row to the ingredients_table table
-exports.insertIntoIngredientsTable = functions.https.onCall(async (data, context) => {
-    const client = new Client({
-          host: 'csce-315-db.engr.tamu.edu',
-          user: 'csce315331_team_13_master',
-          password: 'Lucky_13',
-          database: 'csce315331_team_13',
-          port: 5432,
-    });
-
-    await client.connect()
-
-    const {values} = data
-
-    const res = await client.query('INSERT INTO ingredients_table (row_id, menu_item_name, ingredient_name, ingredient_amount) VALUES(' + values + ')')
-
-    client.end()
-
-    return "Added ingredient to ingredients_table"
-});
-
-exports.getIngredientRowId = functions.https.onCall(async (data, context) => {
-     const client = new Client({
-           host: 'csce-315-db.engr.tamu.edu',
-           user: 'csce315331_team_13_master',
-           password: 'Lucky_13',
-           database: 'csce315331_team_13',
-           port: 5432,
-     });
-
-     await client.connect()
-
-     const {menu_item_name} = data
-     const {ingredient_name} = data
-
-     const res = await client.query('SELECT row_id FROM ingredients_table WHERE menu_item_name=\'' + menu_item_name + '\' AND ingredient_name=\'' + ingredient_name + '\'')
-
-     client.end()
-
-     return res.rows
- })
-
-// Takes a row_id and a new_amount, updates the ingredients_table at row_id and changes the quantity to new_amount
-exports.updateIngredientsTableRow = functions.https.onCall(async (data, context) => {
-    const client = new Client({
-          host: 'csce-315-db.engr.tamu.edu',
-          user: 'csce315331_team_13_master',
-          password: 'Lucky_13',
-          database: 'csce315331_team_13',
-          port: 5432,
-    });
-
-    await client.connect()
-
-    const {row_id} = data
-    const {new_amount} = data
-
-    const res = await client.query('UPDATE ingredients_table SET ingredient_amount=' + new_amount + ' WHERE row_id=' + row_id)
-
-    client.end()
-
-    return "Successfully updated ingredients_table row"
-});
-
-// Deletes an individual row from the ingredients_table
-exports.deleteIngredientsTableRow = functions.https.onCall(async (data, context) => {
-    const client = new Client({
-          host: 'csce-315-db.engr.tamu.edu',
-          user: 'csce315331_team_13_master',
-          password: 'Lucky_13',
-          database: 'csce315331_team_13',
-          port: 5432,
-    });
-
-    await client.connect()
-
-    const {row_id} = data
-
-    const res = await client.query('DELETE FROM ingredients_table WHERE row_id=' + row_id)
-
-    client.end()
-
-    return "Successfully deleted ingredients_table row"
-});
-
-exports.getMenuItemName = functions.https.onCall(async (data, context) => {
-    const client = new Client({
-          host: 'csce-315-db.engr.tamu.edu',
-          user: 'csce315331_team_13_master',
-          password: 'Lucky_13',
-          database: 'csce315331_team_13',
-          port: 5432,
-    });
-
-    await client.connect()
-
-    const {menu_item_id} = data
-
-    const res = await client.query('SELECT menu_item FROM menu_items WHERE menu_item_id=' + menu_item_id)
-
-    client.end()
-
-    return res.rows
-});
-
-exports.getMenuItemType = functions.https.onCall(async (data, context) => {
-    const client = new Client({
-          host: 'csce-315-db.engr.tamu.edu',
-          user: 'csce315331_team_13_master',
-          password: 'Lucky_13',
-          database: 'csce315331_team_13',
-          port: 5432,
-    });
-
-    await client.connect()
-
-    const {menu_item_id} = data
-
-    const res = await client.query('SELECT type FROM menu_items WHERE menu_item_id=' + menu_item_id)
-
-    client.end()
-
-    return res.rows
-});
-
-
-exports.getItemPrice = functions.https.onCall(async (data, context) => {
-    const client = new Client({
-          host: 'csce-315-db.engr.tamu.edu',
-          user: 'csce315331_team_13_master',
-          password: 'Lucky_13',
-          database: 'csce315331_team_13',
-          port: 5432,
-    });
-
-    await client.connect()
-
-    const {menu_item_name} = data
-
-    const res = await client.query('SELECT item_price FROM menu_items WHERE menu_item=\'' + menu_item_name + '\'')
-
-    client.end()
-
-    return res.rows
-});
-
-exports.getItemID = functions.https.onCall(async (data, context) => {
-    const client = new Client({
-          host: 'csce-315-db.engr.tamu.edu',
-          user: 'csce315331_team_13_master',
-          password: 'Lucky_13',
-          database: 'csce315331_team_13',
-          port: 5432,
-    });
-
-    await client.connect()
-
-    const {menu_item_name} = data
-
-    const res = await client.query('SELECT menu_item_id FROM menu_items WHERE menu_item=\'' + menu_item_name + '\'')
-
-    client.end()
-
-    return res.rows
-});
-
-
-
-exports.getMenuItemIngredients = functions.https.onCall(async (data, context) => {
-    const client = new Client({
-          host: 'csce-315-db.engr.tamu.edu',
-          user: 'csce315331_team_13_master',
-          password: 'Lucky_13',
-          database: 'csce315331_team_13',
-          port: 5432,
-    });
-
-    await client.connect()
-
-    const {menu_item_name} = data
-
-    const res = await client.query('SELECT ingredient_name, ingredient_amount FROM ingredients_table WHERE menu_item_name=\'' + menu_item_name + '\'')
-
-    client.end()
-
-    return res.rows
-});
-
-exports.getAmountInvStock = functions.https.onCall(async (data, context) => {
-    const client = new Client({
-          host: 'csce-315-db.engr.tamu.edu',
-          user: 'csce315331_team_13_master',
-          password: 'Lucky_13',
-          database: 'csce315331_team_13',
-          port: 5432,
-    });
-
-    await client.connect()
-
-    const {ingredient} = data
-
-    const res = await client.query('SELECT inv_order_id, amount_inv_stock FROM inventory WHERE ingredient=\'' + ingredient + '\' ORDER BY expiration_date DESC, date_ordered');
-
-    client.end()
-
-    return res.rows
-});
-
-exports.updateInventoryRow = functions.https.onCall(async (data, context) => {
-    const client = new Client({
-          host: 'csce-315-db.engr.tamu.edu',
-          user: 'csce315331_team_13_master',
-          password: 'Lucky_13',
-          database: 'csce315331_team_13',
-          port: 5432,
-    });
-
-    await client.connect()
-
-    const {inv_order_id} = data
-    const {new_amount} = data
-
-    const res = await client.query('UPDATE inventory SET amount_inv_stock=' + new_amount + 'WHERE inv_order_id=' + inv_order_id)
-
-    client.end()
-
-    return "Successfully updated inventory row"
-
-});
-
-exports.insertIntoOrderHistory = functions.https.onCall(async (data, context) => {
-     const client = new Client({
-           host: 'csce-315-db.engr.tamu.edu',
-           user: 'csce315331_team_13_master',
-           password: 'Lucky_13',
-           database: 'csce315331_team_13',
-           port: 5432,
-     });
-
-     await client.connect()
-
-     const {values} = data
-
-     const res = await client.query('INSERT INTO order_history (transaction_id, order_taker_id, item_ids_in_order, total_price, customer_name, date_of_order, status) VALUES(' + values + ')')
-
-     client.end()
-
-     return "Successfully added order to the order history"
-});
-
-exports.getSmoothieNames = functions.https.onCall(async (data, context) => {
-    const client = new Client({
-        host: 'csce-315-db.engr.tamu.edu',
-        user: 'csce315331_team_13_master',
-        password: 'Lucky_13',
-        database: 'csce315331_team_13',
-        port: 5432,
-    });
-
-    await client.connect()
-
-    const res = await client.query("SELECT menu_item FROM menu_items WHERE type='smoothie'");
-
-    client.end()
-
-    return res.rows
-});
-
-exports.getSnackNames = functions.https.onCall(async (data, context) => {
-    const client = new Client({
-        host: 'csce-315-db.engr.tamu.edu',
-        user: 'csce315331_team_13_master',
-        password: 'Lucky_13',
-        database: 'csce315331_team_13',
-        port: 5432,
-    });
-
-    await client.connect()
-
-    const res = await client.query("SELECT menu_item FROM menu_items WHERE type='snack'");
-
-    client.end()
-
-    return res.rows
-});
-
-exports.getAddonNames = functions.https.onCall(async (data, context) => {
-    const client = new Client({
-        host: 'csce-315-db.engr.tamu.edu',
-        user: 'csce315331_team_13_master',
-        password: 'Lucky_13',
-        database: 'csce315331_team_13',
-        port: 5432,
-    });
-
-    await client.connect()
-
-    const res = await client.query("SELECT menu_item FROM menu_items WHERE type='addon'");
-
-    client.end()
-
-    return res.rows
-});
-
-exports.getIngredientNames = functions.https.onCall(async (data, context) => {
-    const client = new Client({
-        host: 'csce-315-db.engr.tamu.edu',
-        user: 'csce315331_team_13_master',
-        password: 'Lucky_13',
-        database: 'csce315331_team_13',
-        port: 5432,
-    });
-
-    await client.connect()
-
-    const res = await client.query("SELECT DISTINCT ingredient_name FROM ingredients_table ORDER BY ingredient_name");
-
-    client.end()
-
-    return res.rows
-});
-
-exports.makeZReport = functions.https.onCall(async (data, context) => {
-   const client = new Client({
-       host: 'csce-315-db.engr.tamu.edu',
-       user: 'csce315331_team_13_master',
-       password: 'Lucky_13',
-       database: 'csce315331_team_13',
-       port: 5432,
-   });
-
-   await client.connect()
-
-   const {date} = data
-   const {amount} = data
-
-   const res = await client.query("INSERT INTO z_reports VALUES('" + date + "', '" + amount + "')");
-
-   client.end()
-
-   return "Successfully initialized X/Z report"
-});
-
-exports.getZReport = functions.https.onCall(async (data, context) => {
-    const client = new Client({
-        host: 'csce-315-db.engr.tamu.edu',
-        user: 'csce315331_team_13_master',
-        password: 'Lucky_13',
-        database: 'csce315331_team_13',
-        port: 5432,
-    });
-
-    await client.connect()
-
-    const {date} = data
-
-    const res = await client.query("SELECT sales FROM z_reports WHERE date=CAST(\'" + date + "\' as date)");
-
-    client.end()
-
-    return res.rows
-});
-
-exports.getAllZReports = functions.https.onCall(async (data, context) => {
-    const client = new Client({
-        host: 'csce-315-db.engr.tamu.edu',
-        user: 'csce315331_team_13_master',
-        password: 'Lucky_13',
-        database: 'csce315331_team_13',
-        port: 5432,
-    });
-
-    await client.connect()
-
-    const res = await client.query("SELECT to_char(date, 'DD-MM-YYYY') AS date_field_string, sales FROM z_reports ORDER BY date ASC");
-
-    client.end()
-
-    return res.rows
-});
-
-
-
-exports.updateXReport = functions.https.onCall(async (data, context) => {
-    const client = new Client({
-        host: 'csce-315-db.engr.tamu.edu',
-        user: 'csce315331_team_13_master',
-        password: 'Lucky_13',
-        database: 'csce315331_team_13',
-        port: 5432,
-    });
-
-    await client.connect()
-
-    const {date} = data
-    const {amount} = data
-
-    const res = await client.query("UPDATE z_reports SET sales=" + amount + " WHERE date=CAST(\'" + date + "\' as date)");
-
-    client.end()
-
-    return "Successfully updated today's X report"
-});
-
-exports.getIngredientNames = functions.https.onCall(async (data, context) => {
-    const client = new Client({
-        host: 'csce-315-db.engr.tamu.edu',
-        user: 'csce315331_team_13_master',
-        password: 'Lucky_13',
-        database: 'csce315331_team_13',
-        port: 5432,
-    });
-
-
-    await client.connect()
-
-    const res = await client.query("SELECT DISTINCT ingredient_name FROM ingredients_table ORDER BY ingredient_name");
-
-    client.end()
-
-    return res.rows
-});
-
-exports.getItemsInOrder = functions.https.onCall(async (data, context) => {
-    const client = new Client({
-        host: 'csce-315-db.engr.tamu.edu',
-        user: 'csce315331_team_13_master',
-        password: 'Lucky_13',
-        database: 'csce315331_team_13',
-        port: 5432,
-    });
-
-    await client.connect()
-
-    const {date1} = data
-    const {date2} = data
-
-    var cast1 = "CAST('" + date1 + "' as date)";
-    var cast2 = "CAST('" + date2 + "' as date)";
-
-    const res = await client.query("SELECT item_ids_in_order FROM order_history WHERE date_of_order>=" + cast1 + " AND date_of_order<=" + cast2);
-
-    client.end()
-
-    return res.rows
-});
-
-exports.getAllSmoothieInfo = functions.https.onCall(async (data, context) => {
-    const client = new Client({
-        host: 'csce-315-db.engr.tamu.edu',
-        user: 'csce315331_team_13_master',
-        password: 'Lucky_13',
-        database: 'csce315331_team_13',
-        port: 5432,
-    });
-
-    await client.connect()
-
-
-    const res = await client.query("SELECT menu_item_id, menu_item, item_price FROM menu_items WHERE (type='smoothie' AND status= 'available') ORDER BY menu_item");
-
-    client.end()
-
-    return res.rows
-});
-
-exports.getAllSnacksInfo = functions.https.onCall(async (data, context) => {
-    const client = new Client({
-        host: 'csce-315-db.engr.tamu.edu',
-        user: 'csce315331_team_13_master',
-        password: 'Lucky_13',
-        database: 'csce315331_team_13',
-        port: 5432,
-    });
-
-    await client.connect()
-
-    const res = await client.query("SELECT menu_item_id, menu_item, item_price FROM menu_items WHERE (type='snack' AND status= 'available') ORDER BY menu_item");
-
-    client.end()
-
-    return res.rows
-});
-
-exports.getAllAddonInfo = functions.https.onCall(async (data, context) => {
-    const client = new Client({
-        host: 'csce-315-db.engr.tamu.edu',
-        user: 'csce315331_team_13_master',
-        password: 'Lucky_13',
-        database: 'csce315331_team_13',
-        port: 5432,
-    });
-
-    await client.connect()
-
-    const res = await client.query("SELECT menu_item_id, menu_item, item_price FROM menu_items WHERE (type='addon' AND status= 'available') ORDER BY menu_item");
-
-    client.end()
-
-    return res.rows
-});
-
-exports.getInventoryItems = functions.https.onCall(async (data, context) =>
-{
-      const client = new Client({
-        host: 'csce-315-db.engr.tamu.edu',
-        user: 'csce315331_team_13_master',
-        password: 'Lucky_13',
-        database: 'csce315331_team_13',
-        port: 5432,
-      });
-
-      await client.connect();
-
-      const res = await client.query("SELECT * FROM inventory WHERE expiration_date > CURRENT_TIMESTAMP ORDER BY ingredient ASC");
-
-      client.end();
-
-      return res.rows;
-});
-
-exports.addInventoryRow = functions.https.onCall(async (data, context) =>
-{
-
-    const client = new Client({
-          host: 'csce-315-db.engr.tamu.edu',
-          user: 'csce315331_team_13_master',
-          password: 'Lucky_13',
-          database: 'csce315331_team_13',
-          port: 5432,
-    });
-
-    await client.connect()
-
-    const values = data.values;
-    const maxIdResult = await client.query('SELECT MAX(inv_order_id) AS max_id FROM inventory');
-    const maxId = maxIdResult.rows[0].max_id;
-
-    const valuesWithId =
-    {
-        ...values,
-        inv_order_id: maxId + 1
-    };
-
-    const query =
-    {
-        text: 'INSERT INTO inventory(inv_order_id, status, ingredient, amount_inv_stock, amount_ordered, unit, date_ordered, expiration_date, conversion) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)',
-        values: Object.values(valuesWithId)
-    };
-
-    const res = await client.query(query);
-
-    client.end()
-
-    return maxId + 1;
-});
-
-exports.deleteInventoryItem = functions.https.onCall(async (data, context) => {
-  const client = new Client({
-    host: 'csce-315-db.engr.tamu.edu',
-    user: 'csce315331_team_13_master',
-    password: 'Lucky_13',
-    database: 'csce315331_team_13',
-    port: 5432,
-  });
-
-  await client.connect();
-
-  const itemName = data.itemName;
-
-  const query =
+  }
+
+
+  Widget itemList(Map<String, num> items1, Map<dynamic, num> items2, Color tile_color, Color _text_color, Color _icon_color) {
+    return Row(
+      children: [
+        Expanded(
+          child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: items1.entries.length,
+            itemBuilder: (context, index) {
+              final entry = items1.entries.elementAt(index);
+              return Card(
+                child: ListTile(
+                  tileColor: tile_color.withAlpha(200),
+                  minVerticalPadding: 5,
+                  onTap: () {},
+                  leading: SizedBox(
+                    width: 100,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                    ),
+                  ),
+                  title: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10.0),
+                    child: Text(
+                      entry.key,
+                      style: TextStyle(
+                        color: _text_color.withAlpha(200),
+                        fontWeight: FontWeight.bold,
+                        fontStyle: FontStyle.italic,
+                        fontSize: 30,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  subtitle: Text(
+                    text_stock + ": ${entry.value}",
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: _text_color.withAlpha(122),
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  trailing: SizedBox(
+                    width: 150,
+                    child: IconButton(
+                      tooltip: "Order",
+                      icon: const Icon(Icons.add),
+                      color: _text_color.withAlpha(122),
+                      onPressed: () {
+                        //_menu_info.removeAt(index);
+                        // editInventoryItem(items1, entry.key, entry.value);
+                        newItemSubWin(entry.key);
+                      },
+                      iconSize: 35,
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+        Container(
+          width: 1,
+          height: double.infinity,
+          color: Colors.grey.shade400,
+        ),
+        Expanded(
+          child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: items2.entries.length,
+            itemBuilder: (context, index) {
+              final entry = items2.entries.elementAt(index);
+              return Card(
+                child: ListTile(
+                  tileColor: tile_color.withAlpha(200),
+                  minVerticalPadding: 5,
+                  onTap: () {},
+                  leading: SizedBox(
+                    width: 100,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                    ),
+                  ),
+                  title: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10.0),
+                    child: Text(
+                      entry.key,
+                      style: TextStyle(
+                        color: _text_color.withAlpha(200),
+                        fontWeight: FontWeight.bold,
+                        fontStyle: FontStyle.italic,
+                        fontSize: 30,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  subtitle: Text(
+                    text_stock + ": ${entry.value}",
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: _text_color.withAlpha(122),
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  trailing: SizedBox(
+                    width: 150,
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+
+  void newItemSubWin(String itemName)
   {
-    text: 'UPDATE inventory SET status = $1 WHERE ingredient = $2',
-    values: ['unavailable', itemName],
-  };
+    TextEditingController _ingredient_name = TextEditingController();
+    TextEditingController _amount_inv_stock = TextEditingController();
+    TextEditingController _amount_ordered = TextEditingController();
+    TextEditingController _unit = TextEditingController();
+    TextEditingController _date_ordered = TextEditingController();
+    TextEditingController _expiration_date = TextEditingController();
+    TextEditingController _conversion = TextEditingController();
 
-  const res = await client.query(query);
+    Icon message_icon = const Icon(Icons.check);
+    String message_text = text_message_text_add;
 
-  client.end();
-});
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("New Order"),
+          content: SizedBox(
+            width: 400,
+            height: 400,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                TextFormField(
+                    controller: _amount_ordered,
+                    decoration:  InputDecoration(
+                      hintText: text_amount_ordered + "...",
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    )
+                ),
+                TextFormField(
+                  controller: _date_ordered,
+                  decoration: InputDecoration(
+                    hintText: text_date_ordered + "...",
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      throw Exception('Please enter a value');
+                    }
+                    final currentDate = DateTime.now();
+                    final dateOrdered = DateTime.parse(value);
+                    if (dateOrdered.isBefore(currentDate)) {
+                      throw Exception('Date ordered cannot be before the current date');
+                    }
+                  },
+                ),
+                TextFormField(
+                  controller: _expiration_date,
+                  decoration: InputDecoration(
+                    hintText: text_expiration_date + "...",
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      throw Exception('Please enter a value');
+                    }
+                    final currentDate = DateTime.now();
+                    final expirationDate = DateTime.parse(value);
+                    if (expirationDate.isBefore(currentDate)) {
+                      throw Exception('Expiration date cannot be before the current date');
+                    }
+                  },
+                ),
 
-exports.editInventoryEntry = functions.https.onCall(async (data, context) => {
-  const itemName = data.itemName;
-  const changeAmount = data.changeAmount;
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text(text_cancel_button),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text("ORDER"),
+              onPressed: () async {
+                try {
+                  Map<String, int> map = HashMap();
+                  map = await inv_helper.place_order(itemName);
+                  final entry = map.entries.elementAt(0);
+                  String unit = entry.key;
+                  int conversion = entry.value;
+                  print(unit);
+                  print(conversion);
+                  inventory_item_obj new_item = inventory_item_obj(
+                      0,
+                      text_available,
+                      itemName,
+                      conversion * int.parse(_amount_ordered.text),
+                      int.parse(_amount_ordered.text),
+                      unit,
+                      _date_ordered.text,
+                      _expiration_date.text,
+                      conversion
+                  );
+                  print("done");
+                  await inv_helper.add_inventory_row(new_item);
+                  getData();
+                  setState(() {
 
-  const client = new Client({
-    host: 'csce-315-db.engr.tamu.edu',
-    user: 'csce315331_team_13_master',
-    password: 'Lucky_13',
-    database: 'csce315331_team_13',
-    port: 5432,
-  });
-
-  await client.connect();
-
-  try {
-    let query = {
-      text: 'SELECT * FROM inventory WHERE ingredient = $1 AND status = \'available\' ORDER BY expiration_date ASC, date_ordered ASC',
-      values: [itemName],
-    };
-
-    let result = await client.query(query);
-
-    let remainingChangeAmount = changeAmount;
-
-    for (let row of result.rows)
-    {
-      const currentAmount = row.amount_inv_stock;
-      const currentId = row.inv_order_id;
-
-      if (remainingChangeAmount > 0)
-      {
-        // Increase the freshest entry
-        const query = {
-          text: 'UPDATE inventory SET amount_inv_stock = $1 WHERE inv_order_id = $2',
-          values: [currentAmount + remainingChangeAmount, currentId],
-        };
-
-        await client.query(query);
-
-        remainingChangeAmount = 0;
-        break;
-      }
-      else
-      {
-        // Decrease the oldest entry
-        if (currentAmount >= -remainingChangeAmount) {
-          // Sufficient amount in the current entry to satisfy the change
-          const query = {
-            text: 'UPDATE inventory SET amount_inv_stock = $1 WHERE inv_order_id = $2',
-            values: [currentAmount + remainingChangeAmount, currentId],
-          };
-
-          await client.query(query);
-
-          remainingChangeAmount = 0;
-          break;
-        }
-        else
-        {
-          // Not enough amount in the current entry to satisfy the change
-          const query = {
-            text: 'UPDATE inventory SET amount_inv_stock = 0 WHERE inv_order_id = $1',
-            values: [currentId],
-          };
-
-          await client.query(query);
-
-          remainingChangeAmount += currentAmount;
-        }
-      }
-    }
-
-    if (remainingChangeAmount != 0) {
-      // Not enough inventory to satisfy the requested change
-      return false;
-    } else {
-      return true;
-    }
-  } catch (error) {
-    throw new functions.https.HttpsError('internal', error);
-  } finally {
-    client.end();
+                  });
+                  Navigator.pop(context);
+                }
+                catch(exception)
+                {
+                  print(exception);
+                  message_icon = const Icon(Icons.error_outline_outlined);
+                  message_text = text_message_text_add_alt;
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: message_icon,
+                        content: Text("Could not place order"),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: Text(text_ok_button),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                }
+                finally{
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: message_icon,
+                          content: Text(message_text),
+                          actions: [
+                            TextButton(
+                                onPressed: (){
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text(text_ok_button))
+                          ],
+                        );
+                      });
+                  Navigator.of(context).pop();
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
-});
-
-exports.getSmoothie = functions.https.onCall(async (data, context) =>
-{
-      const client = new Client({
-        host: 'csce-315-db.engr.tamu.edu',
-        user: 'csce315331_team_13_master',
-        password: 'Lucky_13',
-        database: 'csce315331_team_13',
-        port: 5432,
-      });
-
-      await client.connect();
-
-      const res = await client.query("SELECT menu_item_id FROM menu_items WHERE type IN ('smoothie')");
-
-      client.end();
-
-      return res.rows;
-});
-
-exports.getInventoryMin = functions.https.onCall(async (data, context) =>
-{
-      const client = new Client({
-        host: 'csce-315-db.engr.tamu.edu',
-        user: 'csce315331_team_13_master',
-        password: 'Lucky_13',
-        database: 'csce315331_team_13',
-        port: 5432,
-      });
-
-      await client.connect();
-
-      const res = await client.query("SELECT ingredient, minimum FROM inventory_minimums");
-
-      client.end();
-
-      return res.rows;
-});
 
 
-exports.generateWeekOrders = functions.https.onCall(async (data, context) => {
-  const client = new Client({
-    host: 'csce-315-db.engr.tamu.edu',
-    user: 'csce315331_team_13_master',
-    password: 'Lucky_13',
-    database: 'csce315331_team_13',
-    port: 5432,
-  });
+  Widget tab(Function tabChange, String tab_text, Color backgroundColor, Color headColor)
+  {
+    return TextButton(
+      style: ButtonStyle(
+        shape: MaterialStateProperty.all<OutlinedBorder>(
+          const RoundedRectangleBorder(
+            borderRadius: BorderRadius.zero,
+          ),
+        ),
+        minimumSize: MaterialStateProperty.all(Size(100, 65)),
+        backgroundColor: MaterialStateProperty.all<Color>(backgroundColor),
+        foregroundColor: MaterialStateProperty.all<Color>(Colors.white70),
+      ),
+      onPressed: (){
 
-  await client.connect();
-
-  const res = await client.query("SELECT item_ids_in_order FROM order_history WHERE date_of_order >= '2022-12-1'::date - interval '7 days' AND date_of_order < '2022-12-1'::date");
-
-  client.end();
-  return res.rows;
-});
-
-
-exports.generateRestockReport = functions.https.onCall(async (data, context) => {
-  const client = new Client({
-    host: 'csce-315-db.engr.tamu.edu',
-    user: 'csce315331_team_13_master',
-    password: 'Lucky_13',
-    database: 'csce315331_team_13',
-    port: 5432,
-  });
-
-  await client.connect();
-
-  try {
-    const invMin = new Map();
-    const minAmount = data.invMin;
-
-    for (var entry in minAmount.entries) {
-        var ingredient = entry.key;
-        var minimum = entry.value;
-        invMin[ingredient] = minimum;
-    }
-
-    const query = {
-      text: 'SELECT * FROM inventory ORDER BY inv_order_id ASC',
-    };
-
-    const result2 = await client.query("UPDATE inventory SET amount_inv_stock = 0 WHERE status = 'unavailable'");
-    const result = await client.query(query);
-
-    const inventoryItems = new Map();
-    for (let row of result.rows) {
-      const itemName = row.ingredient;
-      const amountInvStock = row.amount_inv_stock;
-
-      if (!inventoryItems.has(itemName)) {
-        inventoryItems.set(itemName, 0);
-      }
-
-      inventoryItems.set(itemName, inventoryItems.get(itemName) + amountInvStock);
-    }
-
-    const mapToReturn = new Map();
-    for (let [ingredient, minimum] of invMin) {
-      const amountInvStock = inventoryItems.get(ingredient) || 0;
-
-      if (amountInvStock < minimum) {
-        const newAmount = Math.round(minimum * 1.1);
-        mapToReturn.set(ingredient, newAmount);
-      }
-    }
-
-    const objToReturn = Object.fromEntries(mapToReturn);
-
-    return invMin;
-  } catch (error) {
-    throw new functions.https.HttpsError('internal', error);
-  } finally {
-    client.end();
+      }, child: Text(tab_text),
+    );
   }
-});
+
+  @override
+  void initState() {
+    super.initState();
+    getData();
+  }
+
+  @override
+  Widget build(BuildContext context){
+    final _color_manager = Color_Manager.of(context);
 
 
-exports.getAllSmoothieIngredients = functions.https.onCall(async (data, context) =>
- {
-       const client = new Client({
-         host: 'csce-315-db.engr.tamu.edu',
-         user: 'csce315331_team_13_master',
-         password: 'Lucky_13',
-         database: 'csce315331_team_13',
-         port: 5432,
-       });
 
-       await client.connect();
 
-       const res = await client.query("select menu_item_id, ingredient_name, ingredient_amount from ingredients_table join menu_items on menu_item=menu_item_name where type='smoothie'");
+    // ToDo Implement the below translation functionality
+    final _translate_manager = Translate_Manager.of(context);
 
-       client.end();
+    Future<void> set_translation() async {
+      call_set_translation = false;
 
-       return res.rows;
- });
+      //set the new Strings here
+      list_page_texts = (await _google_translate_api.translate_batch(list_page_texts_originals,_translate_manager.chosen_language));
+      text_page_header = list_page_texts[0];
+      text_item_amount = list_page_texts[1];
+      text_hint_new_amount = list_page_texts[2];
+      text_cancel_button = list_page_texts[3];
+      text_confirm_button = list_page_texts[4];
+      text_not_enough_inventory = list_page_texts[5];
+      text_ok_button = list_page_texts[6];
+      text_unable_to_change_amount = list_page_texts[7];
+      text_message_text_rem = list_page_texts[8];
+      text_message_text_rem_alt = list_page_texts[9];
+      text_confirm_item_deletion = list_page_texts[10];
+      text_certain_you_want_del = list_page_texts[11];
+      text_stock = list_page_texts[12];
+      text_remove_from_inventory = list_page_texts[13];
+      text_edit_amount = list_page_texts[14];
+      text_message_text_add = list_page_texts[15];
+      text_message_text_add_alt = list_page_texts[16];
+      text_new_item_creation = list_page_texts[17];
+      text_ingredient_name = list_page_texts[18];
+      text_amount_in_stock = list_page_texts[19];
+      text_amount_ordered = list_page_texts[20];
+      text_unit = list_page_texts[21];
+      text_date_ordered = list_page_texts[22];
+      text_expiration_date = list_page_texts[23];
+      text_conversion = list_page_texts[24];
+      text_add_item = list_page_texts[25];
+      text_available = list_page_texts[26];
+      text_ret_man = list_page_texts[27];
+      text_add_inventory = list_page_texts[28];
 
-exports.getMenuItemsInfo = functions.https.onCall(async (data, context) => {
-    const client = new Client({
-      host: 'csce-315-db.engr.tamu.edu',
-      user: 'csce315331_team_13_master',
-      password: 'Lucky_13',
-      database: 'csce315331_team_13',
-      port: 5432,
-    });
+      await  getData_no_reload();
+      List<String> keys_list = inventoryItems.keys.toList();
+      keys_list = (await _google_translate_api.translate_batch(keys_list,_translate_manager.chosen_language));
 
-    await client.connect()
+      Map<String, num> new_inventoryItems = {};
 
-    const res = await client.query("SELECT * FROM menu_items");
+      int current_keys_index = 0;
+      inventoryItems.forEach((key, value) {
+        new_inventoryItems[keys_list[current_keys_index]] = value;
+        current_keys_index++;
 
-    client.end();
-
-    return res.rows
-
-});
-exports.getIngredientOrder = functions.https.onCall(async (data, context) => {
-  const client = new Client({
-    host: 'csce-315-db.engr.tamu.edu',
-    user: 'csce315331_team_13_master',
-    password: 'Lucky_13',
-    database: 'csce315331_team_13',
-    port: 5432,
-  });
-
-  await client.connect();
-
-  const itemName = data.itemName;
-  let query = {
-        text: 'SELECT unit, conversion FROM inventory WHERE ingredient = $1',
-        values: [itemName],
-      };
-
-  let res = await client.query(query);
-
-  client.end();
-  return res.rows;
-});
-
-exports.getOrderItems = functions.https.onCall(async (data, context) =>
-{
-      const client = new Client({
-        host: 'csce-315-db.engr.tamu.edu',
-        user: 'csce315331_team_13_master',
-        password: 'Lucky_13',
-        database: 'csce315331_team_13',
-        port: 5432,
       });
+      inventoryItems = new_inventoryItems;
 
-      await client.connect();
 
-      const res = await client.query("SELECT * FROM inventory ORDER BY inv_order_id ASC");
 
-      client.end();
 
-      return res.rows;
-});
-
-exports.getExpiration = functions.https.onCall(async (data, context) =>
-{
-      const client = new Client({
-        host: 'csce-315-db.engr.tamu.edu',
-        user: 'csce315331_team_13_master',
-        password: 'Lucky_13',
-        database: 'csce315331_team_13',
-        port: 5432,
+      setState(() {
       });
+    }
 
-      await client.connect();
+    if(call_set_translation){
+      set_translation();
+    }else{
+      call_set_translation = true;
+    }
+
+    //Translation functionality end
 
 
-      const res = await client.query("SELECT ingredient, AGE(expiration_date, date_ordered) as interval FROM inventory");
-
-      client.end();
-
-      return res.rows;
-});
 
 
+
+    return Scaffold(
+      appBar: Page_Header(
+        context: context,
+        pageName: text_page_header,
+        buttons: [
+          IconButton(
+            tooltip: text_ret_man,
+            padding: const EdgeInsets.only(left: 25, right: 10),
+            onPressed: ()
+            {
+              Navigator.pushReplacementNamed(context,Win_Manager_View.route);
+
+            },
+            icon: const Icon(Icons.close_rounded),
+            iconSize: 40,
+          ),],
+      ),
+      body: _isLoading ?  Center(
+        child: SpinKitRing(color: _color_manager.primary_color) ,
+      ) : Padding(
+        padding: const EdgeInsets.only(bottom: 76),
+        child: Stack(
+          children: [
+            Visibility(
+              visible: visibility_ctrl == 0,
+              child: itemList(inventoryItems,reportItems, _color_manager.secondary_color, _color_manager.text_color, _color_manager.active_color),
+            ),
+          ],
+        ),
+      ),
+      backgroundColor: _color_manager.background_color,
+      bottomSheet: Container
+        (
+        height: 75,
+        color: _color_manager.primary_color,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            IconButton(
+              tooltip: "Return to Inventory Management",
+              padding: const EdgeInsets.only(left: 75, right: 10, top: 15),
+              onPressed: ()
+              {
+                Navigator.pushReplacementNamed(context,Win_View_Inventory.route);
+              },
+              icon: const Icon(Icons.close_rounded),
+              iconSize: 40,
+            ),
+            Padding(
+              padding: EdgeInsets.only(left: 500.0),
+              child: Login_Button(
+                onTap: () async {
+                  try {
+                    showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (BuildContext context) {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      },
+                    );
+                    await report.restock();
+                    getData();
+                    setState(() {
+
+                    });
+                    await Future.delayed(Duration(seconds: 2));
+                    Navigator.pop(context); // Close the loading dialog
+                  } catch (e) {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text("Error"),
+                          content: Text("Could not restock: $e"),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Text("OK"),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  }
+                },
+                buttonWidth: 200,
+                buttonName: 'Restock All Items',
+              ),
+            ),
+
+            // Login_Button(
+            //   onTap: () {
+            //     newItemSubWin();
+            //   },
+            //   buttonWidth: 200,
+            //   buttonName: 'Restock Report',
+            // ),
+          ],
+        ),
+      ),
+    );
+  }
+}
