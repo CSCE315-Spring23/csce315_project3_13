@@ -1,6 +1,9 @@
 import 'package:csce315_project3_13/GUI/Components/Login_Button.dart';
+import 'package:csce315_project3_13/GUI/Pages/Management/WIn_Edit_Smoothie.dart';
 import 'package:csce315_project3_13/GUI/Pages/Management/Win_Add_Smoothie.dart';
 import 'package:csce315_project3_13/GUI/Pages/Manager_View/Win_Manager_View.dart';
+import 'package:csce315_project3_13/Inherited_Widgets/Translate_Manager.dart';
+import 'package:csce315_project3_13/Services/google_translate_API.dart';
 import 'package:csce315_project3_13/Services/menu_item_helper.dart';
 import 'package:csce315_project3_13/Services/view_helper.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -20,8 +23,121 @@ class Win_View_Menu extends StatefulWidget {
 
 class _Win_View_Menu_State extends State<Win_View_Menu>
 {
+
+  // GOOGLE TRANSLATE VARIABLES BEGIN
+
+  google_translate_API _google_translate_api = google_translate_API();
+  String _current_lang = "";
+
+  List<String> build_texts_original = [
+    "Manage Smoothies",
+    "Edit Item Price",
+    "New Price",
+    "CANCEL",
+    "CONFIRM",
+    "Unable to change price for this item",
+    "Successfully Removed Item",
+    "Confirm Item Deletion",
+    "Are you sure you want to delete",
+    "Unable to remove item",
+    "Item ID",
+    "Edit Ingredients",
+    "Remove from Menu",
+    "Successfully Added Item",
+    "New",
+    "Creation",
+    "Name",
+    "Price",
+    "Amount in Stock",
+    "Add item",
+    "Unable to add item",
+    "Menu Item Management",
+    "Return to Manager View",
+    "Add Smoothie",
+    "Add Snack",
+    "Add Addon",
+    "Manage Smoothies",
+    "Manage Snacks",
+    "Manage Addons",
+  ];
+  List<String> build_texts = [
+    "Manage Smoothies",
+    "Edit Item Price",
+    "New Price",
+    "CANCEL",
+    "CONFIRM",
+    "Unable to change price for this item",
+    "Successfully Removed Item",
+    "Confirm Item Deletion",
+    "Are you sure you want to delete",
+    "Unable to remove item",
+    "Item ID",
+    "Edit Ingredients",
+    "Remove from Menu",
+    "Successfully Added Item",
+    "New",
+    "Creation",
+    "Name",
+    "Price",
+    "Amount in Stock",
+    "Add item",
+    "Unable to add item",
+    "Menu Item Management",
+    "Return to Manager View",
+    "Add Smoothie",
+    "Add Snack",
+    "Add Addon",
+  "Manage Smoothies",
+  "Manage Snacks",
+  "Manage Addons",
+  ];
+
+  String title = "Manage Smoothies";
+  String text_edit_price = "Edit Item Price";
+  String text_new_price = "New Price";
+  String text_cancel_button = "CANCEL";
+  String text_confirm_button = "CONFIRM";
+  String text_unable_change_price = "Unable to change price for this item";
+  String text_success_rem_item = "Successfully Removed Item";
+  String text_confirm_item_del = "Confirm Item Deletion";
+  String text_sure_del = "Are you sure you want to delete";
+  String text_unable_rem_item = "Unable to remove item";
+  String text_item_id = "Item ID";
+  String text_edit_ingredients = "Edit Ingredients";
+  String rem_from_menu = "Remove from Menu";
+  String success_add_item = "Successfully Added Item";
+  String text_new = "New";
+  String text_creation = "Creation";
+  String text_name = "Name";
+  String text_price = "Price";
+  String text_amount_in_stock = "Amount in Stock";
+  String text_add_item = "Add item";
+  String text_unable_add_item = "Unable to add item";
+  String text_menu_item_man = "Menu Item Management";
+  String text_ret_man_view = "Return to Manager View";
+  String text_add_smoothie = "Add Smoothie";
+  String text_add_snack = "Add Snack";
+  String text_add_addon = "Add Addon";
+  String text_manage_smoothies = "Manage Smoothies";
+  String text_manage_snacks = "Manage Snacks";
+  String text_manage_addons = "Manage Addons";
+
+
+
+  List<String> smoothie_names = [];
+  List<String> snack_names = [];
+  List<String> addon_names = [];
+
+  // GOOGLE TRANSLATE VARIABLES END
+
+  bool first_load = false;
+
+
+
+
+
   int visibility_ctrl = 0;
-  String title = 'Manage Smoothies';
+
   bool _isLoading = true;
   List<menu_item_obj> _smoothie_items = [];
   List<menu_item_obj> _snack_items = [];
@@ -31,7 +147,7 @@ class _Win_View_Menu_State extends State<Win_View_Menu>
 
   // - Calls appropriate firebase function
   // - Displays a loading screen in the meantime
-  void getData() async
+  Future<void> getData() async
   {
     print('Building Page...');
     _smoothie_items = await item_helper.getAllSmoothiesInfo();
@@ -39,10 +155,18 @@ class _Win_View_Menu_State extends State<Win_View_Menu>
     _snack_items = await item_helper.getAllSnackInfo();
     _addon_items = await item_helper.getAllAddonInfo();
 
-    setState(()
-    {
-      _isLoading = false;
-    });
+    for(int i = 0; i < _smoothie_items.length; i++){
+      smoothie_names.add(_smoothie_items[i].menu_item);
+    }
+
+    for(int i = 0; i < _snack_items.length; i++){
+      snack_names.add(_snack_items[i].menu_item);
+    }
+
+    for(int i = 0; i < _addon_items.length; i++){
+      addon_names.add(_addon_items[i].menu_item);
+    }
+
   }
 
   // Popup that handle price editing
@@ -52,20 +176,20 @@ class _Win_View_Menu_State extends State<Win_View_Menu>
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Edit Item Price'),
+          title: Text(text_edit_price),
           content: TextFormField(
             controller: new_price,
-            decoration: const InputDecoration(hintText: 'New Price...'),
+            decoration: InputDecoration(hintText: text_new_price + "..."),
           ),
           actions: <Widget>[
             TextButton(
-              child: const Text('CANCEL'),
+              child: Text(text_cancel_button),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: const Text('CONFIRM'),
+              child: Text(text_confirm_button),
               onPressed: () async {
                 Navigator.of(context).pop();
                 try {
@@ -81,13 +205,13 @@ class _Win_View_Menu_State extends State<Win_View_Menu>
                       builder: (BuildContext context) {
                         return AlertDialog(
                           title: const Icon(Icons.error_outline_sharp),
-                          content: const Text('Unable to change price for this item.'),
+                          content: Text(text_unable_change_price),
                           actions: [
                             TextButton(
                                 onPressed: (){
                                   Navigator.of(context).pop();
                                 },
-                                child: const Text('OK'))
+                                child: Text(text_confirm_button))
                           ],
                         );
                       });
@@ -105,25 +229,25 @@ class _Win_View_Menu_State extends State<Win_View_Menu>
   void confirmRemoval(List<menu_item_obj> items, String item_name, int id, int index)
   {
     Icon message_icon = const Icon(Icons.check);
-    String message_text = 'Successfully Removed Item';
+    String message_text = text_success_rem_item;
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Confirm Item Deletion'),
+          title: Text(text_confirm_item_del),
           content: Text(
-              'Are you sure you want to delete $item_name ?'
+               text_sure_del + ' $item_name ?'
           ),
           actions: <Widget>[
             TextButton(
-              child: const Text('CANCEL'),
+              child: Text(text_cancel_button),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: const Text('CONFIRM'),
+              child: Text(text_confirm_button),
               onPressed: () async {
                 try {
                   await item_helper.delete_menu_item(id);
@@ -135,7 +259,7 @@ class _Win_View_Menu_State extends State<Win_View_Menu>
                 {
                   print(exception);
                   message_icon = const Icon(Icons.error_outline_outlined);
-                  message_text = 'Unable to remove item item';
+                  message_text = text_unable_rem_item;
                 }
                 finally{
                   showDialog(
@@ -150,7 +274,7 @@ class _Win_View_Menu_State extends State<Win_View_Menu>
                                 onPressed: (){
                                   Navigator.of(context).pop();
                                 },
-                                child: const Text('OK'))
+                                child: Text(text_confirm_button))
                           ],
                         );
                       });
@@ -192,7 +316,7 @@ class _Win_View_Menu_State extends State<Win_View_Menu>
                           const Icon(Icons.add_circle_outline_sharp),
                       const SizedBox(width: 20,),
          */             Text(
-                        'Item ID: ${items[index].menu_item_id.toString()}',
+                        text_item_id + ': ${items[index].menu_item_id.toString()}',
                         style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
@@ -206,7 +330,8 @@ class _Win_View_Menu_State extends State<Win_View_Menu>
                 title: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10.0),
                   child: Text(
-                    items[index].menu_item,
+                    type == "smoothie"?  smoothie_names[index] : type == "snack"?  snack_names[index] : type == "addon"?  addon_names[index] :   items[index].menu_item ,
+                    // items[index].menu_item,
                     style: TextStyle(
                       color: _text_color.withAlpha(200),
                       fontWeight: FontWeight.bold,
@@ -230,7 +355,7 @@ class _Win_View_Menu_State extends State<Win_View_Menu>
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       IconButton(
-                        tooltip: 'Edit Price',
+                        tooltip: text_edit_price,
                         icon: const Icon(Icons.attach_money),
                         color: _text_color.withAlpha(122),
                         onPressed: () {
@@ -240,13 +365,13 @@ class _Win_View_Menu_State extends State<Win_View_Menu>
                         iconSize: 35,
                       ),
                       type == 'smoothie' ? IconButton(
-                        tooltip: 'Edit Ingredients',
+                        tooltip: text_edit_ingredients,
                         icon: const Icon(Icons.edit),
                         color: _text_color.withAlpha(122),
                         onPressed: () {
                           Navigator.pushReplacementNamed(
                             context,
-                            '/edit-smoothie-manager',
+                            Win_Edit_Smoothie.route,
                             arguments:  {'name': items[index].menu_item,
                               'id': items[index].menu_item_id.toString()},
                           );
@@ -254,7 +379,7 @@ class _Win_View_Menu_State extends State<Win_View_Menu>
                         iconSize: 35,
                       ) : Container(),
                       IconButton(
-                        tooltip: 'Remove from Menu',
+                        tooltip: rem_from_menu,
                         icon: const Icon(Icons.delete),
                         color: _text_color.withAlpha(122),
                         iconSize: 35,
@@ -279,14 +404,14 @@ class _Win_View_Menu_State extends State<Win_View_Menu>
     TextEditingController _new_item_price = TextEditingController();
     TextEditingController _new_item_amount = TextEditingController();
     Icon message_icon = const Icon(Icons.check);
-    String message_text = 'Successfully Added Item';
+    String message_text = success_add_item;
 
     showDialog(
       barrierDismissible: false,
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('New $item_type Creation'),
+          title: Text( text_new + ' $item_type ' + text_creation),
           content: SizedBox(
             width: 300,
             height: 250,
@@ -296,7 +421,7 @@ class _Win_View_Menu_State extends State<Win_View_Menu>
                 TextFormField(
                   controller: _new_item_name,
                   decoration:  InputDecoration(
-                    hintText: 'Name...',
+                    hintText:  text_name + '...',
                     filled: true,
                     fillColor: Colors.white,
                     border: OutlineInputBorder(
@@ -306,24 +431,24 @@ class _Win_View_Menu_State extends State<Win_View_Menu>
                 ),
                 TextFormField(
                   controller: _new_item_price,
-                  decoration: const InputDecoration(hintText: 'Price...'),
+                  decoration:  InputDecoration(hintText: text_price + '...'),
                 ),
                 TextFormField(
                   controller: _new_item_amount,
-                  decoration: const InputDecoration(hintText: 'Amount in Stock...'),
+                  decoration: InputDecoration(hintText: text_amount_in_stock + '...'),
                 ),
               ],
             ),
           ),
           actions: <Widget>[
             TextButton(
-              child: const Text('CANCEL'),
+              child: Text(text_cancel_button),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: const Text('ADD ITEM'),
+              child: Text(text_add_item),
               onPressed: () async {
                 try {
                   menu_item_obj new_item = menu_item_obj(0,
@@ -348,7 +473,7 @@ class _Win_View_Menu_State extends State<Win_View_Menu>
                 {
                   print(exception);
                   message_icon = const Icon(Icons.error_outline_outlined);
-                  message_text = 'Unable to add item';
+                  message_text = text_unable_add_item;
                 }
                 finally{
                   showDialog(
@@ -362,7 +487,7 @@ class _Win_View_Menu_State extends State<Win_View_Menu>
                                 onPressed: (){
                                   Navigator.of(context).pop();
                                 },
-                                child: const Text('OK'))
+                                child:Text(text_confirm_button))
                           ],
                         );
                       });
@@ -392,15 +517,15 @@ class _Win_View_Menu_State extends State<Win_View_Menu>
       ),
       onPressed: (){
         setState(() {
-          if (tab_text == 'Manage Smoothies')
+          if (tab_text == text_manage_smoothies)
           {
             visibility_ctrl = 0;
           }
-          else if (tab_text == 'Manage Snacks')
+          else if (tab_text == text_manage_snacks)
           {
             visibility_ctrl = 1;
           }
-          else if (tab_text == 'Manage Addons')
+          else if (tab_text == text_manage_addons)
           {
             visibility_ctrl = 2;
           }
@@ -411,23 +536,102 @@ class _Win_View_Menu_State extends State<Win_View_Menu>
 
   @override
   void initState() {
+    // getData(true);
+    first_load = true;
+
     super.initState();
-    getData();
   }
+
 
   @override
   Widget build(BuildContext context){
     final _color_manager = Color_Manager.of(context);
+
+
+    final _translate_manager = Translate_Manager.of(context);
+
+    Future<void> set_translation() async {
+
+      build_texts = (await _google_translate_api.translate_batch(build_texts_original,_translate_manager.chosen_language));
+
+      title = build_texts[0];
+      text_edit_price = build_texts[1];
+      text_new_price = build_texts[2];
+      text_cancel_button = build_texts[3];
+      text_confirm_button = build_texts[4];
+      text_unable_change_price = build_texts[5];
+      text_success_rem_item = build_texts[6];
+      text_confirm_item_del = build_texts[7];
+      text_sure_del = build_texts[8];
+      text_unable_rem_item = build_texts[9];
+      text_item_id = build_texts[10];
+      text_edit_ingredients = build_texts[11];
+      rem_from_menu = build_texts[12];
+      success_add_item = build_texts[13];
+      text_new = build_texts[14];
+      text_creation = build_texts[15];
+      text_name = build_texts[16];
+      text_price = build_texts[17];
+      text_amount_in_stock = build_texts[18];
+      text_add_item = build_texts[19];
+      text_unable_add_item = build_texts[20];
+      text_menu_item_man = build_texts[21];
+      text_ret_man_view = build_texts[22];
+      text_add_smoothie = build_texts[23];
+      text_add_snack = build_texts[24];
+      text_add_addon = build_texts[25];
+      text_manage_smoothies = build_texts[26];
+      text_manage_snacks = build_texts[27];
+      text_manage_addons = build_texts[28];
+
+      _current_lang = _translate_manager.chosen_language;
+      await getData();
+
+
+
+      smoothie_names = (await _google_translate_api.translate_batch(smoothie_names,_translate_manager.chosen_language));
+
+      snack_names = (await _google_translate_api.translate_batch(snack_names,_translate_manager.chosen_language));
+
+      addon_names = (await _google_translate_api.translate_batch(addon_names,_translate_manager.chosen_language));
+
+
+      first_load = false;
+      setState(()
+      {
+        _isLoading = false;
+      });
+    }
+
+    if ((!_isLoading) && (_current_lang != _translate_manager.chosen_language)) {
+      setState(() {
+        _isLoading = true;
+      });
+    }
+
+    if (((_isLoading && (_current_lang != _translate_manager.chosen_language))) || first_load) {
+      set_translation();
+    }
+
+
+
+
+
+
+
+
+
+
     return Scaffold(
       appBar: Page_Header(
         context: context,
-        pageName: "Menu Item Management",
+        pageName: text_menu_item_man,
         buttons: [
-          tab((){}, 'Manage Smoothies', _color_manager.background_color, _color_manager.primary_color, 0),
-          tab((){}, 'Manage Snacks', _color_manager.background_color, _color_manager.primary_color, 1),
-          tab((){}, 'Manage Addons', _color_manager.background_color, _color_manager.primary_color, 2),
+          tab((){}, text_manage_smoothies, _color_manager.background_color, _color_manager.primary_color, 0),
+          tab((){}, text_manage_snacks, _color_manager.background_color, _color_manager.primary_color, 1),
+          tab((){}, text_manage_addons, _color_manager.background_color, _color_manager.primary_color, 2),
           IconButton(
-            tooltip: "Return to Manager View",
+            tooltip: text_ret_man_view,
             padding: const EdgeInsets.only(left: 25, right: 10),
             onPressed: ()
             {
@@ -446,15 +650,15 @@ class _Win_View_Menu_State extends State<Win_View_Menu>
                 children: [
                     Visibility(
                       visible: visibility_ctrl == 0,
-                      child: itemList(_smoothie_items, 'smoothie', _color_manager.secondary_color, _color_manager.text_color, _color_manager.active_color),
+                      child: itemList(_smoothie_items, "smoothie", _color_manager.secondary_color, _color_manager.text_color, _color_manager.active_color),
                     ),
                   Visibility(
                     visible: visibility_ctrl == 1,
-                      child: itemList(_snack_items, 'snack', _color_manager.secondary_color, _color_manager.text_color, _color_manager.active_color),
+                      child: itemList(_snack_items, "snack", _color_manager.secondary_color, _color_manager.text_color, _color_manager.active_color),
                   ),
                   Visibility(
                       visible: visibility_ctrl == 2,
-                      child: itemList(_addon_items, 'addon', _color_manager.secondary_color, _color_manager.text_color, _color_manager.active_color),
+                      child: itemList(_addon_items, "addon", _color_manager.secondary_color, _color_manager.text_color, _color_manager.active_color),
                   ),
                   ],
 
@@ -474,21 +678,21 @@ class _Win_View_Menu_State extends State<Win_View_Menu>
                   Navigator.pushReplacementNamed(context,Win_Add_Smoothie.route);
                 },
                 buttonWidth: 200,
-                buttonName: 'Add Smoothie',
+                buttonName: text_add_smoothie,
             ),
             Login_Button(
               onTap: () {
                 newItemSubWin('Snack');
               },
               buttonWidth: 200,
-              buttonName: 'Add Snack',
+              buttonName: text_add_snack,
             ),
             Login_Button(
               onTap: () {
                 newItemSubWin('Addon');
               },
               buttonWidth: 200,
-              buttonName: 'Add Addon',
+              buttonName: text_add_addon,
             ),
           ],
         ),
