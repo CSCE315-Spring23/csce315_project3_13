@@ -815,7 +815,6 @@ class Win_Cust_Order_State extends State<Win_Cust_Order>
           pageName: "$text_page_title - Texas A&M MSC",
           buttons: [
             IconButton(
-              tooltip: text_ret_prev_view,
               padding: const EdgeInsets.only(left: 25, right: 10),
               onPressed: ()
               {

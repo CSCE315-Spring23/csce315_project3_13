@@ -376,7 +376,7 @@ class _MyAppState extends State<MyApp> {
                 Win_Menu_Board.route : (BuildContext context) => Win_Menu_Board(),
                 Win_Cust_Order.route: (BuildContext context) => Win_Cust_Order(),
               },
-              initialRoute: Win_Manager_View.route,
+              initialRoute: Win_Login.route,
             ),
           ),
         ),
