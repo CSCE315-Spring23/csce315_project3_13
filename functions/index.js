@@ -1012,5 +1012,44 @@ exports.getMenuItemsInfo = functions.https.onCall(async (data, context) => {
 
 });
 
+exports.getExcessInventoryData = functions.https.onCall(async (data, context) => {
+    const client = new Client({
+        host: 'csce-315-db.engr.tamu.edu',
+        user: 'csce315331_team_13_master',
+        password: 'Lucky_13',
+        database: 'csce315331_team_13',
+        port: 5432,
+    });
 
+    await client.connect()
+
+    const {date} = data
+    const {ingredient} = data
+
+    var cast = "CAST('" + date + "' as date)";
+
+    const res = await client.query("SELECT amount_inv_stock, amount_ordered, conversion FROM inventory WHERE date_ordered>=" + cast + " AND ingredient='" + ingredient + "'");
+
+    client.end()
+
+    return res.rows
+});
+
+exports.getExcessIngredients = functions.https.onCall(async (data, context) => {
+    const client = new Client({
+        host: 'csce-315-db.engr.tamu.edu',
+        user: 'csce315331_team_13_master',
+        password: 'Lucky_13',
+        database: 'csce315331_team_13',
+        port: 5432,
+    });
+
+    await client.connect()
+
+    const res = await client.query("SELECT DISTINCT ingredient from inventory ORDER BY ingredient");
+
+    client.end()
+
+    return res.rows
+});
 
