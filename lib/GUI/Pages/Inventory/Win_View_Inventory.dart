@@ -1,7 +1,6 @@
-/// Window for viewing the inventory.
-
 import 'package:csce315_project3_13/GUI/Components/Login_Button.dart';
 import 'package:csce315_project3_13/GUI/Pages/Inventory/Win_Order_Inventory.dart';
+import 'package:csce315_project3_13/GUI/Pages/Inventory/Win_Restock_Inventory.dart';
 import 'package:csce315_project3_13/GUI/Pages/Manager_View/Win_Manager_View.dart';
 import 'package:csce315_project3_13/Inherited_Widgets/Translate_Manager.dart';
 import 'package:csce315_project3_13/Services/google_translate_API.dart';
@@ -256,15 +255,13 @@ class _Win_View_Inventory_State extends State<Win_View_Inventory> {
 
   // INSERT INTO menu_items (menu_item_id, menu_item, item_price, amount_in_stock, type, status) VALUES(407, 'The Smoothie Squad Special small', 6.18, 60, 'smoothie', 'available')
   void confirmInventoryItemRemoval(String itemName) {
-    Icon message_icon = const Icon(Icons.check);
-    String message_text = text_message_text_rem;
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(text_confirm_item_deletion),
-          content: Text( text_certain_you_want_del + " $itemName ?"),
+          content: Text(text_certain_you_want_del + " $itemName ?"),
           actions: <Widget>[
             TextButton(
               child: Text(text_cancel_button),
@@ -278,34 +275,27 @@ class _Win_View_Inventory_State extends State<Win_View_Inventory> {
                 try {
                   await inv_helper.deleteInventoryItem(itemName);
                   getData();
-                  setState(() {
-
-                  });
+                  setState(() {});
                   Navigator.pop(context);
                 } catch (exception) {
                   print(exception);
-                  message_icon = const Icon(Icons.error_outline_outlined);
-                  message_text = text_message_text_rem_alt;
-                } finally {
                   showDialog(
-                    barrierDismissible: false,
                     context: context,
                     builder: (BuildContext context) {
                       return AlertDialog(
-                        title: message_icon,
-                        content: Text(message_text),
-                        actions: [
+                        title: Text("Error"),
+                        content: Text("Could not delete Inventory"),
+                        actions: <Widget>[
                           TextButton(
+                            child: Text(text_ok_button),
                             onPressed: () {
                               Navigator.of(context).pop();
                             },
-                            child: Text(text_ok_button),
-                          )
+                          ),
                         ],
                       );
                     },
                   );
-                  Navigator.of(context).pop();
                 }
               },
             ),
@@ -314,6 +304,7 @@ class _Win_View_Inventory_State extends State<Win_View_Inventory> {
       },
     );
   }
+
 
   Widget itemList(Map<String, num> items, Color tile_color, Color _text_color, Color _icon_color) {
     return ListView.builder(
@@ -525,6 +516,23 @@ class _Win_View_Inventory_State extends State<Win_View_Inventory> {
                   print(exception);
                   message_icon = const Icon(Icons.error_outline_outlined);
                   message_text = text_message_text_add_alt;
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: message_icon,
+                        content: Text("Could not add item"),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: Text(text_ok_button),
+                          ),
+                        ],
+                      );
+                    },
+                  );
                 }
                 finally{
                   showDialog(
@@ -662,7 +670,6 @@ class _Win_View_Inventory_State extends State<Win_View_Inventory> {
 
     return Scaffold(
       appBar: Page_Header(
-        // showWeather: false,
         context: context,
         pageName: text_page_header,
         buttons: [
@@ -716,7 +723,7 @@ class _Win_View_Inventory_State extends State<Win_View_Inventory> {
             ),
             Login_Button(
               onTap: () {
-                newItemSubWin();
+                Navigator.pushReplacementNamed(context, Win_Restock_Inventory.route);
               },
               buttonWidth: 200,
               buttonName: text_restock_report,
