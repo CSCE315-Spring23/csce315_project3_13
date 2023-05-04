@@ -83,7 +83,7 @@ class _Win_Server_ViewState extends State<Win_Server_View> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
             Login_Button(onTap: (){
-              Navigator.pushReplacementNamed(context,Win_Order.route);
+              Navigator.pushReplacementNamed(context,Win_Order.route_server);
             }, buttonName: text_order_button),
 
 

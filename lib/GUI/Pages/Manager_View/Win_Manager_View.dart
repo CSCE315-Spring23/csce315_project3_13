@@ -106,7 +106,7 @@ class _Win_Manager_ViewState extends State<Win_Manager_View> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Login_Button(onTap: (){
-                  Navigator.pushReplacementNamed(context,Win_Order.route);
+                  Navigator.pushReplacementNamed(context,Win_Order.route_manager);
                 }, buttonName: text_order_button),
                 Login_Button(onTap: (){
                   Navigator.pushReplacementNamed(context,Win_View_Menu.route);

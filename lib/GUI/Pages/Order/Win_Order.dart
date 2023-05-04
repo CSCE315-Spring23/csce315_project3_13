@@ -1,6 +1,7 @@
 /// Window for placing a new order for the system.
 
 import 'package:csce315_project3_13/GUI/Pages/Manager_View/Win_Manager_View.dart';
+import 'package:csce315_project3_13/GUI/Pages/Server_View/Win_Server_View.dart';
 import 'package:csce315_project3_13/Inherited_Widgets/Translate_Manager.dart';
 import 'package:csce315_project3_13/Models/Order%20Models/addon_order.dart';
 import 'package:csce315_project3_13/Models/Order%20Models/curr_order.dart';
@@ -20,6 +21,13 @@ import '../../../Models/models_library.dart';
 
 class Win_Order extends StatefulWidget {
   static const String route = '/order';
+  static const String route_server = '/order-server';
+  static const String route_manager = '/order-manager';
+  final bool isManager;
+
+  Win_Order({Key? key,
+    required this.isManager,
+  }) : super(key: key);
 
   @override
   State<Win_Order> createState() => Win_Order_State();
@@ -36,7 +44,7 @@ class Win_Order_State extends State<Win_Order>
 
   List<String> build_texts_originals = [
     "Smoothie King ",
-    "Return to Manager View",
+    "Return to Previous View",
     "Index",
     "Name",
     "Size",
@@ -66,7 +74,7 @@ class Win_Order_State extends State<Win_Order>
 
   List<String> build_texts = [
     "Smoothie King ",
-    "Return to Manager View",
+    "Return to Previous View",
     "Index",
     "Name",
     "Size",
@@ -97,7 +105,7 @@ class Win_Order_State extends State<Win_Order>
 
   //Strings for build
   String text_page_title =  "Smoothie King ";
-  String text_ret_prev_view = "Return to Manager View";
+  String text_ret_prev_view = "Return to Previous View";
   String text_datacolumn_index = 'Index';
   String text_datacolumn_name = 'Name';
   String text_datacolumn_size = 'Size';
@@ -856,7 +864,12 @@ class Win_Order_State extends State<Win_Order>
               padding: const EdgeInsets.only(left: 25, right: 10),
               onPressed: ()
               {
-                Navigator.pushReplacementNamed(context,Win_Manager_View.route);
+                if(widget.isManager){
+                  Navigator.pushReplacementNamed(context,Win_Manager_View.route);
+                }else{
+                  Navigator.pushReplacementNamed(context,Win_Server_View.route);
+                }
+
               },
               icon: const Icon(Icons.close_rounded),
               iconSize: 40,
